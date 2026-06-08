@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom"
 import portImage from "../assets/port.jpg"
 import "./MainPage.scss"
 
+
 const stats = [
   { label: "Navi in Porto",        value: "08", sub: "/ 8 banchine", icon: "🚢" },
   { label: "Navi in Attesa",       value: "03", sub: "da assegnare", icon: "⏳" },

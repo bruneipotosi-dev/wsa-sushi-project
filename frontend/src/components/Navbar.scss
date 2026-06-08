@@ -1,0 +1,86 @@
+// src/components/Navbar.scss
+.navbar {
+  background: linear-gradient(135deg, #0a0e27 0%, #0f1235 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+
+    h1 {
+      font-size: 1.25rem;
+      color: white;
+      margin: 0;
+    }
+
+    .current-day {
+      color: #a0aec0;
+      font-size: 0.875rem;
+      
+      strong {
+        color: #3498db;
+      }
+    }
+  }
+
+  .navbar-links {
+    display: flex;
+    gap: 1.5rem;
+
+    a {
+      color: #a0aec0;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+
+      &:hover, &.active {
+        color: #3498db;
+      }
+    }
+  }
+
+  .navbar-actions {
+    display: flex;
+    gap: 0.75rem;  // ← AGGIUNTO: spazio tra i pulsanti
+
+    .next-day-button {
+      background: rgba(52, 152, 219, 0.2);
+      border: 1px solid rgba(52, 152, 219, 0.3);
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      color: #3498db;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+
+      &:hover {
+        background: rgba(52, 152, 219, 0.3);
+        transform: translateY(-1px);
+      }
+    }
+
+    // ← AGGIUNTO: stile per il pulsante reset
+    .reset-button {
+      background: rgba(231, 76, 60, 0.2);
+      border: 1px solid rgba(231, 76, 60, 0.3);
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      color: #e74c3c;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+
+      &:hover {
+        background: rgba(231, 76, 60, 0.3);
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
