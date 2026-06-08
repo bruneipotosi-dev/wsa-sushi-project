@@ -53,53 +53,6 @@ export default function MainPage() {
 
 </section>
 
-      <div className="main-body">
-
-        <section className="quick-access">
-          <h2>Accessi Rapidi</h2>
-          <div className="role-cards">
-
-            <div className="role-card" onClick={() => navigate("/operatore")}>
-              <div className="role-card-top">
-                <div className="role-icon">⚓</div>
-                <span className="role-badge">Operatore</span>
-              </div>
-              <h3>Area Operatore</h3>
-              <p>Registra e gestisci le navi nel sistema portuale.</p>
-              <button>Entra →</button>
-            </div>
-
-            <div className="role-card featured" onClick={() => navigate("/scheduler")}>
-              <div className="role-card-top">
-                <div className="role-icon">📅</div>
-                <span className="role-badge">Scheduler</span>
-              </div>
-              <h3>Area Scheduler</h3>
-              <p>Assegna le navi alle banchine e gestisci i turni.</p>
-              <button>Entra →</button>
-            </div>
-
-          </div>
-        </section>
-
-        <section className="operative-summary">
-          <h2>Riepilogo Operativo</h2>
-          <div className="stats-grid">
-            {stats.map((s, i) => (
-              <div className="stat-card" key={s.label} style={{ animationDelay: `${i * 0.1}s` }}>
-                <div className="stat-header">
-                  <span className="stat-label">{s.label}</span>
-                  <span className="stat-icon">{s.icon}</span>
-                </div>
-                <div className="stat-value">{s.value}</div>
-                <div className="stat-sub">{s.sub}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-      </div>
-
       <footer className="main-footer">
         <span>© 2025 BlueHarbor Logistics — INTERNAL USE ONLY</span>
       </footer>
