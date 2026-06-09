@@ -16,14 +16,6 @@ export default function MainPage() {
   return (
     <div className="main-page">
 
-      <nav className="main-nav">
-        <div className="nav-logo">
-          <span className="nav-logo-icon">⚓</span>
-          BlueHarbor
-        </div>
-        <span className="nav-tag">Sistema Interno</span>
-      </nav>
-
     <section className="main-hero" style={{ backgroundImage: `url(${portImage})` }}>
   <div className="hero-overlay" />
   
