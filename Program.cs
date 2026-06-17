@@ -9,7 +9,7 @@ builder.Services.AddSwaggerGen();
 
 // Collega il database SQLite
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=blueharbor.db"));
+    options.UseSqlite("Data Source=Data/blueharbor.db"));
 
 var app = builder.Build();
 

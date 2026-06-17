@@ -26,9 +26,9 @@ npm run dev     # → localhost:5173
 
 ### 4. Avvia il Backend
 ```bash
-cd backend
-dotnet restore
-dotnet run      # → localhost:5000
+cd ..
+dotnet restore BlueHarbor.API.csproj
+dotnet run --project BlueHarbor.API.csproj
 ```
 
 ### 5. Per testare sul telefono
