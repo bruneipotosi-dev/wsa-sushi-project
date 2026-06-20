@@ -1,5 +1,4 @@
 using BlueHarbor.API.Data;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,18 +16,40 @@ public class SystemController : ControllerBase
     }
 
     [HttpGet("day")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetDay()
     {
-        var currentDay = await _db.Ships.MaxAsync(s => (int?)s.ArrivalDay) ?? 0;
-        return Ok(new { currentDay });
+        var state = await _db.SystemStates.FirstAsync();
+        return Ok(new { currentDay = state.CurrentDay });
     }
 
     [HttpPost("advance-day")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> AdvanceDay()
     {
-        // Placeholder: implement business logic reale per avanzare il giorno virtuale
-        return Ok(new { message = "Advance day endpoint is available." });
+        var state = await _db.SystemStates.FirstAsync();
+        state.CurrentDay++;
+
+        var assignmentsEnded = await _db.Assignments
+            .Include(a => a.Ship)
+            .Where(a => a.EndDay < state.CurrentDay
+                     && a.Ship!.Status == "Assigned")
+            .ToListAsync();
+
+        foreach (var assignment in assignmentsEnded)
+        {
+            assignment.Ship!.Status = "Departed";
+        }
+
+        await _db.SaveChangesAsync();
+
+        return Ok(new
+        {
+            newDay        = state.CurrentDay,
+            departedCount = assignmentsEnded.Count,
+            departedShips = assignmentsEnded.Select(a => new
+            {
+                shipId   = a.ShipId,
+                shipName = a.Ship!.Name
+            })
+        });
     }
 }
