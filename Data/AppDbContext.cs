@@ -11,6 +11,7 @@ public class AppDbContext : DbContext
     public DbSet<Berth> Berths => Set<Berth>();
     public DbSet<Assignment> Assignments => Set<Assignment>();
     public DbSet<SystemState> SystemStates => Set<SystemState>();
+    public DbSet<PortLog> PortLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

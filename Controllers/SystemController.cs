@@ -1,6 +1,7 @@
 using BlueHarbor.API.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using BlueHarbor.API.Models;
 
 namespace BlueHarbor.API.Controllers;
 
@@ -43,13 +44,32 @@ public class SystemController : ControllerBase
 
         return Ok(new
         {
-            newDay        = state.CurrentDay,
+            newDay = state.CurrentDay,
             departedCount = assignmentsEnded.Count,
             departedShips = assignmentsEnded.Select(a => new
             {
-                shipId   = a.ShipId,
+                shipId = a.ShipId,
                 shipName = a.Ship!.Name
             })
+        });
+    }
+    [HttpPost("history")]
+    public async Task<IActionResult> SavePortLog([FromBody] PortLog log)
+    {
+        // Sicurezza: la partenza non può essere prima dell'arrivo
+        if (log.DepartureDay < log.ArrivalDay)
+        {
+            return BadRequest("Il giorno di partenza non può essere precedente al giorno di arrivo.");
+        }
+
+        // Salviamo nel database
+        _db.PortLogs.Add(log);
+        await _db.SaveChangesAsync();
+
+        return Ok(new
+        {
+            message = "Registro di sosta salvato con successo nello storico!",
+            durataCalcolata = log.Duration
         });
     }
 }
