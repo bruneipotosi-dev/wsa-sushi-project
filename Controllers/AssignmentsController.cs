@@ -1,6 +1,5 @@
 using BlueHarbor.API.Data;
 using BlueHarbor.API.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,8 +16,8 @@ public class AssignmentsController : ControllerBase
         _db = db;
     }
 
+    // GET /api/assignments
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAssignments()
     {
         var assignments = await _db.Assignments
@@ -29,9 +28,8 @@ public class AssignmentsController : ControllerBase
         return Ok(assignments);
     }
 
+    // GET /api/assignments/{id}
     [HttpGet("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAssignmentById(int id)
     {
         var assignment = await _db.Assignments
@@ -39,41 +37,76 @@ public class AssignmentsController : ControllerBase
             .Include(a => a.Berth)
             .FirstOrDefaultAsync(a => a.Id == id);
 
-        return assignment is null ? NotFound(new { error = "Assignment not found." }) : Ok(assignment);
+        return assignment is null
+            ? NotFound(new { error = "Assignment non trovato." })
+            : Ok(assignment);
     }
 
+    // POST /api/assignments
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateAssignment([FromBody] Assignment assignment)
+    public async Task<IActionResult> CreateAssignment([FromBody] AssignmentRequest request)
     {
-        if (!ModelState.IsValid)
+        // STEP 1 — Carica la nave
+        var ship = await _db.Ships.FindAsync(request.ShipId);
+        if (ship is null)
+            return BadRequest(new { error = "Nave non trovata." });
+
+        // STEP 2 — Carica la banchina
+        var berth = await _db.Berths.FindAsync(request.BerthId);
+        if (berth is null)
+            return BadRequest(new { error = "Banchina non trovata." });
+
+        // STEP 3 — Verifica che la nave sia ancora Pending
+        if (ship.Status != "Pending")
+            return BadRequest(new { error = $"La nave è già in stato '{ship.Status}'." });
+
+        // STEP 4 — Verifica compatibilità dimensione
+        if (ship.Size != berth.Size)
+            return BadRequest(new
+            {
+                error = $"Dimensione incompatibile: nave {ship.Size}, banchina {berth.Size}."
+            });
+
+        // STEP 5 — Leggi il giorno corrente
+     int currentDay = 1;
+
+        // STEP 6 — FindFirstFreeSlot
+        int lastEndDay = await _db.Assignments
+            .Where(a => a.BerthId == request.BerthId)
+            .MaxAsync(a => (int?)a.EndDay) ?? (currentDay - 1);
+
+        int firstFreeDay = Math.Max(currentDay, lastEndDay + 1);
+        int startDay     = Math.Max(ship.ArrivalDay, firstFreeDay);
+        int endDay       = startDay + ship.OccupationDuration - 1;
+
+        // STEP 7 — Salva assignment e aggiorna stato nave
+        var assignment = new Assignment
         {
-            return ValidationProblem(ModelState);
-        }
+            ShipId   = ship.Id,
+            BerthId  = berth.Id,
+            StartDay = startDay,
+            EndDay   = endDay
+        };
 
-        if (assignment.EndDay < assignment.StartDay)
-        {
-            return BadRequest(new { error = "EndDay must be greater than or equal to StartDay." });
-        }
+        ship.Status = "Assigned";
 
-        var shipExists = await _db.Ships.AnyAsync(s => s.Id == assignment.ShipId);
-        if (!shipExists)
-        {
-            return BadRequest(new { error = "ShipId does not refer to an existing ship." });
-        }
-
-        var berthExists = await _db.Berths.AnyAsync(b => b.Id == assignment.BerthId);
-        if (!berthExists)
-        {
-            return BadRequest(new { error = "BerthId does not refer to an existing berth." });
-        }
-
-        assignment.Ship = null;
-        assignment.Berth = null;
-
+        _db.Ships.Update(ship);
         _db.Assignments.Add(assignment);
         await _db.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetAssignmentById), new { id = assignment.Id }, assignment);
+
+        return CreatedAtAction(nameof(GetAssignmentById), new { id = assignment.Id }, new
+        {
+            assignment.Id,
+            assignment.ShipId,
+            assignment.BerthId,
+            assignment.StartDay,
+            assignment.EndDay,
+            shipName  = ship.Name,
+            shipSize  = ship.Size,
+            berthName = berth.Name
+        });
     }
 }
+
+// DTO per la richiesta
+public record AssignmentRequest(int ShipId, int BerthId);
