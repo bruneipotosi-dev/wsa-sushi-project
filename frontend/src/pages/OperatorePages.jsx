@@ -1,193 +1,180 @@
 // src/pages/OperatorePages.jsx
-// src/pages/OperatorePages.jsx
-import React, { useState } from 'react';
-import './OperatorePages.scss';   
+import { useState } from "react";
+import { mockShips } from "../mock/mockShips";
+import "./OperatorePages.scss";
 
-const OperatorePages = ({ currentDay, ships, setShips }) => {
-  const [newShip, setNewShip] = useState({
-    name: '',
-    notes: '',
-  });
-
-  // Statistiche
-  const stats = {
-    totalShips: ships.length,
-    pendingShips: ships.filter(s => s.status === 'Pending').length,
-    assignedShips: ships.filter(s => s.status === 'Assigned').length,
-    departedShips: ships.filter(s => s.status === 'Departed').length,
+// Genera valori casuali per la nave (il frontend li genera, il backend li validerà)
+function generateShipData() {
+  const sizes = ["XL", "L", "M", "S"];
+  return {
+    size: sizes[Math.floor(Math.random() * sizes.length)],
+    arrivalDay: Math.floor(Math.random() * 31),           // 0–30
+    occupationDuration: Math.floor(Math.random() * 13) + 3 // 3–15
   };
+}
 
-  // Funzioni per generare dati casuali
-  const getRandomSize = () => {
-    const sizes = ['XL', 'L', 'M', 'S'];
-    return sizes[Math.floor(Math.random() * sizes.length)];
-  };
+export default function OperatorePage() {
+  const [ships, setShips] = useState(mockShips);
+  const [name, setName] = useState("");
+  const [notes, setNotes] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
-  const getRandomArrivalDay = (currentDay) => {
-    const offset = Math.floor(Math.random() * 31);
-    return currentDay + offset;
-  };
+  // Filtra per stato
+  const pending = ships.filter(s => s.status === "Pending");
+  const assigned = ships.filter(s => s.status === "Assigned");
+  const departed = ships.filter(s => s.status === "Departed");
 
-  const getRandomDuration = () => {
-    return Math.floor(Math.random() * 13) + 3;
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewShip((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!newShip.name.trim()) {
-      alert('Il nome della nave è obbligatorio');
+  async function handleSubmit() {
+    if (!name.trim()) {
+      setError("Il nome della nave è obbligatorio.");
       return;
     }
 
-    const newShipEntry = {
-      id: Date.now(),
-      name: newShip.name,
-      notes: newShip.notes,
-      size: getRandomSize(),
-      arrivalDay: getRandomArrivalDay(currentDay),
-      occupationDuration: getRandomDuration(),
-      status: 'Pending',
-      assignedBerth: null,
-      startDay: null,
-    };
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
 
-    setShips((prevShips) => [...prevShips, newShipEntry]);
-    setNewShip({ name: '', notes: '' });
-  };
+    try {
+      // FASE A: salva in mock locale
+      const generated = generateShipData();
+      const newShip = {
+        id: Date.now(),
+        name: name.trim(),
+        notes: notes.trim(),
+        status: "Pending",
+        ...generated
+      };
+
+      setShips(prev => [newShip, ...prev]);
+      setSuccess(`Nave "${newShip.name}" registrata! Dimensione: ${newShip.size}`);
+      setName("");
+      setNotes("");
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <div className="operatore-container">
-      {/* Header con titolo e descrizione */}
-      <div className="page-header">
-        <h2>Area Operatore</h2>
-        <p>Registra e gestisci le navi nel sistema portuale</p>
-      </div>
+    <div className="operatore-page">
 
-      {/* Card delle statistiche */}
-      <div className="stats-grid">
-        <div className="stat-card">
-          <div className="stat-icon">🚢</div>
-          <div className="stat-info">
-            <span className="stat-value">{stats.totalShips}</span>
-            <span className="stat-label">NAVI REGISTRATE</span>
-          </div>
+      {/* Header statistiche */}
+      <div className="stats-bar">
+        <div className="stat">
+          <span className="stat-number">{ships.length}</span>
+          <span className="stat-label">Totale</span>
         </div>
-        <div className="stat-card pending">
-          <div className="stat-icon">⏳</div>
-          <div className="stat-info">
-            <span className="stat-value">{stats.pendingShips}</span>
-            <span className="stat-label">NAVI IN ATTESA</span>
-          </div>
+        <div className="stat pending">
+          <span className="stat-number">{pending.length}</span>
+          <span className="stat-label">In attesa</span>
         </div>
-        <div className="stat-card assigned">
-          <div className="stat-icon">⚓</div>
-          <div className="stat-info">
-            <span className="stat-value">{stats.assignedShips}</span>
-            <span className="stat-label">NAVI ASSEGNATE</span>
-          </div>
+        <div className="stat assigned">
+          <span className="stat-number">{assigned.length}</span>
+          <span className="stat-label">Assegnate</span>
         </div>
-        <div className="stat-card departed">
-          <div className="stat-icon">✅</div>
-          <div className="stat-info">
-            <span className="stat-value">{stats.departedShips}</span>
-            <span className="stat-label">NAVI PARTITE</span>
-          </div>
+        <div className="stat departed">
+          <span className="stat-number">{departed.length}</span>
+          <span className="stat-label">Partite</span>
         </div>
       </div>
 
-      {/* Form di registrazione */}
-      <div className="form-card">
-        <h3>📝 Registra Nuova Nave</h3>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Nome Nave *</label>
-            <input
-              type="text"
-              name="name"
-              value={newShip.name}
-              onChange={handleInputChange}
-              placeholder="Es. Ever Given, MSC Beatrice..."
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Note (opzionali)</label>
-            <textarea
-              name="notes"
-              value={newShip.notes}
-              onChange={handleInputChange}
-              placeholder="Note operative, carico, provenienza..."
-              rows="3"
-            />
-          </div>
-          <button type="submit" className="submit-btn">
-            🚢 Registra Nave
-          </button>
-        </form>
+      {/* Form registrazione nave */}
+      <div className="form-section">
+        <h2>Registra Nuova Nave</h2>
+
+        {error && <div className="alert alert-error">{error}</div>}
+        {success && <div className="alert alert-success">{success}</div>}
+
+        <div className="form-group">
+          <label>Nome Nave *</label>
+          <input
+            type="text"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            placeholder="es. MSC Aurora"
+            disabled={loading}
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Note (opzionale)</label>
+          <textarea
+            value={notes}
+            onChange={e => setNotes(e.target.value)}
+            placeholder="Informazioni aggiuntive..."
+            disabled={loading}
+            rows={3}
+          />
+        </div>
+
+        <p className="form-hint">
+          Dimensione, giorno di arrivo e durata vengono generati automaticamente dal sistema.
+        </p>
+
+        <button
+          onClick={handleSubmit}
+          disabled={loading || !name.trim()}
+          className="btn-primary"
+        >
+          {loading ? "Registrazione in corso..." : "Registra Nave"}
+        </button>
       </div>
 
-      {/* Tabella navi registrate */}
+      {/* Lista navi per stato */}
       <div className="ships-section">
-        <h3>📋 Navi Registrate</h3>
-        <div className="table-wrapper">
-          <table className="ships-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Dimensione</th>
-                <th>Arrivo</th>
-                <th>Durata</th>
-                <th>Stato</th>
-                <th>Banchina</th>
-                <th>Inizio</th>
-                <th>Note</th>
-              </tr>
-            </thead>
-            <tbody>
-              {ships.map((ship) => (
-                <tr key={ship.id}>
-                  <td>{ship.id}</td>
-                  <td className="ship-name">{ship.name}</td>
-                  <td>
-                    <span className={`size-badge size-${ship.size.toLowerCase()}`}>
-                      {ship.size}
-                    </span>
-                  </td>
-                  <td>Giorno {ship.arrivalDay}</td>
-                  <td>{ship.occupationDuration} gg</td>
-                  <td>
-                    <span className={`status-badge status-${ship.status.toLowerCase()}`}>
-                      {ship.status}
-                    </span>
-                  </td>
-                  <td>{ship.assignedBerth || '—'}</td>
-                  <td>{ship.startDay ? `Giorno ${ship.startDay}` : '—'}</td>
-                  <td className="ship-notes">{ship.notes || '—'}</td>
-                </tr>
-              ))}
-              {ships.length === 0 && (
-                <tr>
-                  <td colSpan="9" className="no-data">
-                    <div className="empty-state">
-                      <span>🚢</span>
-                      <p>Nessuna nave registrata</p>
-                      <small>Utilizza il form sopra per registrare la prima nave</small>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+
+        <div className="ships-group">
+          <h3>🟡 In Attesa ({pending.length})</h3>
+          {pending.length === 0
+            ? <p className="empty">Nessuna nave in attesa</p>
+            : pending.map(ship => <ShipCard key={ship.id} ship={ship} />)
+          }
         </div>
+
+        <div className="ships-group">
+          <h3>🟢 Assegnate ({assigned.length})</h3>
+          {assigned.length === 0
+            ? <p className="empty">Nessuna nave assegnata</p>
+            : assigned.map(ship => <ShipCard key={ship.id} ship={ship} />)
+          }
+        </div>
+
+        <div className="ships-group">
+          <h3>⚫ Partite ({departed.length})</h3>
+          {departed.length === 0
+            ? <p className="empty">Nessuna nave partita</p>
+            : departed.map(ship => <ShipCard key={ship.id} ship={ship} />)
+          }
+        </div>
+
       </div>
     </div>
   );
-};
+}
 
-export default OperatorePages;
+// Componente card per ogni nave
+function ShipCard({ ship }) {
+  const statusClass = {
+    Pending: "pending",
+    Assigned: "assigned",
+    Departed: "departed"
+  }[ship.status] || "";
+
+  return (
+    <div className={`ship-card ${statusClass}`}>
+      <div className="ship-card-header">
+        <strong>{ship.name}</strong>
+        <span className={`badge badge-${statusClass}`}>{ship.status}</span>
+      </div>
+      <div className="ship-card-body">
+        <span>📦 {ship.size}</span>
+        <span>📅 Arrivo: giorno {ship.arrivalDay}</span>
+        <span>⏱ Durata: {ship.occupationDuration} giorni</span>
+      </div>
+      {ship.notes && <p className="ship-notes">{ship.notes}</p>}
+    </div>
+  );
+}
