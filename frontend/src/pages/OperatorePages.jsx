@@ -1,6 +1,5 @@
 // src/pages/OperatorePages.jsx
 import { useState } from "react";
-import { mockShips } from "../mock/mockShips";
 import "./OperatorePages.scss";
 
 // Genera valori casuali per la nave (il frontend li genera, il backend li validerà)
@@ -13,16 +12,15 @@ function generateShipData() {
   };
 }
 
-export default function OperatorePage() {
-  const [ships, setShips] = useState(mockShips);
-  const [name, setName] = useState("");
-  const [notes, setNotes] = useState("");
+export default function OperatorePage({ ships, setShips }) {
+  const [name, setName]       = useState("");
+  const [notes, setNotes]     = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(null);
 
   // Filtra per stato
-  const pending = ships.filter(s => s.status === "Pending");
+  const pending  = ships.filter(s => s.status === "Pending");
   const assigned = ships.filter(s => s.status === "Assigned");
   const departed = ships.filter(s => s.status === "Departed");
 
@@ -37,7 +35,7 @@ export default function OperatorePage() {
     setSuccess(null);
 
     try {
-      // FASE A: salva in mock locale
+      // FASE A: salva in mock locale (ma ora usando lo stato globale di App.jsx)
       const generated = generateShipData();
       const newShip = {
         id: Date.now(),
@@ -47,7 +45,9 @@ export default function OperatorePage() {
         ...generated
       };
 
-      setShips(prev => [newShip, ...prev]);
+      // ⬇️ Questo è il punto chiave: usa setShips ricevuto da App.jsx
+      setShips(prev => [...prev, newShip]);
+
       setSuccess(`Nave "${newShip.name}" registrata! Dimensione: ${newShip.size}`);
       setName("");
       setNotes("");
@@ -85,7 +85,7 @@ export default function OperatorePage() {
       <div className="form-section">
         <h2>Registra Nuova Nave</h2>
 
-        {error && <div className="alert alert-error">{error}</div>}
+        {error   && <div className="alert alert-error">{error}</div>}
         {success && <div className="alert alert-success">{success}</div>}
 
         <div className="form-group">
@@ -158,7 +158,7 @@ export default function OperatorePage() {
 // Componente card per ogni nave
 function ShipCard({ ship }) {
   const statusClass = {
-    Pending: "pending",
+    Pending:  "pending",
     Assigned: "assigned",
     Departed: "departed"
   }[ship.status] || "";
