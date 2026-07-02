@@ -1,5 +1,6 @@
 // src/pages/OperatorePages.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createShip, getShips } from "../services/api";
 import "./OperatorePages.scss";
 
 // Genera valori casuali per la nave (il frontend li genera, il backend li validerà)
@@ -19,11 +20,26 @@ export default function OperatorePage({ ships, setShips }) {
   const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(null);
 
+  // Modifica 2: loadShips e useEffect
+  const loadShips = async () => {
+    try {
+      const data = await getShips();
+      setShips(data);
+    } catch (err) {
+      console.error('Errore caricamento navi:', err);
+    }
+  };
+
+  useEffect(() => {
+    loadShips();
+  }, []);
+
   // Filtra per stato
   const pending  = ships.filter(s => s.status === "Pending");
   const assigned = ships.filter(s => s.status === "Assigned");
   const departed = ships.filter(s => s.status === "Departed");
 
+  // Modifica 3: handleSubmit con API reale
   async function handleSubmit() {
     if (!name.trim()) {
       setError("Il nome della nave è obbligatorio.");
@@ -35,20 +51,17 @@ export default function OperatorePage({ ships, setShips }) {
     setSuccess(null);
 
     try {
-      // FASE A: salva in mock locale (ma ora usando lo stato globale di App.jsx)
+      // FASE B: API reale
       const generated = generateShipData();
-      const newShip = {
-        id: Date.now(),
+      await createShip({
         name: name.trim(),
         notes: notes.trim(),
         status: "Pending",
         ...generated
-      };
+      });
+      await loadShips(); // ricarica dal backend
 
-      // ⬇️ Questo è il punto chiave: usa setShips ricevuto da App.jsx
-      setShips(prev => [...prev, newShip]);
-
-      setSuccess(`Nave "${newShip.name}" registrata! Dimensione: ${newShip.size}`);
+      setSuccess(`Nave "${name.trim()}" registrata! Dimensione: ${generated.size}`);
       setName("");
       setNotes("");
     } catch (e) {
