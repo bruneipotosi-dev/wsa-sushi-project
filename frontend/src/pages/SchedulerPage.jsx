@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react"
-import { getShips, getBerths, createAssignment } from "../services/api"
+import { getShips, getBerths, createAssignment, getAssignments } from "../services/api"
 import "./SchedulerPage.scss"
 
-const USE_MOCK = true
+const USE_MOCK = false
 
 const calcSlot = (berth, ship, allShips, currentDay) => {
   const assigned = allShips.filter(
@@ -30,15 +30,15 @@ const BERTHS = [
 ]
 
 export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) {
-  const [apiData, setApiData]           = useState({ ships: [], berths: [] })
+  const [apiData, setApiData]           = useState({ ships: [], berths: [], assignments: [] })
   const [selectedShip, setSelectedShip] = useState(null)
   const [confirmModal, setConfirmModal] = useState(null)
 
   // Solo in Fase B (USE_MOCK=false) carica i dati dall'API
   useEffect(() => {
     if (!USE_MOCK) {
-      Promise.all([getShips("Pending"), getBerths()])
-        .then(([s, b]) => setApiData({ ships: s, berths: b }))
+      Promise.all([getShips("Pending"), getBerths(), getAssignments()])
+        .then(([s, b, a]) => setApiData({ ships: s, berths: b, assignments: a }))
         .catch(console.error)
     }
   }, [])
@@ -71,22 +71,38 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
       ))
     } else {
       await createAssignment(ship.id, berth.id)
-      const [s, b] = await Promise.all([getShips("Pending"), getBerths()])
-      setApiData({ ships: s, berths: b })
+      const [s, b, a] = await Promise.all([getShips("Pending"), getBerths(), getAssignments()])
+      setApiData({ ships: s, berths: b, assignments: a })
     }
     setConfirmModal(null)
     setSelectedShip(null)
   }
 
   const getBerthInfo = (berth) => {
-    const assigned = ships.filter(
-      s => s.assignedBerth === berth.name && s.status === "Assigned"
-    )
-    const active = assigned.find(
-      s => s.startDay <= currentDay && (s.startDay + s.occupationDuration - 1) >= currentDay
-    )
-    const inQueue = assigned.filter(s => s.startDay > currentDay)
-    return { active, inQueue }
+    if (USE_MOCK) {
+      const assigned = ships.filter(
+        s => s.assignedBerth === berth.name && s.status === "Assigned"
+      )
+      const active = assigned.find(
+        s => s.startDay <= currentDay && (s.startDay + s.occupationDuration - 1) >= currentDay
+      )
+      const inQueue = assigned.filter(s => s.startDay > currentDay)
+      return { active, inQueue }
+    } else {
+      const berthAssignments = apiData.assignments.filter(a => a.berthId === berth.id)
+      const active = berthAssignments.find(
+        a => a.startDay <= currentDay && a.endDay >= currentDay
+      )
+      const inQueue = berthAssignments.filter(a => a.startDay > currentDay)
+      return {
+        active: active ? {
+          name: active.ship?.name,
+          startDay: active.startDay,
+          occupationDuration: active.endDay - active.startDay + 1
+        } : null,
+        inQueue
+      }
+    }
   }
 
   return (

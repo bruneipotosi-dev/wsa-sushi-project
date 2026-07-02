@@ -1,96 +1,55 @@
-// src/App.jsx
-import React, { useState, useEffect } from 'react';  // ← AGGIUNTO: useEffect
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Navbar from './components/Navbar';
 import MainPage from './pages/MainPage';
 import OperatorePages from './pages/OperatorePages';
 import SchedulerPage from './pages/SchedulerPage';
+import { getCurrentDay, advanceDay } from './services/api';
 
 function App() {
-  // Stato globale
   const [currentDay, setCurrentDay] = useState(1);
   const [ships, setShips] = useState([]);
 
-  // ← AGGIUNTO: Carica dati salvati all'avvio
+  // All'avvio legge il giorno corrente dal backend
   useEffect(() => {
-    const savedShips = localStorage.getItem('blueharbor-ships');
-    const savedDay = localStorage.getItem('blueharbor-day');
-    if (savedShips) setShips(JSON.parse(savedShips));
-    if (savedDay) setCurrentDay(parseInt(savedDay));
+    getCurrentDay()
+      .then(res => setCurrentDay(res.currentDay))
+      .catch(console.error);
   }, []);
 
-  // ← AGGIUNTO: Salva dati quando cambiano
-  useEffect(() => {
-    localStorage.setItem('blueharbor-ships', JSON.stringify(ships));
-    localStorage.setItem('blueharbor-day', currentDay);
-  }, [ships, currentDay]);
-
-  // Funzione per avanzare il giorno
-  const handleNextDay = () => {
-    const newDay = currentDay + 1;
-    setCurrentDay(newDay);
-    
-    // Aggiorna lo stato delle navi (Departed)
-    setShips(prevShips => 
-      prevShips.map(ship => {
-        if (ship.status === 'Assigned' && ship.startDay + ship.occupationDuration <= newDay) {
-          return { ...ship, status: 'Departed' };
-        }
-        return ship;
-      })
-    );
+  // Next Day chiama il backend — non più stato locale
+  const handleNextDay = async () => {
+    try {
+      const res = await advanceDay();
+      setCurrentDay(res.newDay);
+    } catch (err) {
+      console.error('Errore advance-day:', err);
+    }
   };
 
-  // ← AGGIUNTO: Funzione per resettare tutti i dati
   const handleReset = () => {
     if (confirm('Sei sicuro? Tutti i dati verranno cancellati!')) {
-      setCurrentDay(1);
-      setShips([]);
-      localStorage.removeItem('blueharbor-ships');
-      localStorage.removeItem('blueharbor-day');
+      window.location.reload();
     }
   };
 
   return (
     <Router>
       <div className="App">
-        <Navbar 
-          currentDay={currentDay} 
+        <Navbar
+          currentDay={currentDay}
           onNextDay={handleNextDay}
-          onReset={handleReset}  // ← AGGIUNTO: passa la funzione reset
+          onReset={handleReset}
         />
-        
         <Routes>
-          {/* MAIN PAGE - Prima schermata */}
-          <Route 
-            path="/" 
-            element={<MainPage />} 
-          />
-          
-          {/* OPERATORE */}
-          <Route 
-            path="/operatore" 
-            element={
-              <OperatorePages 
-                currentDay={currentDay}
-                ships={ships}
-                setShips={setShips}
-              />
-            } 
-          />
-          
-          {/* SCHEDULER */}
-          <Route 
-            path="/scheduler" 
-            element={
-              <SchedulerPage 
-                currentDay={currentDay}
-                ships={ships}
-                setShips={setShips}
-              />
-            } 
-          />
+          <Route path="/" element={<MainPage />} />
+          <Route path="/operatore" element={
+            <OperatorePages currentDay={currentDay} ships={ships} setShips={setShips} />
+          } />
+          <Route path="/scheduler" element={
+            <SchedulerPage currentDay={currentDay} />
+          } />
         </Routes>
       </div>
     </Router>
