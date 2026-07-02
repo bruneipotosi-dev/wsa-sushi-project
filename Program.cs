@@ -11,6 +11,17 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=Data/blueharbor.db"));
 
+// CORS — necessario per le chiamate dal frontend (porta 5173)
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 // Crea il database automaticamente all'avvio
@@ -20,21 +31,18 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseSwagger();
-//     app.UseSwaggerUI();
-// }
+// Swagger sempre attivo — comodo per i test, e apre direttamente su http://localhost:5000
 app.UseSwagger();
-
 app.UseSwaggerUI(c =>
 {
-    // Questo trucco fa sì che digitando http://localhost:5000 si apra DIRETTAMENTE Swagger
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "BlueHarbor API V1");
-    c.RoutePrefix = string.Empty; 
+    c.RoutePrefix = string.Empty;
 });
 
-//app.UseHttpsRedirection();
+// HttpsRedirection disattivato in sviluppo locale (evita warning con http://localhost)
+// app.UseHttpsRedirection();
+
+app.UseCors();          // ⚠️ deve stare PRIMA di UseAuthorization
 app.UseAuthorization();
 app.MapControllers();
 

@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom"
 import portImage from "../assets/port.jpg"
 import "./MainPage.scss"
+import { Anchor, CalendarDays } from "lucide-react"
+import starsImage from "../assets/msc.logo.png"
 
 
 const stats = [
@@ -18,6 +20,7 @@ export default function MainPage() {
 
     <section className="main-hero" style={{ backgroundImage: `url(${portImage})` }}>
   <div className="hero-overlay" />
+    <img className="hero-decoration" src={starsImage} alt="" />
   
   <div className="hero-content">
     <span className="hero-pill">🟢 Sistema Operativo</span>
@@ -25,13 +28,15 @@ export default function MainPage() {
     <p>Gestione efficiente del terminal BlueHarbor.<br />
        Supervisiona, assegna e monitora le navi in porto.</p>
     <div className="hero-actions">
-      <button className="hero-btn-primary" onClick={() => navigate("/scheduler")}>
-        Inizia Operazione →
-      </button>
-      <button className="hero-btn-secondary" onClick={() => navigate("/operatore")}>
-        Area Operatore
-      </button>
-    </div>
+  <button className="hero-btn-primary" onClick={() => navigate("/scheduler")}>
+    <CalendarDays size={20} />
+    Inizia Operazione
+  </button>
+  <button className="hero-btn-secondary" onClick={() => navigate("/operatore")}>
+    <Anchor size={20} />
+    Area Operatore
+  </button>
+</div>
   </div>
 
   <div className="hero-stats">

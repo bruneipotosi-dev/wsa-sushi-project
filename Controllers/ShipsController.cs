@@ -18,10 +18,14 @@ public class ShipsController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetShips()
+    public async Task<IActionResult> GetShips([FromQuery] string? status = null)
     {
-        var ships = await _db.Ships.ToListAsync();
+        var query = _db.Ships.AsQueryable();
+
+        if (!string.IsNullOrEmpty(status))
+            query = query.Where(s => s.Status == status);
+
+        var ships = await query.ToListAsync();
         return Ok(ships);
     }
 

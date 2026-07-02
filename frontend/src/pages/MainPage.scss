@@ -19,10 +19,10 @@
 
 // HERO
 .main-hero {
-  position: relative;        // ← mancava!
-  flex: 2;                   // ← occupa 2/3 dello spazio
+  position: relative;
+  flex: 1;
   display: flex;
-  align-items: center;
+  align-items: center;          // ← contenuto sinistro centrato
   justify-content: space-between;
   padding: 0 80px;
   background-size: cover;
@@ -40,13 +40,29 @@
     rgba(11,31,58,0.40) 100%
   );
 }
+
+.hero-decoration {
+  position: absolute;
+  top: 0;
+  right: 15%;        // era 0 — sposta a sinistra
+  width: 18%;
+  height: 30%;
+  object-fit: cover;
+  opacity: 0.3;
+  z-index: 0;
+  mask-image: linear-gradient(
+    to bottom left,
+    rgba(0,0,0,0.8) 0%,
+    rgba(0,0,0,0) 100%
+  );
+}
 .hero-content {
   position: relative;
   z-index: 1;
-  max-width: 620px;
+  max-width: 910px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 36px;
 }
 .hero-pill {
   display: inline-flex;
@@ -55,52 +71,58 @@
   background: rgba(255,255,255,0.1);
   border: 1px solid rgba(255,255,255,0.2);
   color: rgba(255,255,255,0.8);
-  font-size: 13px;
-  padding: 6px 14px;
+  font-size: 18px;
+  padding: 10px 20px;
   border-radius: 20px;
   width: fit-content;
 }
 .hero-content h1 {
   font-family: $font-title;
-  font-size: 72px;
+  font-size: 114px;
   font-weight: 700;
   color: $white;
-  line-height: 1.05;
+  line-height: 1.0;
 }
 .hero-content p {
-  font-size: 18px;
+  font-size: 26px;
   color: rgba(255,255,255,0.7);
   line-height: 1.6;
 }
 .hero-actions {
   display: flex;
   gap: 14px;
-  margin-top: 8px;
 }
 .hero-btn-primary {
   background: $gold;
   color: $navy;
   border: none;
-  padding: 16px 32px;
-  border-radius: 8px;
+  padding: 28px 56px; 
+  border-radius: 12px;
   font-weight: 700;
-  font-size: 16px;
+  font-size: 26px;         
   font-family: $font-body;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;           // ← aggiunto
+  align-items: center;     // ← aggiunto
+  gap: 14px;              // ← aggiunto
   &:hover { opacity: 0.9; transform: translateY(-1px); }
 }
+
 .hero-btn-secondary {
   background: transparent;
   color: $white;
   border: 1px solid rgba(255,255,255,0.3);
-  padding: 16px 32px;
-  border-radius: 8px;
+  padding: 28px 56px;
+  border-radius: 12px; 
   font-weight: 500;
-  font-size: 16px;
+  font-size: 26px; 
   font-family: $font-body;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;           // ← aggiunto
+  align-items: center;     // ← aggiunto
+  gap: 14px;              // ← aggiunto
   &:hover {
     background: rgba(255,255,255,0.1);
     border-color: rgba(255,255,255,0.5);
@@ -119,15 +141,15 @@
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.15);
   border-radius: 12px;
-  padding: 24px;
+  padding: 36px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
   backdrop-filter: blur(8px);
-  min-width: 150px;
+  min-width: 234px;
 }
 .hero-stat-label {
-  font-size: 12px;
+  font-size: 17px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -135,18 +157,18 @@
 }
 .hero-stat-value {
   font-family: $font-numbers;
-  font-size: 56px;
+  font-size: 94px;
   color: $white;
   line-height: 1;
 }
 .hero-stat-sub {
-  font-size: 13px;
+  font-size: 18px;
   color: rgba(255,255,255,0.4);
 }
 
 // BODY — role cards
 .main-body {
-  flex: 1;                   // ← occupa 1/3 dello spazio
+  flex: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
@@ -223,8 +245,7 @@
   &:hover { opacity: 0.85; }
 }
 
-
-// FOOTER — non toccare
+// FOOTER
 .main-footer {
   position: fixed;
   bottom: 0;
@@ -248,10 +269,11 @@
 // ================================
 
 @media (max-width: 1024px) {
-  .main-hero {
-    padding: 0 40px;
-    .hero-content h1 { font-size: 52px; }
-  }
+  .main-hero { padding: 0 40px; }
+  .hero-content h1 { font-size: 80px; }
+  .hero-content p { font-size: 20px; }
+  .hero-stat-value { font-size: 68px; }
+  .hero-stat-card { min-width: 180px; padding: 24px; }
   .main-body { padding: 16px 40px; gap: 16px; }
   .role-card { padding: 24px; }
 }
@@ -266,8 +288,8 @@
     align-items: flex-start;
     justify-content: center;
   }
-  .hero-content h1 { font-size: 36px !important; }
-  .hero-content p { font-size: 15px !important; }
+  .hero-content h1 { font-size: 44px !important; }
+  .hero-content p { font-size: 16px !important; }
   .hero-actions { flex-direction: column; button { width: 100%; } }
   .hero-stats { display: none; }
   .main-body {
@@ -281,7 +303,21 @@
 }
 
 @media (max-width: 480px) {
-  .hero-content h1 { font-size: 28px !important; }
+  .hero-content h1 { font-size: 32px !important; }
   .main-hero { padding: 32px 16px; }
   .main-body { padding: 16px; }
+}
+
+@media (max-width: 1024px) {
+  .hero-decoration {
+    width: 14%;
+    height: 25%;
+    right: 10%;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-decoration {
+    display: none; // ← nascosta su mobile
+  }
 }
