@@ -3,24 +3,22 @@ import { useState, useEffect } from "react";
 import { createShip, getShips } from "../services/api";
 import "./OperatorePages.scss";
 
-// Genera valori casuali per la nave (il frontend li genera, il backend li validerà)
-function generateShipData() {
+function generateShipData(currentDay) {
   const sizes = ["XL", "L", "M", "S"];
   return {
     size: sizes[Math.floor(Math.random() * sizes.length)],
-    arrivalDay: Math.floor(Math.random() * 31),           // 0–30
-    occupationDuration: Math.floor(Math.random() * 13) + 3 // 3–15
+    arrivalDay: (currentDay || 1) + Math.floor(Math.random() * 31),
+    occupationDuration: Math.floor(Math.random() * 13) + 3
   };
 }
 
-export default function OperatorePage({ ships, setShips }) {
+export default function OperatorePage({ ships, setShips, currentDay }) {
   const [name, setName]       = useState("");
   const [notes, setNotes]     = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(null);
 
-  // Modifica 2: loadShips e useEffect
   const loadShips = async () => {
     try {
       const data = await getShips();
@@ -34,34 +32,28 @@ export default function OperatorePage({ ships, setShips }) {
     loadShips();
   }, []);
 
-  // Filtra per stato
   const pending  = ships.filter(s => s.status === "Pending");
   const assigned = ships.filter(s => s.status === "Assigned");
   const departed = ships.filter(s => s.status === "Departed");
 
-  // Modifica 3: handleSubmit con API reale
   async function handleSubmit() {
     if (!name.trim()) {
       setError("Il nome della nave è obbligatorio.");
       return;
     }
-
     setLoading(true);
     setError(null);
     setSuccess(null);
-
     try {
-      // FASE B: API reale
-      const generated = generateShipData();
+      const generated = generateShipData(currentDay);
       await createShip({
         name: name.trim(),
         notes: notes.trim(),
         status: "Pending",
         ...generated
       });
-      await loadShips(); // ricarica dal backend
-
-      setSuccess(`Nave "${name.trim()}" registrata! Dimensione: ${generated.size}`);
+      await loadShips();
+      setSuccess(`"${name.trim()}" registrata — taglia ${generated.size}, arrivo giorno ${generated.arrivalDay}`);
       setName("");
       setNotes("");
     } catch (e) {
@@ -74,120 +66,133 @@ export default function OperatorePage({ ships, setShips }) {
   return (
     <div className="operatore-page">
 
-      {/* Header statistiche */}
+      <div className="operatore-header">
+        <h2>⚓ Area Operatore</h2>
+        <p>Registra le navi in arrivo al terminal BlueHarbor</p>
+      </div>
+
       <div className="stats-bar">
         <div className="stat">
-          <span className="stat-number">{ships.length}</span>
-          <span className="stat-label">Totale</span>
+          <span className="stat-icon">🚢</span>
+          <div className="stat-info">
+            <span className="stat-number">{ships.length}</span>
+            <span className="stat-label">Totale navi</span>
+          </div>
         </div>
         <div className="stat pending">
-          <span className="stat-number">{pending.length}</span>
-          <span className="stat-label">In attesa</span>
+          <span className="stat-icon">⏳</span>
+          <div className="stat-info">
+            <span className="stat-number">{pending.length}</span>
+            <span className="stat-label">In attesa</span>
+          </div>
         </div>
         <div className="stat assigned">
-          <span className="stat-number">{assigned.length}</span>
-          <span className="stat-label">Assegnate</span>
+          <span className="stat-icon">⚓</span>
+          <div className="stat-info">
+            <span className="stat-number">{assigned.length}</span>
+            <span className="stat-label">Assegnate</span>
+          </div>
         </div>
         <div className="stat departed">
-          <span className="stat-number">{departed.length}</span>
-          <span className="stat-label">Partite</span>
+          <span className="stat-icon">✅</span>
+          <div className="stat-info">
+            <span className="stat-number">{departed.length}</span>
+            <span className="stat-label">Partite</span>
+          </div>
         </div>
       </div>
 
-      {/* Form registrazione nave */}
-      <div className="form-section">
-        <h2>Registra Nuova Nave</h2>
+      <div className="operatore-layout">
 
-        {error   && <div className="alert alert-error">{error}</div>}
-        {success && <div className="alert alert-success">{success}</div>}
+        <div className="form-card">
+          <h3>📝 Registra nuova nave</h3>
 
-        <div className="form-group">
-          <label>Nome Nave *</label>
-          <input
-            type="text"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            placeholder="es. MSC Aurora"
-            disabled={loading}
-          />
+          {error   && <div className="alert alert-error">{error}</div>}
+          {success && <div className="alert alert-success">{success}</div>}
+
+          <div className="form-group">
+            <label>Nome nave *</label>
+            <input
+              type="text"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              placeholder="es. MSC Aurora"
+              disabled={loading}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Note operative</label>
+            <textarea
+              value={notes}
+              onChange={e => setNotes(e.target.value)}
+              placeholder="Carico, provenienza, istruzioni..."
+              disabled={loading}
+              rows={4}
+            />
+          </div>
+
+          <p className="form-hint">
+            Taglia, giorno di arrivo e durata vengono assegnati automaticamente dal sistema.
+          </p>
+
+          <button
+            onClick={handleSubmit}
+            disabled={loading || !name.trim()}
+            className="btn-submit"
+          >
+            {loading ? "Registrazione..." : "🚢 Registra nave"}
+          </button>
         </div>
 
-        <div className="form-group">
-          <label>Note (opzionale)</label>
-          <textarea
-            value={notes}
-            onChange={e => setNotes(e.target.value)}
-            placeholder="Informazioni aggiuntive..."
-            disabled={loading}
-            rows={3}
-          />
+        <div className="ships-card">
+          <div className="ships-card-header">
+            <h3>Registro navi</h3>
+            <span className="ships-count">{ships.length} navi totali</span>
+          </div>
+
+          {ships.length === 0 ? (
+            <div className="empty-state">
+              <span className="empty-icon">🚢</span>
+              <p>Nessuna nave registrata.<br/>Usa il form per aggiungerne una.</p>
+            </div>
+          ) : (
+            <table className="ships-table">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Taglia</th>
+                  <th>Arrivo</th>
+                  <th>Durata</th>
+                  <th>Stato</th>
+                  <th>Note</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ships.map(ship => (
+                  <tr key={ship.id}>
+                    <td className="ship-name">{ship.name}</td>
+                    <td>
+                      <span className={`size-badge size-${ship.size.toLowerCase()}`}>
+                        {ship.size}
+                      </span>
+                    </td>
+                    <td>Gg {ship.arrivalDay}</td>
+                    <td>{ship.occupationDuration} giorni</td>
+                    <td>
+                      <span className={`status-badge status-${ship.status.toLowerCase()}`}>
+                        {ship.status}
+                      </span>
+                    </td>
+                    <td className="ship-notes">{ship.notes || "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
 
-        <p className="form-hint">
-          Dimensione, giorno di arrivo e durata vengono generati automaticamente dal sistema.
-        </p>
-
-        <button
-          onClick={handleSubmit}
-          disabled={loading || !name.trim()}
-          className="btn-primary"
-        >
-          {loading ? "Registrazione in corso..." : "Registra Nave"}
-        </button>
       </div>
-
-      {/* Lista navi per stato */}
-      <div className="ships-section">
-
-        <div className="ships-group">
-          <h3>🟡 In Attesa ({pending.length})</h3>
-          {pending.length === 0
-            ? <p className="empty">Nessuna nave in attesa</p>
-            : pending.map(ship => <ShipCard key={ship.id} ship={ship} />)
-          }
-        </div>
-
-        <div className="ships-group">
-          <h3>🟢 Assegnate ({assigned.length})</h3>
-          {assigned.length === 0
-            ? <p className="empty">Nessuna nave assegnata</p>
-            : assigned.map(ship => <ShipCard key={ship.id} ship={ship} />)
-          }
-        </div>
-
-        <div className="ships-group">
-          <h3>⚫ Partite ({departed.length})</h3>
-          {departed.length === 0
-            ? <p className="empty">Nessuna nave partita</p>
-            : departed.map(ship => <ShipCard key={ship.id} ship={ship} />)
-          }
-        </div>
-
-      </div>
-    </div>
-  );
-}
-
-// Componente card per ogni nave
-function ShipCard({ ship }) {
-  const statusClass = {
-    Pending:  "pending",
-    Assigned: "assigned",
-    Departed: "departed"
-  }[ship.status] || "";
-
-  return (
-    <div className={`ship-card ${statusClass}`}>
-      <div className="ship-card-header">
-        <strong>{ship.name}</strong>
-        <span className={`badge badge-${statusClass}`}>{ship.status}</span>
-      </div>
-      <div className="ship-card-body">
-        <span>📦 {ship.size}</span>
-        <span>📅 Arrivo: giorno {ship.arrivalDay}</span>
-        <span>⏱ Durata: {ship.occupationDuration} giorni</span>
-      </div>
-      {ship.notes && <p className="ship-notes">{ship.notes}</p>}
     </div>
   );
 }
