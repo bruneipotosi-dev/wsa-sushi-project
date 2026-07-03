@@ -14,7 +14,7 @@ public class Ship
     [RegularExpression("^(XL|L|M|S)$", ErrorMessage = "Size must be one of XL, L, M, S.")]
     public string Size { get; set; } = string.Empty; // XL | L | M | S
 
-    [Range(0, 30, ErrorMessage = "ArrivalDay must be between 0 and 30.")]
+    [Range(0, 100000, ErrorMessage = "ArrivalDay must be a positive number.")]
     public int ArrivalDay { get; set; }
 
     [Range(3, 15, ErrorMessage = "OccupationDuration must be between 3 and 15 days.")]

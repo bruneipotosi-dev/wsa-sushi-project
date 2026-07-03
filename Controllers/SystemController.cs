@@ -32,7 +32,7 @@ public class SystemController : ControllerBase
         var assignmentsEnded = await _db.Assignments
             .Include(a => a.Ship)
             .Where(a => a.EndDay < state.CurrentDay
-                     && a.Ship!.Status == "Assigned")
+                && a.Ship!.Status == "Assigned")
             .ToListAsync();
 
         foreach (var assignment in assignmentsEnded)
@@ -53,6 +53,18 @@ public class SystemController : ControllerBase
             })
         });
     }
+
+    [HttpPost("reset")]
+    public async Task<IActionResult> Reset()
+    {
+        _db.Assignments.RemoveRange(_db.Assignments);
+        _db.Ships.RemoveRange(_db.Ships);
+        var state = await _db.SystemStates.FirstAsync();
+        state.CurrentDay = 1;
+        await _db.SaveChangesAsync();
+        return Ok(new { message = "Sistema resettato." });
+    }
+
     [HttpPost("history")]
     public async Task<IActionResult> SavePortLog([FromBody] PortLog log)
     {
