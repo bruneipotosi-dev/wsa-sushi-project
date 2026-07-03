@@ -18,6 +18,21 @@ const calcSlot = (berth, ship, allShips, currentDay) => {
   return { startDay, endDay }
 }
 
+// Stessa formula FindFirstFreeSlot, usata qui solo per l'anteprima nel modal
+// in modalità reale (il backend calcola comunque il valore definitivo al POST)
+const calcSlotReal = (berth, ship, assignments, currentDay) => {
+  const berthAssignments = assignments
+    .filter(a => a.berthId === berth.id)
+    .sort((a, b) => a.startDay - b.startDay)
+  let cand = Math.max(ship.arrivalDay, currentDay)
+  const dur = ship.occupationDuration
+  for (const a of berthAssignments) {
+    if (cand + dur - 1 < a.startDay) break
+    if (cand <= a.endDay) cand = a.endDay + 1
+  }
+  return { startDay: cand, endDay: cand + dur - 1 }
+}
+
 const BERTHS = [
   { id: 1, name: "XL-1", size: "XL" },
   { id: 2, name: "L-1",  size: "L"  },
@@ -29,12 +44,21 @@ const BERTHS = [
   { id: 8, name: "S-4",  size: "S"  },
 ]
 
+const STATUS_THEME = {
+  DISPONIBILE: "#46c08a",
+  PIANIFICATA: "#C9A84C",
+  OCCUPATA:    "#e07a5f",
+}
+
+const pad2 = (n) => String(n).padStart(2, "0")
+
 export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) {
   const [apiData, setApiData]           = useState({ ships: [], berths: [], assignments: [] })
   const [selectedShip, setSelectedShip] = useState(null)
   const [confirmModal, setConfirmModal] = useState(null)
+  const [toast, setToast]               = useState(null)
+  const [dragOverBerthId, setDragOverBerthId] = useState(null)
 
-  // Solo in Fase B (USE_MOCK=false) carica i dati dall'API
   useEffect(() => {
     if (!USE_MOCK) {
       Promise.all([getShips("Pending"), getBerths(), getAssignments()])
@@ -43,26 +67,108 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
     }
   }, [])
 
-  // Valori calcolati direttamente — nessuno stato intermedio
+  useEffect(() => {
+    if (!toast) return
+    const t = setTimeout(() => setToast(null), 4000)
+    return () => clearTimeout(t)
+  }, [toast])
+
   const pendingShips = USE_MOCK ? ships.filter(s => s.status === "Pending") : apiData.ships
-  const berths       = USE_MOCK ? BERTHS : apiData.berths
+  const berths        = USE_MOCK ? BERTHS : apiData.berths
+
+  // Calcola active + upcoming (piu vicino) + finestra a 7 giorni per una banchina
+  const getBerthState = (berth) => {
+    let assigns
+    if (USE_MOCK) {
+      assigns = ships
+        .filter(s => s.assignedBerth === berth.name && s.status === "Assigned")
+        .map(s => ({ startDay: s.startDay, endDay: s.startDay + s.occupationDuration - 1, name: s.name, size: s.size }))
+    } else {
+      assigns = apiData.assignments
+        .filter(a => a.berthId === berth.id)
+        .map(a => ({ startDay: a.startDay, endDay: a.endDay, name: a.ship?.name, size: berth.size }))
+    }
+    assigns.sort((p, q) => p.startDay - q.startDay)
+
+    const active   = assigns.find(a => a.startDay <= currentDay && currentDay <= a.endDay)
+    const upcoming = assigns.find(a => a.startDay > currentDay)
+    const status = active ? "OCCUPATA" : (upcoming ? "PIANIFICATA" : "DISPONIBILE")
+    const occ = active || upcoming || null
+
+    let occMeta = "", occMetaColor = "#9a9a9a"
+    if (active) {
+      const left = active.endDay - currentDay + 1
+      occMeta = `Libera tra ${left} ${left === 1 ? "giorno" : "giorni"}`
+      occMetaColor = "#e07a5f"
+    } else if (upcoming) {
+      const inn = upcoming.startDay - currentDay
+      occMeta = `In arrivo tra ${inn} ${inn === 1 ? "giorno" : "giorni"}`
+      occMetaColor = "#C9A84C"
+    }
+
+    const timeline = []
+    if (occ) {
+      for (let k = 0; k < 7; k++) {
+        const d = currentDay + k
+        const cov = assigns.find(a => a.startDay <= d && d <= a.endDay)
+        let bg = "rgba(255,255,255,0.06)"
+        if (cov) {
+          const isActiveToday = cov.startDay <= currentDay && currentDay <= cov.endDay
+          bg = isActiveToday ? "#e07a5f" : "rgba(201,168,76,0.55)"
+        }
+        const isToday = d === currentDay
+        timeline.push({ dayLabel: d, bg, isToday })
+      }
+    }
+
+    return { status, active, upcoming, occ, occMeta, occMetaColor, timeline }
+  }
+
+  const berthStates = berths.map(b => ({ berth: b, state: getBerthState(b) }))
+  const occCount  = berthStates.filter(x => x.state.status === "OCCUPATA").length
+  const planCount = berthStates.filter(x => x.state.status === "PIANIFICATA").length
+  const freeCount = berthStates.filter(x => x.state.status === "DISPONIBILE").length
+
+  const openAssignModal = (ship, berth) => {
+    if (!ship || berth.size !== ship.size) return
+    let startDay, endDay
+    if (USE_MOCK) {
+      ({ startDay, endDay } = calcSlot(berth, ship, ships, currentDay))
+    } else {
+      ({ startDay, endDay } = calcSlotReal(berth, ship, apiData.assignments, currentDay))
+    }
+    const protocol = `BH-${berth.name}-G${startDay}-${ship.size}`
+    setConfirmModal({ ship, berth, startDay, endDay, protocol })
+  }
 
   const handleShipClick = (ship) => {
     setSelectedShip(prev => prev?.id === ship.id ? null : ship)
   }
 
   const handleBerthClick = (berth) => {
+    openAssignModal(selectedShip, berth)
+  }
+
+  const handleDragStart = (e, ship) => {
+    e.dataTransfer.effectAllowed = "move"
+    e.dataTransfer.setData("text/plain", String(ship.id))
+    setSelectedShip(ship)
+  }
+
+  const handleDragOver = (e, berth) => {
     if (!selectedShip || berth.size !== selectedShip.size) return
-    if (USE_MOCK) {
-      const { startDay, endDay } = calcSlot(berth, selectedShip, ships, currentDay)
-      setConfirmModal({ ship: selectedShip, berth, startDay, endDay })
-    } else {
-      setConfirmModal({ ship: selectedShip, berth, startDay: "?", endDay: "?" })
-    }
+    e.preventDefault()
+    setDragOverBerthId(berth.id)
+  }
+
+  const handleDrop = (e, berth) => {
+    e.preventDefault()
+    setDragOverBerthId(null)
+    openAssignModal(selectedShip, berth)
   }
 
   const handleConfirm = async () => {
-    const { ship, berth, startDay } = confirmModal
+    const { ship, berth, startDay, endDay } = confirmModal
     if (USE_MOCK) {
       setShips(prev => prev.map(s =>
         s.id === ship.id
@@ -74,141 +180,233 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
       const [s, b, a] = await Promise.all([getShips("Pending"), getBerths(), getAssignments()])
       setApiData({ ships: s, berths: b, assignments: a })
     }
+    setToast({
+      title: "Assegnazione confermata",
+      msg: `${ship.name} → ${berth.name} · Finestra G${startDay}–G${endDay}`,
+    })
     setConfirmModal(null)
     setSelectedShip(null)
-  }
-
-  const getBerthInfo = (berth) => {
-    if (USE_MOCK) {
-      const assigned = ships.filter(
-        s => s.assignedBerth === berth.name && s.status === "Assigned"
-      )
-      const active = assigned.find(
-        s => s.startDay <= currentDay && (s.startDay + s.occupationDuration - 1) >= currentDay
-      )
-      const inQueue = assigned.filter(s => s.startDay > currentDay)
-      return { active, inQueue }
-    } else {
-      const berthAssignments = apiData.assignments.filter(a => a.berthId === berth.id)
-      const active = berthAssignments.find(
-        a => a.startDay <= currentDay && a.endDay >= currentDay
-      )
-      const inQueue = berthAssignments.filter(a => a.startDay > currentDay)
-      return {
-        active: active ? {
-          name: active.ship?.name,
-          startDay: active.startDay,
-          occupationDuration: active.endDay - active.startDay + 1
-        } : null,
-        inQueue
-      }
-    }
   }
 
   return (
     <div className="scheduler-page">
 
+      {/* SECTION HEADER */}
+      <div className="sch-topline">
+        <div>
+          <div className="sch-eyebrow">Matrice di assegnazione</div>
+          <h1 className="sch-title">
+            Giorno Operativo <span className="sch-title-day">{currentDay}</span>
+            <span className="sch-pulse-dot" />
+          </h1>
+        </div>
+        <div className="sch-stats">
+          <div className="sch-stat-box">
+            <div className="sch-stat-label">Navi in attesa</div>
+            <div className="sch-stat-value">{pad2(pendingShips.length)}</div>
+          </div>
+          <div className="sch-stat-box">
+            <div className="sch-stat-label">Banchine libere</div>
+            <div className="sch-stat-value sch-stat-value--free">{pad2(freeCount)}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* UTILIZATION BAR */}
+      <div className="sch-util">
+        <span className="sch-util-label">Occupazione terminale</span>
+        <div className="sch-util-track">
+          {berthStates.map(({ berth, state }) => (
+            <div
+              key={berth.id}
+              className="sch-util-seg"
+              style={{ background: state.status === "OCCUPATA" ? "#e07a5f" : state.status === "PIANIFICATA" ? "rgba(201,168,76,0.55)" : "rgba(255,255,255,0.06)" }}
+            />
+          ))}
+        </div>
+        <span className="sch-util-count">{occCount} occupate · {planCount} pianificate · {freeCount} libere</span>
+      </div>
+
       {selectedShip && (
         <div className="selection-banner">
           <span>
             Nave selezionata: <strong>{selectedShip.name}</strong>
-            &nbsp;·&nbsp; Taglia <span className={`size-badge size-${selectedShip.size.toLowerCase()}`}>{selectedShip.size}</span>
-            &nbsp;·&nbsp; Clicca una banchina <strong>{selectedShip.size}</strong>
+            &nbsp;·&nbsp; Taglia <span className="sch-chip">{selectedShip.size}</span>
+            &nbsp;·&nbsp; Clicca o trascina su una banchina <strong>{selectedShip.size}</strong>
           </span>
           <button onClick={() => setSelectedShip(null)}>✕ Annulla</button>
         </div>
       )}
 
-      <div className="scheduler-layout">
+      <div className="sch-body">
 
-        <div className="panel pending-panel">
-          <h3>⏳ Navi in Attesa <span className="count">{pendingShips.length}</span></h3>
-          {pendingShips.length === 0
-            ? <p className="empty">✅ Nessuna nave in attesa</p>
-            : pendingShips.map(ship => (
-              <div
-                key={ship.id}
-                className={`ship-card ${selectedShip?.id === ship.id ? "selected" : ""}`}
-                onClick={() => handleShipClick(ship)}
-              >
-                <div className="ship-card-top">
-                  <span className={`size-badge size-${ship.size.toLowerCase()}`}>{ship.size}</span>
-                  <span className="ship-name">{ship.name}</span>
-                  {selectedShip?.id === ship.id && <span className="selected-tag">✓</span>}
+        {/* QUEUE */}
+        <aside className="sch-queue">
+          <div className="sch-queue-head">
+            <span>Coda di attesa</span>
+            <span className="sch-queue-count">{pendingShips.length}</span>
+          </div>
+
+          {pendingShips.length === 0 ? (
+            <div className="sch-queue-empty">
+              <div className="sch-queue-empty-title">Nessuna nave in coda</div>
+              <div className="sch-queue-empty-sub">Tutte le navi sono assegnate</div>
+            </div>
+          ) : (
+            <div className="sch-queue-list">
+              {pendingShips.map(ship => (
+                <div
+                  key={ship.id}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, ship)}
+                  onClick={() => handleShipClick(ship)}
+                  className={`sch-ship-card ${selectedShip?.id === ship.id ? "sch-ship-card--selected" : ""}`}
+                >
+                  <div className="sch-ship-card-top">
+                    <span className="sch-ship-name">{ship.name}</span>
+                    <span className="sch-chip">{ship.size}</span>
+                  </div>
+                  <div className="sch-ship-card-meta">
+                    <div><span className="sch-meta-label">ARRIVO</span><span className="sch-meta-val">Giorno {ship.arrivalDay}</span></div>
+                    <div><span className="sch-meta-label">DURATA</span><span className="sch-meta-val">{ship.occupationDuration} {ship.occupationDuration === 1 ? "giorno" : "giorni"}</span></div>
+                  </div>
+                  {selectedShip?.id === ship.id && (
+                    <div className="sch-ship-selected-tag">✓ Scegli banchina</div>
+                  )}
                 </div>
-                <div className="ship-card-info">
-                  <span>📅 Arrivo: Gg {ship.arrivalDay}</span>
-                  <span>⏱ {ship.occupationDuration} giorni</span>
+              ))}
+            </div>
+          )}
+        </aside>
+
+        {/* BERTH GRID */}
+        <main className="sch-berth-grid">
+          {berthStates.map(({ berth, state }, i) => {
+            const isCompatible = !!(selectedShip && berth.size === selectedShip.size)
+            const isDimmed     = !!(selectedShip && !isCompatible)
+            const isDragOver   = dragOverBerthId === berth.id
+            const themeColor   = STATUS_THEME[state.status]
+
+            return (
+              <div
+                key={berth.id}
+                onClick={() => isCompatible && handleBerthClick(berth)}
+                onDragOver={(e) => handleDragOver(e, berth)}
+                onDragLeave={() => setDragOverBerthId(null)}
+                onDrop={(e) => handleDrop(e, berth)}
+                className={[
+                  "sch-berth-card",
+                  isCompatible ? "sch-berth-card--compatible" : "",
+                  isDimmed ? "sch-berth-card--dimmed" : "",
+                  isDragOver ? "sch-berth-card--dragover" : "",
+                ].join(" ")}
+              >
+                <div className="sch-berth-head">
+                  <div>
+                    <div className="sch-berth-index">BANCHINA {pad2(i + 1)}</div>
+                    <div className="sch-berth-name-row">
+                      <span className="sch-berth-name">{berth.name}</span>
+                      <span className="sch-chip">{berth.size}</span>
+                    </div>
+                  </div>
+                  <div className="sch-berth-badge">
+                    <span className="sch-berth-badge-dot" style={{ background: themeColor }} />
+                    {state.status}
+                  </div>
+                </div>
+
+                <div className="sch-berth-center">
+                  {state.status === "DISPONIBILE" ? (
+                    <>
+                      <div className={`sch-berth-anchor-box ${isCompatible ? "sch-berth-anchor-box--compatible" : ""}`}>
+                        <span style={{ color: isCompatible ? "#4d8df6" : "#4a4a4a" }}>⚓</span>
+                      </div>
+                      <div className="sch-berth-center-label" style={{ color: isCompatible ? "#4d8df6" : "#4a4a4a" }}>
+                        {isCompatible ? "TRASCINA O CLICCA" : "LIBERA PER ORMEGGIO"}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="sch-berth-occupant">
+                      <div className="sch-berth-occupant-top">
+                        <span className="sch-berth-occupant-name">{state.occ.name}</span>
+                        <span className="sch-chip">{state.occ.size}</span>
+                      </div>
+                      <div className="sch-berth-occupant-meta" style={{ color: state.occMetaColor }}>{state.occMeta}</div>
+                      <div className="sch-berth-occupant-range">
+                        <span>FINESTRA</span>
+                        <span>G{state.occ.startDay} – G{state.occ.endDay}</span>
+                      </div>
+                      <div className="sch-berth-timeline">
+                        {state.timeline.map((cell, idx) => (
+                          <div key={idx} className="sch-timeline-cell">
+                            <div className="sch-timeline-bar" style={{ background: cell.bg, border: cell.isToday ? "1.5px solid rgba(255,255,255,0.45)" : "1px solid transparent" }} />
+                            <div className="sch-timeline-label" style={{ color: cell.isToday ? "#ededed" : "#565656", fontWeight: cell.isToday ? 500 : 400 }}>{cell.dayLabel}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="sch-berth-footer">
+                  <button
+                    className={`sch-berth-cta ${isCompatible ? "sch-berth-cta--compatible" : ""}`}
+                    disabled={!isCompatible}
+                    onClick={(e) => { e.stopPropagation(); handleBerthClick(berth) }}
+                  >
+                    {isCompatible ? "ASSEGNA QUI" : "SELEZIONA NAVE"}
+                  </button>
                 </div>
               </div>
-            ))
-          }
-        </div>
-
-        <div className="panel berths-panel">
-          <h3>⚓ Banchine del Terminal</h3>
-          <div className="berths-grid">
-            {berths.map(berth => {
-              const { active, inQueue } = getBerthInfo(berth)
-              const isCompatible = selectedShip && berth.size === selectedShip.size
-              const isDimmed     = selectedShip && !isCompatible
-
-              return (
-                <div
-                  key={berth.id}
-                  className={[
-                    "berth-card",
-                    active       ? "occupied"   : "free",
-                    isCompatible ? "compatible" : "",
-                    isDimmed     ? "dimmed"     : "",
-                  ].join(" ")}
-                  onClick={() => handleBerthClick(berth)}
-                >
-                  <div className="berth-header">
-                    <span className={`size-badge size-${berth.size.toLowerCase()}`}>{berth.size}</span>
-                    <span className="berth-name">{berth.name}</span>
-                    <span className={`dot ${active ? "dot-busy" : "dot-free"}`} />
-                  </div>
-
-                  {active
-                    ? <div className="berth-ship">
-                        🚢 <span>{active.name}</span>
-                        <small>Gg {active.startDay}→{active.startDay + active.occupationDuration - 1}</small>
-                      </div>
-                    : <div className="berth-free">Libera</div>
-                  }
-
-                  {inQueue.length > 0 && (
-                    <div className="berth-queue">🕐 +{inQueue.length} in coda</div>
-                  )}
-
-                  {isCompatible && (
-                    <div className="berth-hint">👆 Clicca per assegnare</div>
-                  )}
-                </div>
-              )
-            })}
-          </div>
-        </div>
-
+            )
+          })}
+        </main>
       </div>
 
+      {/* CONFIRM MODAL */}
       {confirmModal && (
-        <div className="modal-overlay" onClick={() => setConfirmModal(null)}>
-          <div className="modal" onClick={e => e.stopPropagation()}>
-            <h3>Conferma Assegnazione</h3>
-            <div className="modal-rows">
-              <div className="modal-row"><span>🚢 Nave</span><strong>{confirmModal.ship.name}</strong></div>
-              <div className="modal-row"><span>⚓ Banchina</span><strong>{confirmModal.berth.name}</strong></div>
-              <hr/>
-              <div className="modal-row"><span>📅 Inizio</span><strong className="gold">Giorno {confirmModal.startDay}</strong></div>
-              <div className="modal-row"><span>📅 Fine</span><strong className="gold">Giorno {confirmModal.endDay}</strong></div>
-              <div className="modal-row"><span>⏱ Durata</span><strong>{confirmModal.ship.occupationDuration} giorni</strong></div>
+        <div className="sch-modal-overlay" onClick={() => setConfirmModal(null)}>
+          <div className="sch-modal" onClick={e => e.stopPropagation()}>
+            <div className="sch-modal-head">
+              <span className="sch-modal-head-dot" />
+              Conferma assegnazione
             </div>
-            <div className="modal-actions">
-              <button className="btn-confirm" onClick={handleConfirm}>✅ Conferma</button>
-              <button className="btn-cancel" onClick={() => setConfirmModal(null)}>✕ Annulla</button>
+            <div className="sch-modal-body">
+              <div className="sch-modal-compare">
+                <div className="sch-modal-compare-item">
+                  <span>NAVE</span>
+                  <strong>{confirmModal.ship.name}</strong>
+                  <span className="sch-chip">{confirmModal.ship.size}</span>
+                </div>
+                <span className="sch-modal-arrow">→</span>
+                <div className="sch-modal-compare-item">
+                  <span>BANCHINA</span>
+                  <strong>{confirmModal.berth.name}</strong>
+                  <span className="sch-chip">{confirmModal.berth.size}</span>
+                </div>
+              </div>
+              <div className="sch-modal-grid">
+                <div><span>GIORNO INIZIO</span><strong className="sch-modal-accent">G{confirmModal.startDay}</strong></div>
+                <div><span>GIORNO FINE</span><strong>G{confirmModal.endDay}</strong></div>
+                <div><span>DURATA</span><strong>{confirmModal.endDay - confirmModal.startDay + 1} giorni</strong></div>
+                <div><span>PROTOCOLLO</span><strong className="sch-modal-muted">{confirmModal.protocol}</strong></div>
+              </div>
+              <div className="sch-modal-actions">
+                <button className="sch-btn-cancel" onClick={() => setConfirmModal(null)}>Annulla</button>
+                <button className="sch-btn-confirm" onClick={handleConfirm}>✓ Conferma Ormeggio</button>
+              </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* TOAST */}
+      {toast && (
+        <div className="sch-toast">
+          <div className="sch-toast-icon">✓</div>
+          <div>
+            <div className="sch-toast-title">{toast.title}</div>
+            <div className="sch-toast-msg">{toast.msg}</div>
           </div>
         </div>
       )}
