@@ -9,7 +9,10 @@ async function request(path, options = {}) {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.error || `Errore HTTP ${res.status}`);
+    const msg = err.error
+      || (err.errors && Object.values(err.errors).flat().join(" ; "))
+      || `Errore HTTP ${res.status}`;
+    throw new Error(msg);
   }
   if (res.status === 204) return null;
   return res.json();
@@ -18,7 +21,6 @@ async function request(path, options = {}) {
 // NAVI
 export const getShips = (status = null) =>
   request(status ? `/ships?status=${status}` : "/ships");
-
 export const createShip = (shipData) =>
   request("/ships", { method: "POST", body: JSON.stringify(shipData) });
 
@@ -27,7 +29,6 @@ export const getBerths = () => request("/berths");
 
 // ASSIGNMENTS
 export const getAssignments = () => request("/assignments");
-
 export const createAssignment = (shipId, berthId) =>
   request("/assignments", {
     method: "POST",
@@ -36,6 +37,8 @@ export const createAssignment = (shipId, berthId) =>
 
 // GIORNO VIRTUALE
 export const getCurrentDay = () => request("/day");
-
 export const advanceDay = () =>
   request("/advance-day", { method: "POST" });
+
+// RESET
+export const resetSystem = () => request("/reset", { method: "POST" });
