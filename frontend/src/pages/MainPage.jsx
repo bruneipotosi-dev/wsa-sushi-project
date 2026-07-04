@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import { User, CalendarDays, ArrowRight } from "lucide-react"
-import starsImage from "../assets/msc.logo.png"
+import starsImage from "../assets/msc-logo.png"
 import "./MainPage.scss"
 
 export default function MainPage() {

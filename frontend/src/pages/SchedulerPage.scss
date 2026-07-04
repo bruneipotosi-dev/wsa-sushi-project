@@ -4,7 +4,9 @@
 * { box-sizing: border-box; }
 
 .scheduler-page {
-  min-height: 100vh;
+  flex: 1;
+  min-height: 0; /* fondamentale in flexbox per permettere lo scroll interno */
+  overflow-y: auto;
   background: #161616;
   color: #ededed;
   font-family: 'IBM Plex Sans', sans-serif;

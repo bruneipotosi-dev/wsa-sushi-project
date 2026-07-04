@@ -5,10 +5,11 @@
 
 .main-page {
   position: relative;
-  min-height: 100vh;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   background: #0d0f14;
   color: #ededed;
   font-family: 'IBM Plex Sans', sans-serif;
