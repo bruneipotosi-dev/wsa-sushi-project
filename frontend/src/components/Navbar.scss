@@ -1,98 +1,264 @@
-@use "../styles/variables" as *;
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
-.navbar {
-  background: linear-gradient(135deg, #0a0e27 0%, #0f1235 100%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 1rem 2rem;
+@keyframes bhPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.bh-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  font-family: $font-body;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 10px 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: #131313;
+  font-family: 'IBM Plex Sans', sans-serif;
+  user-select: none;
+}
 
-  .navbar-brand {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
+/* left: logo + brand + day pill */
+.bh-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+}
+.bh-brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+}
+.bh-logo-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: rgba(201, 168, 76, 0.12);
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  color: #C9A84C;
+  flex: none;
+}
+.bh-divider {
+  width: 1px;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.14);
+  flex: none;
+}
+.bh-brand-title {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.1px;
+  color: #fafafa;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 
-    h1 {
-      font-size: 1.6rem;
-      color: $white;
-      margin: 0;
-      font-family: $font-title;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
+  span {
+    font-weight: 400;
+    color: #7e7e7e;
+    margin-left: 5px;
+  }
+}
+.bh-day-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  flex: none;
+  white-space: nowrap;
+}
+.bh-day-label {
+  font-size: 10.5px;
+  color: #9a9a9a;
+}
+.bh-day-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ededed;
+}
 
-    .current-day {
-      color: rgba(255,255,255,0.5);
-      font-size: 1rem;
-      font-family: $font-body;
+/* center: nav links */
+.bh-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+.bh-link {
+  position: relative;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #8a8a8a;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
 
-      strong {
-        color: $gold;
-        font-family: $font-numbers;
-        font-size: 1.3rem;
-      }
-    }
+  &:hover {
+    color: #ededed;
+    background: rgba(255, 255, 255, 0.04);
+  }
+}
+.bh-link--active {
+  font-weight: 500;
+  color: #ededed;
+  background: transparent;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: -5px;
+    height: 2px;
+    background: #4d8df6;
   }
 
-  .navbar-links {
+  &:hover {
+    background: transparent;
+  }
+}
+
+/* right: status + actions */
+.bh-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: none;
+}
+.bh-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(70, 192, 138, 0.08);
+  border: 1px solid rgba(70, 192, 138, 0.25);
+  white-space: nowrap;
+}
+.bh-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #46c08a;
+  animation: bhPulse 2.4s ease-in-out infinite;
+}
+.bh-status-text {
+  font-size: 10.5px;
+  color: #7fcfa6;
+  font-weight: 500;
+}
+.bh-btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #161616;
+  background: #ededed;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: #ffffff;
+  }
+}
+.bh-btn-icon {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 11px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #8a8a8a;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.15s ease;
+  flex: none;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ededed;
+  }
+}
+
+/* menu hamburger — visibile solo sotto i 900px, sostituisce i link inline */
+.bh-menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: #ededed;
+  cursor: pointer;
+  flex: none;
+
+  &:hover { border-color: rgba(255, 255, 255, 0.25); }
+}
+
+.bh-mobile-panel {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .bh-links, .bh-status { display: none; }
+  .bh-menu-btn { display: flex; }
+
+  .bh-mobile-panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
     display: flex;
-    gap: 1.5rem;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 16px 16px;
+    background: #131313;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
 
-    a {
-      color: rgba(255,255,255,0.6);
-      text-decoration: none;
-      font-weight: 500;
-      font-family: $font-body;
-      font-size: 1.1rem;
-      transition: color 0.2s;
+    .bh-link {
+      padding: 10px 12px;
+    }
 
-      &:hover, &.active {
-        color: $gold;
-      }
+    .bh-status--mobile {
+      display: flex;
+      align-self: flex-start;
+      margin-top: 8px;
     }
   }
+}
 
-  .navbar-actions {
-    display: flex;
-    gap: 0.75rem;
+@media (min-width: 901px) {
+  .bh-mobile-panel { display: none !important; }
+}
 
-    .next-day-button {
-      background: $gold;
-      border: none;
-      padding: 0.7rem 1.4rem;
-      border-radius: 0.5rem;
-      color: $navy;
-      cursor: pointer;
-      font-weight: 700;
-      font-family: $font-body;
-      font-size: 1rem;
-      transition: all 0.2s;
-
-      &:hover {
-        opacity: 0.85;
-        transform: translateY(-1px);
-      }
-    }
-
-    .reset-button {
-      background: transparent;
-      border: 1px solid rgba(231, 76, 60, 0.5);
-      padding: 0.7rem 1.4rem;
-      border-radius: 0.5rem;
-      color: #e74c3c;
-      cursor: pointer;
-      font-weight: 600;
-      font-family: $font-body;
-      font-size: 1rem;
-      transition: all 0.2s;
-
-      &:hover {
-        background: rgba(231, 76, 60, 0.15);
-        transform: translateY(-1px);
-      }
-    }
-  }
+@media (prefers-reduced-motion: reduce) {
+  .bh-status-dot { animation: none; }
 }
