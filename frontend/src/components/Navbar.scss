@@ -6,16 +6,16 @@
 }
 
 .bh-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  padding: 4px 28px;
+  padding: 10px 28px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   background: #131313;
-  position: sticky;
-  top: 0;
-  z-index: 40;
   font-family: 'IBM Plex Sans', sans-serif;
   user-select: none;
 }
@@ -33,10 +33,16 @@
   gap: 13px;
   min-width: 0;
 }
-.bh-logo {
-  height: 13px;
-  width: auto;
-  display: block;
+.bh-logo-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: rgba(201, 168, 76, 0.12);
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  color: #C9A84C;
   flex: none;
 }
 .bh-divider {
@@ -45,8 +51,8 @@
   background: rgba(255, 255, 255, 0.14);
   flex: none;
 }
-.bh-title {
-  font-size: 11px;
+.bh-brand-title {
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: -0.1px;
   color: #fafafa;
@@ -199,8 +205,58 @@
   }
 }
 
+/* menu hamburger — visibile solo sotto i 900px, sostituisce i link inline */
+.bh-menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: #ededed;
+  cursor: pointer;
+  flex: none;
+
+  &:hover { border-color: rgba(255, 255, 255, 0.25); }
+}
+
+.bh-mobile-panel {
+  display: none;
+}
+
 @media (max-width: 900px) {
   .bh-links, .bh-status { display: none; }
+  .bh-menu-btn { display: flex; }
+
+  .bh-mobile-panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 16px 16px;
+    background: #131313;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+
+    .bh-link {
+      padding: 10px 12px;
+    }
+
+    .bh-status--mobile {
+      display: flex;
+      align-self: flex-start;
+      margin-top: 8px;
+    }
+  }
+}
+
+@media (min-width: 901px) {
+  .bh-mobile-panel { display: none !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {

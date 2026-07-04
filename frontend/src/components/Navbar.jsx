@@ -1,7 +1,7 @@
 // src/components/Navbar.jsx
-import React from 'react';
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import mscLogo from '../assets/msc-logo.png';
+import { Anchor, Menu, X } from 'lucide-react';
 import './Navbar.scss';
 
 const NAV_ITEMS = [
@@ -12,6 +12,7 @@ const NAV_ITEMS = [
 
 const Navbar = ({ currentDay, onNextDay, onReset }) => {
   const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // La navbar operativa non appare nella home — solo quando si è
   // dentro un ruolo (Operatore o Scheduler)
@@ -23,9 +24,11 @@ const Navbar = ({ currentDay, onNextDay, onReset }) => {
     <header className="bh-header">
       <div className="bh-left">
         <div className="bh-brand">
-          <img src={mscLogo} alt="MSC" className="bh-logo" />
+          <span className="bh-logo-mark">
+            <Anchor size={14} strokeWidth={2.1} />
+          </span>
           <span className="bh-divider" />
-          <div className="bh-title">
+          <div className="bh-brand-title">
             BlueHarbor<span>Terminal</span>
           </div>
         </div>
@@ -70,6 +73,35 @@ const Navbar = ({ currentDay, onNextDay, onReset }) => {
           Reset
         </button>
       </div>
+
+      <button
+        type="button"
+        className="bh-menu-btn"
+        onClick={() => setMenuOpen(open => !open)}
+        aria-label={menuOpen ? 'Chiudi menu' : 'Apri menu'}
+        aria-expanded={menuOpen}
+      >
+        {menuOpen ? <X size={18} /> : <Menu size={18} />}
+      </button>
+
+      {menuOpen && (
+        <div className="bh-mobile-panel">
+          {NAV_ITEMS.map(item => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className={`bh-link ${location.pathname === item.to ? 'bh-link--active' : ''}`}
+              onClick={() => setMenuOpen(false)}
+            >
+              {item.label}
+            </Link>
+          ))}
+          <div className="bh-status bh-status--mobile">
+            <span className="bh-status-dot" />
+            <span className="bh-status-text">Online</span>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
