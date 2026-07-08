@@ -1,4 +1,5 @@
 using BlueHarbor.API.Data;
+using BlueHarbor.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,8 @@ builder.Services.AddSwaggerGen();
 // Collega il database SQLite
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=Data/blueharbor.db"));
+
+builder.Services.AddScoped<IAssignmentService, AssignmentService>();
 
 // CORS — necessario per le chiamate dal frontend (porta 5173)
 builder.Services.AddCors(options =>

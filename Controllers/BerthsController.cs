@@ -15,6 +15,7 @@ public class BerthsController : ControllerBase
         _db = db;
     }
 
+    // GET /api/berths
     [HttpGet]
     public async Task<IActionResult> GetBerths()
     {
@@ -24,24 +25,33 @@ public class BerthsController : ControllerBase
             .Include(a => a.Ship)
             .ToListAsync();
 
-        var result = berths.Select(b => new
+        // Calcola il giorno corrente
+        var state = await _db.SystemStates.FirstOrDefaultAsync();
+        int currentDay = state?.CurrentDay ?? 1;
+
+        var result = berths.Select(b =>
         {
-            b.Id,
-            b.Name,
-            b.Size,
-            currentAssignment = assignments
+            // Trova l'assegnazione attiva per questa banchina (se esiste)
+            var currentAssignment = assignments
                 .Where(a => a.BerthId == b.Id)
                 .OrderByDescending(a => a.StartDay)
-                .Select(a => new
+                .FirstOrDefault(a => a.StartDay <= currentDay && a.EndDay >= currentDay);
+
+            return new
+            {
+                b.Id,
+                b.Name,
+                b.Size,
+                currentAssignment = currentAssignment == null ? null : new
                 {
-                    a.Id,
-                    a.StartDay,
-                    a.EndDay,
-                    shipName   = a.Ship!.Name,
-                    shipSize   = a.Ship.Size,
-                    shipStatus = a.Ship.Status
-                })
-                .FirstOrDefault()
+                    currentAssignment.Id,
+                    currentAssignment.StartDay,
+                    currentAssignment.EndDay,
+                    shipName = currentAssignment.Ship?.Name,
+                    shipSize = currentAssignment.Ship?.Size,
+                    shipStatus = currentAssignment.Ship?.Status
+                }
+            };
         });
 
         return Ok(result);
