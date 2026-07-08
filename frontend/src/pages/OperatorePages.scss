@@ -1,102 +1,147 @@
 // src/pages/OperatorePages.scss
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+// Design Tokens (allineati a SchedulerPage)
+$bg-page: #161616;
+$bg-card: #1c1c1c;
+$bg-card-alt: #1a1a1a;
+$border-subtle: rgba(255, 255, 255, 0.07);
+$border-input: rgba(255, 255, 255, 0.09);
+$text-primary: #ededed;
+$text-muted: #9a9a9a;
+$text-dim: #6e6e6e;
+$text-input: #565656;
+$accent-gold: #C9A84C;
+$accent-blue: #4d8df6;
+$accent-green: #46c08a;
+$accent-coral: #e07a5f;
 
 .operatore-page {
   flex: 1;
   min-height: 0; /* fondamentale in flexbox per permettere lo scroll interno */
   overflow-y: auto;
-  background: #0a0e27;
-  padding: 2rem;
+  background: $bg-page;
+  padding: 0 28px 44px;
   font-family: 'IBM Plex Sans', sans-serif;
 }
 
-// ─── Header ─────
-.operatore-header {
-  margin-bottom: 2rem;
-
-  h2 {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #fff;
-    margin: 0 0 0.25rem;
-  }
-
-  p {
-    color: rgba(255,255,255,0.45);
-    font-size: 0.9rem;
-    margin: 0;
-  }
+// ─── Section Header ─────────────────────────────────────────────
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 30px 0 22px;
+  gap: 24px;
+  flex-wrap: wrap;
+  max-width: 1480px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-// ─── Stats ──
-.stats-bar {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  margin-bottom: 2rem;
-
-  .stat {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 10px;
-    padding: 1rem 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-
-    .stat-icon {
-      font-size: 1.4rem;
-      opacity: 0.8;
-    }
-
-    .stat-info {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .stat-number {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: #fff;
-      line-height: 1;
-    }
-
-    .stat-label {
-      font-size: 0.7rem;
-      color: rgba(255,255,255,0.4);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-top: 0.2rem;
-    }
-
-    &.pending  .stat-number { color: #f5c842; }
-    &.assigned .stat-number { color: #4ade80; }
-    &.departed .stat-number { color: #94a3b8; }
-  }
+.section-eyebrow {
+  font-size: 11px;
+  letter-spacing: 1.8px;
+  color: $text-dim;
+  font-weight: 400;
+  text-transform: uppercase;
+  margin-bottom: 9px;
+  font-family: 'IBM Plex Mono', monospace;
 }
 
-// ─── Layout principale ────
+.section-title {
+  margin: 0;
+  font-size: 27px;
+  font-weight: 500;
+  letter-spacing: -0.4px;
+  color: #fafafa;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: $accent-green;
+  animation: bhPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes bhPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+// ─── Stats ──────────────────────────────────────────────────
+.stats-container {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.stat-box {
+  min-width: 118px;
+  padding: 12px 16px;
+  border-radius: 9px;
+  background: $bg-card;
+  border: 1px solid $border-subtle;
+}
+
+.stat-label {
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  color: $text-dim;
+  text-transform: uppercase;
+  font-family: 'IBM Plex Mono', monospace;
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1;
+  color: $text-primary;
+}
+
+.stat-value-pending {
+  color: $accent-gold;
+}
+
+.stat-value-assigned {
+  color: $accent-blue;
+}
+
+.stat-value-departed {
+  color: $accent-green;
+}
+
+// ─── Layout principale ──────────────────────────────────────
 .operatore-layout {
   display: grid;
-  grid-template-columns: 340px 1fr;
-  gap: 1.5rem;
+  grid-template-columns: 380px 1fr;
+  gap: 20px;
   align-items: start;
+  max-width: 1480px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-// ─── Form ────────
+// ─── Form Card ─────────────────────────────────────────────
 .form-card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 12px;
-  padding: 1.5rem;
+  background: $bg-card;
+  border: 1px solid $border-subtle;
+  border-radius: 11px;
+  padding: 20px;
   position: sticky;
-  top: 1rem;
+  top: 20px;
 
   h3 {
     margin: 0 0 1.25rem;
-    color: #fff;
-    font-size: 1rem;
-    font-weight: 600;
+    color: $text-primary;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.2px;
   }
 }
 
@@ -106,161 +151,305 @@
   label {
     display: block;
     margin-bottom: 0.4rem;
-    color: rgba(255,255,255,0.6);
+    color: $text-muted;
     font-size: 0.85rem;
+    font-weight: 400;
   }
 
   input, textarea {
     width: 100%;
-    padding: 0.6rem 0.8rem;
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 6px;
-    color: #fff;
+    padding: 10px 12px;
+    background: $bg-page;
+    border: 1px solid $border-input;
+    border-radius: 8px;
+    color: $text-primary;
+    font-family: 'IBM Plex Sans', sans-serif;
     font-size: 0.95rem;
     box-sizing: border-box;
-    transition: border-color 0.15s;
+    transition: border-color 0.15s ease;
     resize: vertical;
 
-    &::placeholder { color: rgba(255,255,255,0.25); }
-    &:focus { outline: none; border-color: #c9a84c; }
-    &:disabled { opacity: 0.4; }
+    &::placeholder {
+      color: $text-input;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: rgba(77, 141, 246, 0.5);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+    }
+  }
+
+  textarea {
+    font-family: 'IBM Plex Sans', sans-serif;
   }
 }
 
 .form-hint {
   font-size: 0.75rem;
-  color: rgba(255,255,255,0.3);
+  color: $text-input;
   margin-bottom: 1rem;
   line-height: 1.5;
 }
 
 .btn-submit {
   width: 100%;
-  background: #c9a84c;
-  color: #0a1628;
+  background: $accent-gold;
+  color: #161616;
   border: none;
-  padding: 0.75rem;
+  padding: 10px 16px;
   border-radius: 8px;
-  font-weight: 700;
-  font-size: 0.95rem;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 600;
+  font-size: 13.5px;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: all 0.15s ease;
 
-  &:hover:not(:disabled) { background: #d4b86a; }
-  &:disabled { opacity: 0.4; cursor: not-allowed; }
+  &:hover:not(:disabled) {
+    background: #dbb95a;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 }
 
-// ─── Alert ───
+// ─── Alert ─────────────────────────────────────────────────
 .alert {
-  padding: 0.65rem 0.9rem;
-  border-radius: 6px;
+  padding: 10px 14px;
+  border-radius: 8px;
   margin-bottom: 1rem;
   font-size: 0.85rem;
-  line-height: 1.4;
+  line-height: 1.5;
 
   &-error {
-    background: rgba(239,68,68,0.12);
-    border: 1px solid rgba(239,68,68,0.35);
-    color: #fca5a5;
+    background: rgba(224, 122, 95, 0.12);
+    border: 1px solid rgba(224, 122, 95, 0.25);
+    color: #f5b8a8;
   }
+
   &-success {
-    background: rgba(74,222,128,0.1);
-    border: 1px solid rgba(74,222,128,0.3);
-    color: #86efac;
+    background: rgba(70, 192, 138, 0.12);
+    border: 1px solid rgba(70, 192, 138, 0.25);
+    color: #7ddbb6;
   }
 }
 
-// ─── Tabella navi ─────────────────────────────────────────
+// ─── Ships Card ────────────────────────────────────────────
 .ships-card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 12px;
+  background: $bg-card;
+  border: 1px solid $border-subtle;
+  border-radius: 11px;
   overflow: hidden;
 
   .ships-card-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 1.25rem;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
+    padding: 16px 18px;
+    border-bottom: 1px solid $border-subtle;
 
     h3 {
       margin: 0;
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 600;
+      color: $text-primary;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: -0.2px;
     }
 
     .ships-count {
-      font-size: 0.8rem;
-      color: rgba(255,255,255,0.35);
+      font-size: 11px;
+      color: $text-dim;
+      font-family: 'IBM Plex Mono', monospace;
     }
   }
 }
 
-.ships-table {
-  width: 100%;
-  border-collapse: collapse;
-
-  th {
-    padding: 0.65rem 1rem;
-    text-align: left;
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: rgba(255,255,255,0.35);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-
-  td {
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
-    color: rgba(255,255,255,0.8);
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    vertical-align: middle;
-  }
-
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(255,255,255,0.03); }
-
-  .ship-name { color: #fff; font-weight: 500; }
-  .ship-notes { color: rgba(255,255,255,0.35); font-style: italic; font-size: 0.8rem; }
+// ─── Ships List ─────────────────────────────────────────────
+.ships-list {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 600px;
+  overflow-y: auto;
 }
 
+.ship-card {
+  background: $bg-card-alt;
+  border: 1px solid $border-subtle;
+  border-radius: 10px;
+  padding: 13px 14px;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.16);
+    background: #1f1f1f;
+  }
+}
+
+.ship-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ship-name {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: $text-primary;
+}
+
+.ship-chip {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  padding: 2px 7px;
+  border-radius: 5px;
+  color: #a3a3a3;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  flex: none;
+}
+
+.ship-status {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+  padding: 3px 8px;
+  border-radius: 5px;
+  flex: none;
+
+  &.status-pending {
+    color: $accent-gold;
+    background: rgba(201, 168, 76, 0.12);
+    border: 1px solid rgba(201, 168, 76, 0.2);
+  }
+
+  &.status-assigned {
+    color: $accent-blue;
+    background: rgba(77, 141, 246, 0.12);
+    border: 1px solid rgba(77, 141, 246, 0.2);
+  }
+
+  &.status-departed {
+    color: $accent-green;
+    background: rgba(70, 192, 138, 0.12);
+    border: 1px solid rgba(70, 192, 138, 0.2);
+  }
+}
+
+.ship-details {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 11px;
+  color: $text-dim;
+  font-family: 'IBM Plex Mono', monospace;
+  flex-wrap: wrap;
+  align-items: center;
+
+  .ship-notes {
+    color: $text-muted;
+    font-style: italic;
+  }
+}
+
+// ─── Empty State ────────────────────────────────────────────
 .empty-state {
   text-align: center;
-  padding: 3rem 1rem;
-  color: rgba(255,255,255,0.25);
+  padding: 50px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 
-  .empty-icon { font-size: 2.5rem; display: block; margin-bottom: 0.75rem; }
-  p { margin: 0; font-size: 0.9rem; }
+  .empty-icon {
+    font-size: 36px;
+    display: block;
+    opacity: 0.4;
+  }
+
+  p {
+    margin: 0;
+    font-size: 13.5px;
+    color: $text-muted;
+    line-height: 1.6;
+  }
 }
 
-// ─── Badges ───────────────────────────────────────────────
-.size-badge {
-  display: inline-block;
-  padding: 0.2rem 0.55rem;
-  border-radius: 20px;
-  font-size: 0.72rem;
-  font-weight: 700;
+// ─── Scrollbar ──────────────────────────────────────────────
+.operatore-page::-webkit-scrollbar,
+.ships-list::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
-.size-xl { background: rgba(231,76,60,0.2);  color: #e74c3c; }
-.size-l  { background: rgba(230,126,34,0.2); color: #e67e22; }
-.size-m  { background: rgba(241,196,15,0.2); color: #f1c40f; }
-.size-s  { background: rgba(46,204,113,0.2); color: #2ecc71; }
 
-.status-badge {
-  display: inline-block;
-  padding: 0.2rem 0.6rem;
-  border-radius: 4px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+.operatore-page::-webkit-scrollbar-track,
+.ships-list::-webkit-scrollbar-track {
+  background: transparent;
+}
 
-  &.status-pending  { background: rgba(245,200,66,0.15);  color: #f5c842; }
-  &.status-assigned { background: rgba(74,222,128,0.15);  color: #4ade80; }
-  &.status-departed { background: rgba(148,163,184,0.15); color: #94a3b8; }
+.operatore-page::-webkit-scrollbar-thumb,
+.ships-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+}
+
+// ─── Responsive ─────────────────────────────────────────────
+@media (max-width: 1024px) {
+  .operatore-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .form-card {
+    position: relative;
+    top: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .section-header {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px 0 16px;
+  }
+
+  .stats-container {
+    justify-content: space-between;
+  }
+
+  .stat-box {
+    flex: 1;
+    min-width: 80px;
+  }
+
+  .operatore-page {
+    padding: 0 16px 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .stat-box {
+    min-width: unset;
+    padding: 10px 12px;
+  }
+
+  .stat-value {
+    font-size: 22px;
+  }
 }
