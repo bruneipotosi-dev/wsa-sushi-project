@@ -1,6 +1,8 @@
 using BlueHarbor.API.Data;
 using BlueHarbor.API.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BlueHarbor.API.Services;
 
@@ -65,6 +67,19 @@ public class AssignmentService : IAssignmentService
             _db.Assignments.Add(assignment);
             await _db.SaveChangesAsync();
             await tx.CommitAsync();
+
+            // ─── LOGGING ──────────────────────────────────────────────
+            var logService = ((IInfrastructure<IServiceProvider>)_db).Instance.GetService<IPortLogService>();
+            if (logService is not null)
+            {
+                await logService.LogAsync(
+                    "Assigned",
+                    $"{ship.Name} (ID: {ship.Id}) assegnata a {berth.Name} (ID: {berth.Id})",
+                    arrivalDay: ship.ArrivalDay,
+                    departureDay: endDay,
+                    duration: ship.OccupationDuration
+                );
+            }
 
             return assignment;
         }
