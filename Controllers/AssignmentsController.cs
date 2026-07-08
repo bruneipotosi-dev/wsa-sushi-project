@@ -67,18 +67,17 @@ public class AssignmentsController : ControllerBase
                 error = $"Dimensione incompatibile: nave {ship.Size}, banchina {berth.Size}."
             });
 
-        // STEP 5 — Leggi il giorno corrente
-     int currentDay = 1;
+       // STEP 5 — Leggi il giorno corrente
+var state = await _db.SystemStates.FirstAsync();
+int currentDay = state.CurrentDay;
+// STEP 6 — FindFirstFreeSlot
+int lastEndDay = await _db.Assignments
+    .Where(a => a.BerthId == request.BerthId)
+    .MaxAsync(a => (int?)a.EndDay) ?? (currentDay - 1);
 
-        // STEP 6 — FindFirstFreeSlot
-        int lastEndDay = await _db.Assignments
-            .Where(a => a.BerthId == request.BerthId)
-            .MaxAsync(a => (int?)a.EndDay) ?? (currentDay - 1);
-
-        int firstFreeDay = Math.Max(currentDay, lastEndDay + 1);
-        int startDay     = Math.Max(ship.ArrivalDay, firstFreeDay);
-        int endDay       = startDay + ship.OccupationDuration - 1;
-
+int firstFreeDay = Math.Max(currentDay, lastEndDay + 1);
+int startDay     = Math.Max(ship.ArrivalDay, firstFreeDay);
+int endDay       = startDay + ship.OccupationDuration - 1;
         // STEP 7 — Salva assignment e aggiorna stato nave
         var assignment = new Assignment
         {
