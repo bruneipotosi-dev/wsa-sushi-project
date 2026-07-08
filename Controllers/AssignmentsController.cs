@@ -67,43 +67,77 @@ public class AssignmentsController : ControllerBase
                 error = $"Dimensione incompatibile: nave {ship.Size}, banchina {berth.Size}."
             });
 
-       // STEP 5 — Leggi il giorno corrente
-var state = await _db.SystemStates.FirstAsync();
-int currentDay = state.CurrentDay;
-// STEP 6 — FindFirstFreeSlot
-int lastEndDay = await _db.Assignments
-    .Where(a => a.BerthId == request.BerthId)
-    .MaxAsync(a => (int?)a.EndDay) ?? (currentDay - 1);
+        // STEP 5 — Leggi il giorno corrente dal DB
+        var state = await _db.SystemStates.FirstOrDefaultAsync();
+        int currentDay = state?.CurrentDay ?? 1; // fallback a 1 se non c'è stato
 
-int firstFreeDay = Math.Max(currentDay, lastEndDay + 1);
-int startDay     = Math.Max(ship.ArrivalDay, firstFreeDay);
-int endDay       = startDay + ship.OccupationDuration - 1;
-        // STEP 7 — Salva assignment e aggiorna stato nave
-        var assignment = new Assignment
+        // STEP 6 — Transazione per evitare race condition
+        await using var tx = await _db.Database.BeginTransactionAsync(
+            System.Data.IsolationLevel.Serializable);
+
+        try
         {
-            ShipId   = ship.Id,
-            BerthId  = berth.Id,
-            StartDay = startDay,
-            EndDay   = endDay
-        };
+            // STEP 7 — Trova l'ultimo giorno occupato della banchina
+            int lastEndDay = await _db.Assignments
+                .Where(a => a.BerthId == request.BerthId)
+                .MaxAsync(a => (int?)a.EndDay) ?? (currentDay - 1);
 
-        ship.Status = "Assigned";
+            // STEP 8 — Calcola il primo giorno libero
+            int firstFreeDay = Math.Max(currentDay, lastEndDay + 1);
+            int startDay = Math.Max(ship.ArrivalDay, firstFreeDay);
+            int endDay = startDay + ship.OccupationDuration - 1;
 
-        _db.Ships.Update(ship);
-        _db.Assignments.Add(assignment);
-        await _db.SaveChangesAsync();
+            // STEP 9 — Verifica overlap (doppia sicurezza)
+            bool overlap = await _db.Assignments.AnyAsync(a =>
+                a.BerthId == request.BerthId &&
+                startDay <= a.EndDay && endDay >= a.StartDay);
 
-        return CreatedAtAction(nameof(GetAssignmentById), new { id = assignment.Id }, new
+            if (overlap)
+            {
+                await tx.RollbackAsync();
+                return Conflict(new
+                {
+                    error = "La banchina è già occupata in quella finestra temporale.",
+                    startDay,
+                    endDay
+                });
+            }
+
+            // STEP 10 — Crea l'assegnazione e aggiorna lo stato della nave
+            var assignment = new Assignment
+            {
+                ShipId = ship.Id,
+                BerthId = berth.Id,
+                StartDay = startDay,
+                EndDay = endDay
+            };
+
+            ship.Status = "Assigned";
+
+            _db.Ships.Update(ship);
+            _db.Assignments.Add(assignment);
+            await _db.SaveChangesAsync();
+            await tx.CommitAsync();
+
+            // STEP 11 — Risposta
+            return CreatedAtAction(nameof(GetAssignmentById), new { id = assignment.Id }, new
+            {
+                assignment.Id,
+                assignment.ShipId,
+                assignment.BerthId,
+                assignment.StartDay,
+                assignment.EndDay,
+                shipName = ship.Name,
+                shipSize = ship.Size,
+                berthName = berth.Name,
+                currentDay // utile per debugging
+            });
+        }
+        catch
         {
-            assignment.Id,
-            assignment.ShipId,
-            assignment.BerthId,
-            assignment.StartDay,
-            assignment.EndDay,
-            shipName  = ship.Name,
-            shipSize  = ship.Size,
-            berthName = berth.Name
-        });
+            await tx.RollbackAsync();
+            throw;
+        }
     }
 }
 
