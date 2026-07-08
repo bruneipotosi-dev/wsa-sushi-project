@@ -1,7 +1,10 @@
 using BlueHarbor.API.Data;
 using BlueHarbor.API.Models;
+using BlueHarbor.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BlueHarbor.API.Controllers;
 
@@ -24,33 +27,47 @@ public class SystemController : ControllerBase
     }
 
     [HttpPost("advance-day")]
-    public async Task<IActionResult> AdvanceDay()
+public async Task<IActionResult> AdvanceDay()
+{
+    var state = await _db.SystemStates.FirstAsync();
+    state.CurrentDay++;
+
+    var assignmentsEnded = await _db.Assignments
+        .Include(a => a.Ship)
+        .Where(a => a.EndDay < state.CurrentDay
+                 && a.Ship!.Status == ShipStatus.Assigned)
+        .ToListAsync();
+
+    var logService = ((IInfrastructure<IServiceProvider>)_db).Instance.GetService<IPortLogService>();
+
+    foreach (var assignment in assignmentsEnded)
     {
-        var state = await _db.SystemStates.FirstAsync();
-        state.CurrentDay++;
+        assignment.Ship!.Status = ShipStatus.Departed;
 
-        var assignmentsEnded = await _db.Assignments
-            .Include(a => a.Ship)
-            .Where(a => a.EndDay < state.CurrentDay
-                     && a.Ship!.Status == ShipStatus.Assigned)
-            .ToListAsync();
-
-        foreach (var assignment in assignmentsEnded)
+        var duration = assignment.EndDay - assignment.StartDay + 1;
+        if (logService is not null)
         {
-            assignment.Ship!.Status = ShipStatus.Departed;
+            await logService.LogAsync(
+                "Departed",
+                $"{assignment.Ship!.Name} (ID: {assignment.ShipId}) partita da banchina {assignment.BerthId}",
+                arrivalDay: assignment.Ship.ArrivalDay,
+                departureDay: assignment.EndDay,
+                duration: duration
+            );
         }
-
-        await _db.SaveChangesAsync();
-
-        return Ok(new
-        {
-            newDay = state.CurrentDay,
-            departedCount = assignmentsEnded.Count,
-            departedShips = assignmentsEnded.Select(a => new
-            {
-                shipId = a.ShipId,
-                shipName = a.Ship!.Name
-            })
-        });
     }
+
+    await _db.SaveChangesAsync();
+
+    return Ok(new
+    {
+        newDay = state.CurrentDay,
+        departedCount = assignmentsEnded.Count,
+        departedShips = assignmentsEnded.Select(a => new
+        {
+            shipId = a.ShipId,
+            shipName = a.Ship!.Name
+        })
+    });
+}
 }

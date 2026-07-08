@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BlueHarbor.API.Controllers;
 
+public record UpdateShipNotesRequest(string? Notes);
+
 [ApiController]
 [Route("api/[controller]")]
 public class ShipsController : ControllerBase
@@ -51,5 +53,34 @@ public class ShipsController : ControllerBase
         _db.Ships.Add(ship);
         await _db.SaveChangesAsync();
         return CreatedAtAction(nameof(GetShipById), new { id = ship.Id }, ship);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateNotes(int id, [FromBody] UpdateShipNotesRequest req)
+    {
+        var ship = await _db.Ships.FindAsync(id);
+        if (ship is null)
+            return NotFound(new { error = "Nave non trovata." });
+
+        ship.Notes = req.Notes;
+        await _db.SaveChangesAsync();
+
+        return Ok(ship);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteShip(int id)
+    {
+        var ship = await _db.Ships.FindAsync(id);
+        if (ship is null)
+            return NotFound(new { error = "Nave non trovata." });
+
+        if (ship.Status != ShipStatus.Pending)
+            return Conflict(new { error = "Si può cancellare solo una nave ancora in attesa." });
+
+        _db.Ships.Remove(ship);
+        await _db.SaveChangesAsync();
+
+        return NoContent();
     }
 }

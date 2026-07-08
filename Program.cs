@@ -18,6 +18,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=Data/blueharbor.db"));
 
 builder.Services.AddScoped<IAssignmentService, AssignmentService>();
+builder.Services.AddScoped<IPortLogService, PortLogService>();
 
 // CORS — necessario per le chiamate dal frontend (porta 5173)
 builder.Services.AddCors(options =>
