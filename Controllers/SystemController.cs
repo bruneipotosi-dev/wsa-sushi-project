@@ -1,4 +1,5 @@
 using BlueHarbor.API.Data;
+using BlueHarbor.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,12 +32,12 @@ public class SystemController : ControllerBase
         var assignmentsEnded = await _db.Assignments
             .Include(a => a.Ship)
             .Where(a => a.EndDay < state.CurrentDay
-                     && a.Ship!.Status == "Assigned")
+                     && a.Ship!.Status == ShipStatus.Assigned)
             .ToListAsync();
 
         foreach (var assignment in assignmentsEnded)
         {
-            assignment.Ship!.Status = "Departed";
+            assignment.Ship!.Status = ShipStatus.Departed;
         }
 
         await _db.SaveChangesAsync();

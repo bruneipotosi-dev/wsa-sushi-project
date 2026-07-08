@@ -18,12 +18,12 @@ public class ShipsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetShips([FromQuery] string? status = null)
+    public async Task<IActionResult> GetShips([FromQuery] ShipStatus? status = null)
     {
         var query = _db.Ships.AsQueryable();
 
-        if (!string.IsNullOrEmpty(status))
-            query = query.Where(s => s.Status == status);
+        if (status.HasValue)
+            query = query.Where(s => s.Status == status.Value);
 
         var ships = await query.ToListAsync();
         return Ok(ships);

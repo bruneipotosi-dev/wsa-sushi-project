@@ -53,7 +53,7 @@ public class AssignmentsController : ControllerBase
                 .FirstAsync(a => a.Id == assignment.Id);
 
             var shipName = fullAssignment.Ship?.Name ?? "Nave sconosciuta";
-            var shipSize = fullAssignment.Ship?.Size ?? "?";
+            var shipSize = fullAssignment.Ship?.Size.ToString() ?? "?";
             var berthName = fullAssignment.Berth?.Name ?? "Banchina sconosciuta";
 
             return CreatedAtAction(nameof(GetAssignmentById), new { id = assignment.Id }, new

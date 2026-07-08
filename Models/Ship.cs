@@ -11,8 +11,8 @@ public class Ship
     public string Name { get; set; } = string.Empty;
 
     [Required]
-    [RegularExpression("^(XL|L|M|S)$", ErrorMessage = "Size must be one of XL, L, M, S.")]
-    public string Size { get; set; } = string.Empty; // XL | L | M | S
+    [EnumDataType(typeof(ShipSize), ErrorMessage = "Size must be one of XL, L, M, S.")]
+    public ShipSize Size { get; set; }
 
     [Range(0, 100000, ErrorMessage = "ArrivalDay must be a positive number.")]
     public int ArrivalDay { get; set; }
@@ -21,8 +21,8 @@ public class Ship
     public int OccupationDuration { get; set; }
 
     [Required]
-    [RegularExpression("^(Pending|Assigned|Departed)$", ErrorMessage = "Status must be Pending, Assigned, or Departed.")]
-    public string Status { get; set; } = "Pending";
+    [EnumDataType(typeof(ShipStatus), ErrorMessage = "Status must be Pending, Assigned, or Departed.")]
+    public ShipStatus Status { get; set; }
 
     [StringLength(500)]
     public string? Notes { get; set; }

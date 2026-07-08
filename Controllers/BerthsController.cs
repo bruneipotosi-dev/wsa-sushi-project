@@ -31,7 +31,6 @@ public class BerthsController : ControllerBase
 
         var result = berths.Select(b =>
         {
-            // Trova l'assegnazione attiva per questa banchina (se esiste)
             var currentAssignment = assignments
                 .Where(a => a.BerthId == b.Id)
                 .OrderByDescending(a => a.StartDay)
@@ -41,15 +40,15 @@ public class BerthsController : ControllerBase
             {
                 b.Id,
                 b.Name,
-                b.Size,
+                Size = b.Size.ToString(),
                 currentAssignment = currentAssignment == null ? null : new
                 {
                     currentAssignment.Id,
                     currentAssignment.StartDay,
                     currentAssignment.EndDay,
                     shipName = currentAssignment.Ship?.Name,
-                    shipSize = currentAssignment.Ship?.Size,
-                    shipStatus = currentAssignment.Ship?.Status
+                    shipSize = currentAssignment.Ship?.Size.ToString(),
+                    shipStatus = currentAssignment.Ship?.Status.ToString()
                 }
             };
         });

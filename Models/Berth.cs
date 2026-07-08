@@ -11,6 +11,6 @@ public class Berth
     public string Name { get; set; } = string.Empty;
 
     [Required]
-    [RegularExpression("^(XL|L|M|S)$", ErrorMessage = "Size must be one of XL, L, M, S.")]
-    public string Size { get; set; } = string.Empty; // XL | L | M | S
+    [EnumDataType(typeof(ShipSize), ErrorMessage = "Size must be one of XL, L, M, S.")]
+    public ShipSize Size { get; set; }
 }
