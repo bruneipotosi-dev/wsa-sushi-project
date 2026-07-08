@@ -56,6 +56,8 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
   const [apiData, setApiData]           = useState({ ships: [], berths: [], assignments: [] })
   const [selectedShip, setSelectedShip] = useState(null)
   const [confirmModal, setConfirmModal] = useState(null)
+  const [confirmLoading, setConfirmLoading] = useState(false)
+  const [confirmError, setConfirmError] = useState(null)
   const [toast, setToast]               = useState(null)
   const [dragOverBerthId, setDragOverBerthId] = useState(null)
 
@@ -82,11 +84,11 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
     if (USE_MOCK) {
       assigns = ships
         .filter(s => s.assignedBerth === berth.name && s.status === "Assigned")
-        .map(s => ({ startDay: s.startDay, endDay: s.startDay + s.occupationDuration - 1, name: s.name, size: s.size }))
+        .map(s => ({ startDay: s.startDay, endDay: s.startDay + s.occupationDuration - 1, name: s.name }))
     } else {
       assigns = apiData.assignments
         .filter(a => a.berthId === berth.id)
-        .map(a => ({ startDay: a.startDay, endDay: a.endDay, name: a.ship?.name, size: berth.size }))
+        .map(a => ({ startDay: a.startDay, endDay: a.endDay, name: a.ship?.name }))
     }
     assigns.sort((p, q) => p.startDay - q.startDay)
 
@@ -137,8 +139,8 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
     } else {
       ({ startDay, endDay } = calcSlotReal(berth, ship, apiData.assignments, currentDay))
     }
-    const protocol = `BH-${berth.name}-G${startDay}-${ship.size}`
-    setConfirmModal({ ship, berth, startDay, endDay, protocol })
+    setConfirmError(null)
+    setConfirmModal({ ship, berth, startDay, endDay })
   }
 
   const handleShipClick = (ship) => {
@@ -169,23 +171,37 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
 
   const handleConfirm = async () => {
     const { ship, berth, startDay, endDay } = confirmModal
-    if (USE_MOCK) {
-      setShips(prev => prev.map(s =>
-        s.id === ship.id
-          ? { ...s, status: "Assigned", assignedBerth: berth.name, startDay }
-          : s
-      ))
-    } else {
-      await createAssignment(ship.id, berth.id)
-      const [s, b, a] = await Promise.all([getShips("Pending"), getBerths(), getAssignments()])
-      setApiData({ ships: s, berths: b, assignments: a })
+    setConfirmLoading(true)
+    setConfirmError(null)
+    try {
+      if (USE_MOCK) {
+        setShips(prev => prev.map(s =>
+          s.id === ship.id
+            ? { ...s, status: "Assigned", assignedBerth: berth.name, startDay }
+            : s
+        ))
+        setToast({
+          title: "Assegnazione confermata",
+          msg: `${ship.name} → ${berth.name} · Finestra G${startDay}–G${endDay}`,
+        })
+      } else {
+        // Usiamo la finestra restituita dal backend (fonte di verità), non
+        // quella di anteprima calcolata lato client per il modal.
+        const result = await createAssignment(ship.id, berth.id)
+        const [s, b, a] = await Promise.all([getShips("Pending"), getBerths(), getAssignments()])
+        setApiData({ ships: s, berths: b, assignments: a })
+        setToast({
+          title: "Assegnazione confermata",
+          msg: `${ship.name} → ${berth.name} · Finestra G${result.startDay}–G${result.endDay}`,
+        })
+      }
+      setConfirmModal(null)
+      setSelectedShip(null)
+    } catch (err) {
+      setConfirmError(err.message || "Errore durante l'assegnazione.")
+    } finally {
+      setConfirmLoading(false)
     }
-    setToast({
-      title: "Assegnazione confermata",
-      msg: `${ship.name} → ${berth.name} · Finestra G${startDay}–G${endDay}`,
-    })
-    setConfirmModal(null)
-    setSelectedShip(null)
   }
 
   return (
@@ -194,11 +210,7 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
       {/* SECTION HEADER */}
       <div className="sch-topline">
         <div>
-          <div className="sch-eyebrow">Matrice di assegnazione</div>
-          <h1 className="sch-title">
-            Giorno Operativo <span className="sch-title-day">{currentDay}</span>
-            <span className="sch-pulse-dot" />
-          </h1>
+          <h1 className="sch-title">Matrice di assegnazione</h1>
         </div>
         <div className="sch-stats">
           <div className="sch-stat-box">
@@ -224,7 +236,7 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
             />
           ))}
         </div>
-        <span className="sch-util-count">{occCount} occupate · {planCount} pianificate · {freeCount} libere</span>
+        <span className="sch-util-count">{occCount} occupate · {planCount} pianificate</span>
       </div>
 
       {selectedShip && (
@@ -244,7 +256,6 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
         <aside className="sch-queue">
           <div className="sch-queue-head">
             <span>Coda di attesa</span>
-            <span className="sch-queue-count">{pendingShips.length}</span>
           </div>
 
           {pendingShips.length === 0 ? (
@@ -316,17 +327,14 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
                 ].join(" ")}
               >
                 <div className="sch-berth-head">
-                  <div>
-                    <div className="sch-berth-index">BANCHINA {pad2(i + 1)}</div>
-                    <div className="sch-berth-name-row">
-                      <span className="sch-berth-name">{berth.name}</span>
-                      <span className="sch-chip">{berth.size}</span>
-                    </div>
-                  </div>
+                  <div className="sch-berth-index">BANCHINA {pad2(i + 1)}</div>
                   <div className="sch-berth-badge">
                     <span className="sch-berth-badge-dot" style={{ background: themeColor }} />
                     {state.status}
                   </div>
+                </div>
+                <div className="sch-berth-name-row">
+                  <span className="sch-berth-name">{berth.name}</span>
                 </div>
 
                 <div className="sch-berth-center">
@@ -343,7 +351,6 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
                     <div className="sch-berth-occupant">
                       <div className="sch-berth-occupant-top">
                         <span className="sch-berth-occupant-name">{state.occ.name}</span>
-                        <span className="sch-chip">{state.occ.size}</span>
                       </div>
                       <div className="sch-berth-occupant-meta" style={{ color: state.occMetaColor }}>{state.occMeta}</div>
                       <div className="sch-berth-occupant-range">
@@ -379,7 +386,7 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
 
       {/* CONFIRM MODAL */}
       {confirmModal && (
-        <div className="sch-modal-overlay" onClick={() => setConfirmModal(null)}>
+        <div className="sch-modal-overlay" onClick={() => !confirmLoading && setConfirmModal(null)}>
           <div className="sch-modal" onClick={e => e.stopPropagation()}>
             <div className="sch-modal-head">
               <span className="sch-modal-head-dot" />
@@ -396,18 +403,19 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
                 <div className="sch-modal-compare-item">
                   <span>BANCHINA</span>
                   <strong>{confirmModal.berth.name}</strong>
-                  <span className="sch-chip">{confirmModal.berth.size}</span>
                 </div>
               </div>
               <div className="sch-modal-grid">
                 <div><span>GIORNO INIZIO</span><strong className="sch-modal-accent">G{confirmModal.startDay}</strong></div>
                 <div><span>GIORNO FINE</span><strong>G{confirmModal.endDay}</strong></div>
                 <div><span>DURATA</span><strong>{confirmModal.endDay - confirmModal.startDay + 1} giorni</strong></div>
-                <div><span>PROTOCOLLO</span><strong className="sch-modal-muted">{confirmModal.protocol}</strong></div>
               </div>
+              {confirmError && <div className="sch-modal-error">{confirmError}</div>}
               <div className="sch-modal-actions">
-                <button className="sch-btn-cancel" onClick={() => setConfirmModal(null)}>Annulla</button>
-                <button className="sch-btn-confirm" onClick={handleConfirm}>✓ Conferma Ormeggio</button>
+                <button className="sch-btn-cancel" onClick={() => setConfirmModal(null)} disabled={confirmLoading}>Annulla</button>
+                <button className="sch-btn-confirm" onClick={handleConfirm} disabled={confirmLoading}>
+                  {confirmLoading ? "Conferma in corso…" : "Conferma"}
+                </button>
               </div>
             </div>
           </div>

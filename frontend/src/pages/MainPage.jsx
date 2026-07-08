@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import { User, CalendarDays, ArrowRight, Anchor } from "lucide-react"
+import { User, CalendarDays, ArrowRight } from "lucide-react"
 import "./MainPage.scss"
 
 export default function MainPage() {
@@ -9,7 +9,6 @@ export default function MainPage() {
     <div className="main-page">
       {/* ambient background */}
       <div className="bh-ambient" />
-      <Anchor className="bh-watermark" strokeWidth={0.6} aria-hidden="true" />
       <div className="bh-vignette" />
 
       <main className="bh-hero">

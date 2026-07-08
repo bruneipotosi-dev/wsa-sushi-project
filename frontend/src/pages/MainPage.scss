@@ -24,19 +24,6 @@
     radial-gradient(1200px 720px at 50% -16%, rgba($gold, 0.34), transparent 60%);
 }
 
-.bh-watermark {
-  position: absolute;
-  left: 50%;
-  top: 30%;
-  transform: translate(-50%, -50%);
-  width: 280px;
-  height: 280px;
-  z-index: 0;
-  color: $gold;
-  opacity: 0.08;
-  pointer-events: none;
-}
-
 .bh-vignette {
   position: absolute;
   inset: 0;
@@ -261,5 +248,4 @@
 @media (max-width: 768px) {
   .bh-title { font-size: 38px !important; }
   .bh-role-grid { grid-template-columns: 1fr; max-width: 330px; }
-  .bh-watermark { width: 180px; }
 }
