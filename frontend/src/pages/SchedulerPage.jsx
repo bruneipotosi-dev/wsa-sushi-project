@@ -258,8 +258,15 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
                 <div
                   key={ship.id}
                   draggable
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={selectedShip?.id === ship.id}
+                  aria-label={`Nave ${ship.name}, taglia ${ship.size}, arrivo giorno ${ship.arrivalDay}, durata ${ship.occupationDuration} ${ship.occupationDuration === 1 ? "giorno" : "giorni"}`}
                   onDragStart={(e) => handleDragStart(e, ship)}
                   onClick={() => handleShipClick(ship)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleShipClick(ship) }
+                  }}
                   className={`sch-ship-card ${selectedShip?.id === ship.id ? "sch-ship-card--selected" : ""}`}
                 >
                   <div className="sch-ship-card-top">
@@ -290,7 +297,14 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
             return (
               <div
                 key={berth.id}
+                role="button"
+                tabIndex={isCompatible ? 0 : -1}
+                aria-disabled={!isCompatible}
+                aria-label={`Banchina ${berth.name}, taglia ${berth.size}, stato ${state.status}${state.occMeta ? `, ${state.occMeta}` : ""}`}
                 onClick={() => isCompatible && handleBerthClick(berth)}
+                onKeyDown={(e) => {
+                  if (isCompatible && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); handleBerthClick(berth) }
+                }}
                 onDragOver={(e) => handleDragOver(e, berth)}
                 onDragLeave={() => setDragOverBerthId(null)}
                 onDrop={(e) => handleDrop(e, berth)}
@@ -319,9 +333,9 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
                   {state.status === "DISPONIBILE" ? (
                     <>
                       <div className={`sch-berth-anchor-box ${isCompatible ? "sch-berth-anchor-box--compatible" : ""}`}>
-                        <span style={{ color: isCompatible ? "#4d8df6" : "#4a4a4a" }}>⚓</span>
+                        <span style={{ color: isCompatible ? "#4d8df6" : "#757575" }}>⚓</span>
                       </div>
-                      <div className="sch-berth-center-label" style={{ color: isCompatible ? "#4d8df6" : "#4a4a4a" }}>
+                      <div className="sch-berth-center-label" style={{ color: isCompatible ? "#4d8df6" : "#8a8a8a" }}>
                         {isCompatible ? "TRASCINA O CLICCA" : "LIBERA PER ORMEGGIO"}
                       </div>
                     </>
@@ -340,7 +354,7 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
                         {state.timeline.map((cell, idx) => (
                           <div key={idx} className="sch-timeline-cell">
                             <div className="sch-timeline-bar" style={{ background: cell.bg, border: cell.isToday ? "1.5px solid rgba(255,255,255,0.45)" : "1px solid transparent" }} />
-                            <div className="sch-timeline-label" style={{ color: cell.isToday ? "#ededed" : "#565656", fontWeight: cell.isToday ? 500 : 400 }}>{cell.dayLabel}</div>
+                            <div className="sch-timeline-label" style={{ color: cell.isToday ? "#ededed" : "#8a8a8a", fontWeight: cell.isToday ? 500 : 400 }}>{cell.dayLabel}</div>
                           </div>
                         ))}
                       </div>
