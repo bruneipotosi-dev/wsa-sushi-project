@@ -87,33 +87,6 @@
   font-weight: 300;
 }
 
-.bh-current-role {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 28px;
-  padding: 10px 14px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #bdbdbd;
-  font-size: 14px;
-
-  strong {
-    color: #ededed;
-  }
-
-  button {
-    border: 0;
-    border-radius: 999px;
-    padding: 8px 12px;
-    background: rgba(201, 168, 76, 0.14);
-    color: #f0d28a;
-    font: inherit;
-    cursor: pointer;
-  }
-}
-
 // ROLE CARDS
 .bh-role-grid {
   display: grid;

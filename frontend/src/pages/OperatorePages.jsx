@@ -24,7 +24,7 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
       const data = await getShips();
       setShips(data);
     } catch (err) {
-      console.error('Errore caricamento navi:', err);
+      console.error('Errore nel caricamento delle navi:', err);
     }
   }, [setShips]);
 
@@ -38,7 +38,7 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
 
   async function handleSubmit() {
     if (!name.trim()) {
-      setError("Il nome della nave è obbligatorio.");
+      setError("Il nome della nave è richiesto.");
       return;
     }
     setLoading(true);
@@ -53,7 +53,7 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
         ...generated
       });
       await loadShips();
-      setSuccess(`"${name.trim()}" registrata — taglia ${generated.size}, arrivo giorno ${generated.arrivalDay}`);
+      setSuccess(`"${name.trim()}" registrata: dimensione ${generated.size}, arrivo al giorno ${generated.arrivalDay}`);
       setName("");
       setNotes("");
     } catch (e) {

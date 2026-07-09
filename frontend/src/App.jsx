@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import Navbar from './components/Navbar';
-import AccessDenied from './components/AccessDenied';
 import MainPage from './pages/MainPage';
 import OperatorePages from './pages/OperatorePages';
 import SchedulerPage from './pages/SchedulerPage';
@@ -16,7 +15,7 @@ function ProtectedRoute({ role, userRole, children }) {
   }
 
   if (userRole !== role) {
-    return <AccessDenied role={role} />;
+    return <Navigate to={userRole === 'Operatore' ? '/operatore' : '/scheduler'} replace />;
   }
 
   return children;
@@ -78,7 +77,7 @@ function App() {
           userRole={userRole}
         />
         <Routes>
-          <Route path="/" element={<MainPage onRoleSelect={handleRoleSelect} userRole={userRole} />} />
+          <Route path="/" element={<MainPage onRoleSelect={handleRoleSelect} />} />
           <Route path="/operatore" element={
             <ProtectedRoute role="Operatore" userRole={userRole}>
               <OperatorePages currentDay={currentDay} ships={ships} setShips={setShips} />

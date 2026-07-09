@@ -4,15 +4,21 @@ import { Link, useLocation } from 'react-router-dom';
 import { Anchor, Menu, X } from 'lucide-react';
 import './Navbar.scss';
 
-const NAV_ITEMS = [
-  { to: '/', label: 'Home' },
-  { to: '/operatore', label: 'Operatore' },
-  { to: '/scheduler', label: 'Scheduler' },
-];
+const ROLE_NAV_ITEMS = {
+  Operatore: [
+    { to: '/', label: 'Home' },
+    { to: '/operatore', label: 'Operatore' },
+  ],
+  Scheduler: [
+    { to: '/', label: 'Home' },
+    { to: '/scheduler', label: 'Scheduler' },
+  ],
+};
 
 const Navbar = ({ currentDay, onNextDay, onReset, userRole }) => {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const navItems = ROLE_NAV_ITEMS[userRole] ?? [{ to: '/', label: 'Home' }];
 
   // La navbar operativa non appare nella home — solo quando si è
   // dentro un ruolo (Operatore o Scheduler)
@@ -35,7 +41,7 @@ const Navbar = ({ currentDay, onNextDay, onReset, userRole }) => {
       </div>
 
       <nav className="bh-links">
-        {NAV_ITEMS.map(item => (
+        {navItems.map(item => (
           <Link
             key={item.to}
             to={item.to}
@@ -47,7 +53,6 @@ const Navbar = ({ currentDay, onNextDay, onReset, userRole }) => {
       </nav>
 
       <div className="bh-right">
-        {userRole && <div className="bh-role-pill">{userRole}</div>}
         <div className="bh-day-pill">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="4" width="18" height="18" rx="2" />
@@ -82,7 +87,7 @@ const Navbar = ({ currentDay, onNextDay, onReset, userRole }) => {
 
       {menuOpen && (
         <div className="bh-mobile-panel">
-          {NAV_ITEMS.map(item => (
+          {navItems.map(item => (
             <Link
               key={item.to}
               to={item.to}

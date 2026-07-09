@@ -2,20 +2,12 @@ import { useNavigate } from "react-router-dom"
 import { User, CalendarDays, ArrowRight } from "lucide-react"
 import "./MainPage.scss"
 
-const ROLE_STORAGE_KEY = "blueharbor-role"
-
-export default function MainPage({ onRoleSelect, userRole }) {
+export default function MainPage({ onRoleSelect }) {
   const navigate = useNavigate()
 
   const handleRoleClick = (role) => {
     onRoleSelect?.(role)
     navigate(role === "Operatore" ? "/operatore" : "/scheduler")
-  }
-
-  const handleResetRole = () => {
-    localStorage.removeItem(ROLE_STORAGE_KEY)
-    onRoleSelect?.(null)
-    navigate("/", { replace: true })
   }
 
   return (
@@ -35,16 +27,9 @@ export default function MainPage({ onRoleSelect, userRole }) {
           Benvenuto in <span className="bh-title-accent">plancia</span>
         </h1>
         <p className="bh-subtitle">
-          Seleziona il tuo ruolo per accedere al terminal BlueHarbor
+          Seleziona il tuo ruolo per entrare nel terminale BlueHarbor
           e iniziare le operazioni del giorno.
         </p>
-
-        {userRole && (
-          <div className="bh-current-role">
-            <span>Ruolo corrente: <strong>{userRole}</strong></span>
-            <button type="button" onClick={handleResetRole}>Cambia ruolo</button>
-          </div>
-        )}
 
         <div className="bh-role-grid">
           <button

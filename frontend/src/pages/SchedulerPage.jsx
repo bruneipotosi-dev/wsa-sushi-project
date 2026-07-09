@@ -199,7 +199,7 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
       setConfirmModal(null)
       setSelectedShip(null)
     } catch (err) {
-      setConfirmError(err.message || "Errore durante l'assegnazione.")
+      setConfirmError(err.message || "Errore durante l'assegnazione della banchina.")
     } finally {
       setConfirmLoading(false)
     }

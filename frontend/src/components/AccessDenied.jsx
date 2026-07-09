@@ -11,11 +11,11 @@ export default function AccessDenied({ role }) {
     <div className="access-denied">
       <div className="access-denied-content">
         <div className="icon">⛔</div>
-        <h2>Accesso Negato</h2>
-        <p>Questa pagina è riservata al ruolo <strong>{role}</strong>.</p>
-        <p>Il tuo ruolo attuale non ti permette di accedere a questa sezione.</p>
+        <h2>Accesso negato</h2>
+        <p>Questa sezione è riservata al ruolo <strong>{role}</strong>.</p>
+        <p>Il tuo ruolo attuale non consente l'accesso a questa sezione.</p>
         <div className="actions">
-          <Link to="/" className="btn-home">Torna alla Home</Link>
+          <Link to="/" className="btn-home">Torna alla home</Link>
           <button onClick={handleResetRole} className="btn-change-role">Cambia ruolo</button>
         </div>
       </div>
