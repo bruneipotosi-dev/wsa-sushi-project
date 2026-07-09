@@ -180,6 +180,34 @@
   }
 }
 
+.warning-banner {
+  flex: none;
+  width: 100%;
+  max-width: 1900px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 15px 22px;
+  border-radius: 12px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.24);
+
+  .warning-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .warning-content {
+    color: #fca5a5;
+    font-size: 14.5px;
+    line-height: 1.5;
+
+    strong { color: #f87171; }
+    small { color: rgba(255, 255, 255, 0.45); }
+  }
+}
+
 // BODY LAYOUT
 .sch-body {
   flex: 1;

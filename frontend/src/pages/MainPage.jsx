@@ -2,8 +2,21 @@ import { useNavigate } from "react-router-dom"
 import { User, CalendarDays, ArrowRight } from "lucide-react"
 import "./MainPage.scss"
 
-export default function MainPage() {
+const ROLE_STORAGE_KEY = "blueharbor-role"
+
+export default function MainPage({ onRoleSelect, userRole }) {
   const navigate = useNavigate()
+
+  const handleRoleClick = (role) => {
+    onRoleSelect?.(role)
+    navigate(role === "Operatore" ? "/operatore" : "/scheduler")
+  }
+
+  const handleResetRole = () => {
+    localStorage.removeItem(ROLE_STORAGE_KEY)
+    onRoleSelect?.(null)
+    navigate("/", { replace: true })
+  }
 
   return (
     <div className="main-page">
@@ -26,11 +39,18 @@ export default function MainPage() {
           e iniziare le operazioni del giorno.
         </p>
 
+        {userRole && (
+          <div className="bh-current-role">
+            <span>Ruolo corrente: <strong>{userRole}</strong></span>
+            <button type="button" onClick={handleResetRole}>Cambia ruolo</button>
+          </div>
+        )}
+
         <div className="bh-role-grid">
           <button
             type="button"
             className="bh-role-card bh-role-card--operatore"
-            onClick={() => navigate("/operatore")}
+            onClick={() => handleRoleClick("Operatore")}
           >
             <span className="bh-role-top-line" />
             <User className="bh-role-icon-ghost" strokeWidth={0.6} aria-hidden="true" />
@@ -46,7 +66,7 @@ export default function MainPage() {
           <button
             type="button"
             className="bh-role-card bh-role-card--scheduler"
-            onClick={() => navigate("/scheduler")}
+            onClick={() => handleRoleClick("Scheduler")}
           >
             <span className="bh-role-top-line" />
             <CalendarDays className="bh-role-icon-ghost" strokeWidth={0.6} aria-hidden="true" />

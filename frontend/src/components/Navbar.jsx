@@ -10,7 +10,7 @@ const NAV_ITEMS = [
   { to: '/scheduler', label: 'Scheduler' },
 ];
 
-const Navbar = ({ currentDay, onNextDay, onReset }) => {
+const Navbar = ({ currentDay, onNextDay, onReset, userRole }) => {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -47,6 +47,7 @@ const Navbar = ({ currentDay, onNextDay, onReset }) => {
       </nav>
 
       <div className="bh-right">
+        {userRole && <div className="bh-role-pill">{userRole}</div>}
         <div className="bh-day-pill">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="4" width="18" height="18" rx="2" />

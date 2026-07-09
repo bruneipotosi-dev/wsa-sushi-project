@@ -1,15 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import Navbar from './components/Navbar';
+import AccessDenied from './components/AccessDenied';
 import MainPage from './pages/MainPage';
 import OperatorePages from './pages/OperatorePages';
 import SchedulerPage from './pages/SchedulerPage';
 import { getCurrentDay, advanceDay, resetSystem } from './services/api';
 
+const ROLE_STORAGE_KEY = 'blueharbor-role';
+
+function ProtectedRoute({ role, userRole, children }) {
+  if (!userRole) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (userRole !== role) {
+    return <AccessDenied role={role} />;
+  }
+
+  return children;
+}
+
 function App() {
   const [currentDay, setCurrentDay] = useState(1);
   const [ships, setShips] = useState([]);
+  const [userRole, setUserRole] = useState(() => localStorage.getItem(ROLE_STORAGE_KEY));
 
   // Carica currentDay dal backend all'avvio
   useEffect(() => {
@@ -18,11 +34,23 @@ function App() {
       .catch(console.error);
   }, []);
 
+  const handleRoleSelect = (role) => {
+    if (role) {
+      localStorage.setItem(ROLE_STORAGE_KEY, role);
+    } else {
+      localStorage.removeItem(ROLE_STORAGE_KEY);
+    }
+    setUserRole(role);
+  };
+
   // Next Day chiama il backend — non più stato locale
   const handleNextDay = async () => {
     try {
       const res = await advanceDay();
       setCurrentDay(res.newDay);
+      if (res.warning) {
+        console.warn(res.warning);
+      }
     } catch (err) {
       console.error('Errore advance-day:', err);
     }
@@ -32,6 +60,7 @@ function App() {
     if (confirm('Sei sicuro? Tutti i dati verranno cancellati!')) {
       try {
         await resetSystem();
+        handleRoleSelect(null);
         window.location.reload();
       } catch (err) {
         console.error('Errore reset:', err);
@@ -46,14 +75,19 @@ function App() {
           currentDay={currentDay}
           onNextDay={handleNextDay}
           onReset={handleReset}
+          userRole={userRole}
         />
         <Routes>
-          <Route path="/" element={<MainPage />} />
+          <Route path="/" element={<MainPage onRoleSelect={handleRoleSelect} userRole={userRole} />} />
           <Route path="/operatore" element={
-            <OperatorePages currentDay={currentDay} ships={ships} setShips={setShips} />
+            <ProtectedRoute role="Operatore" userRole={userRole}>
+              <OperatorePages currentDay={currentDay} ships={ships} setShips={setShips} />
+            </ProtectedRoute>
           } />
           <Route path="/scheduler" element={
-            <SchedulerPage currentDay={currentDay} ships={ships} setShips={setShips} />
+            <ProtectedRoute role="Scheduler" userRole={userRole}>
+              <SchedulerPage currentDay={currentDay} ships={ships} setShips={setShips} />
+            </ProtectedRoute>
           } />
         </Routes>
       </div>

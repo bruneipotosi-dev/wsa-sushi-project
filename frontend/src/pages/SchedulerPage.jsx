@@ -77,6 +77,7 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
 
   const pendingShips = USE_MOCK ? ships.filter(s => s.status === "Pending") : apiData.ships
   const berths        = USE_MOCK ? BERTHS : apiData.berths
+  const overdueShips  = pendingShips.filter(ship => ship.arrivalDay <= currentDay)
 
   // Calcola active + upcoming (piu vicino) + finestra a 7 giorni per una banchina
   const getBerthState = (berth) => {
@@ -247,6 +248,17 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
             &nbsp;·&nbsp; Clicca o trascina su una banchina <strong>{selectedShip.size}</strong>
           </span>
           <button onClick={() => setSelectedShip(null)}>✕ Annulla</button>
+        </div>
+      )}
+
+      {overdueShips.length > 0 && (
+        <div className="warning-banner">
+          <div className="warning-icon">⚠️</div>
+          <div className="warning-content">
+            <strong>Attenzione:</strong> ci sono <strong>{overdueShips.length}</strong> navi in attesa già arrivate.
+            <br />
+            <small>Assegnale prima di proseguire con il giorno operativo.</small>
+          </div>
         </div>
       )}
 

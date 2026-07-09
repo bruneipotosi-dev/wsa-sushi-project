@@ -1,5 +1,5 @@
 // src/pages/OperatorePages.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createShip, getShips } from "../services/api";
 import "./OperatorePages.scss";
 
@@ -19,18 +19,18 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
   const [error, setError]     = useState(null);
   const [success, setSuccess] = useState(null);
 
-  const loadShips = async () => {
+  const loadShips = useCallback(async () => {
     try {
       const data = await getShips();
       setShips(data);
     } catch (err) {
       console.error('Errore caricamento navi:', err);
     }
-  };
+  }, [setShips]);
 
   useEffect(() => {
     loadShips();
-  }, []);
+  }, [loadShips]);
 
   const pending  = ships.filter(s => s.status === "Pending");
   const assigned = ships.filter(s => s.status === "Assigned");
