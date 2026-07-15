@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -7,7 +8,7 @@
 namespace BlueHarbor.API.Migrations
 {
     /// <inheritdoc />
-    public partial class AddSystemState : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,11 +20,29 @@ namespace BlueHarbor.API.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
-                    Size = table.Column<string>(type: "TEXT", nullable: false)
+                    Size = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Berths", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PortLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Action = table.Column<string>(type: "TEXT", nullable: false),
+                    Details = table.Column<string>(type: "TEXT", nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    DepartureDay = table.Column<int>(type: "INTEGER", nullable: false),
+                    ArrivalDay = table.Column<int>(type: "INTEGER", nullable: false),
+                    Duration = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PortLogs", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -33,10 +52,10 @@ namespace BlueHarbor.API.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    Size = table.Column<string>(type: "TEXT", nullable: false),
+                    Size = table.Column<int>(type: "INTEGER", nullable: false),
                     ArrivalDay = table.Column<int>(type: "INTEGER", nullable: false),
                     OccupationDuration = table.Column<int>(type: "INTEGER", nullable: false),
-                    Status = table.Column<string>(type: "TEXT", nullable: false),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false),
                     Notes = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true)
                 },
                 constraints: table =>
@@ -90,14 +109,14 @@ namespace BlueHarbor.API.Migrations
                 columns: new[] { "Id", "Name", "Size" },
                 values: new object[,]
                 {
-                    { 1, "XL-1", "XL" },
-                    { 2, "L-1", "L" },
-                    { 3, "M-1", "M" },
-                    { 4, "M-2", "M" },
-                    { 5, "S-1", "S" },
-                    { 6, "S-2", "S" },
-                    { 7, "S-3", "S" },
-                    { 8, "S-4", "S" }
+                    { 1, "XL-1", 1 },
+                    { 2, "L-1", 2 },
+                    { 3, "M-1", 3 },
+                    { 4, "M-2", 3 },
+                    { 5, "S-1", 4 },
+                    { 6, "S-2", 4 },
+                    { 7, "S-3", 4 },
+                    { 8, "S-4", 4 }
                 });
 
             migrationBuilder.InsertData(
@@ -106,14 +125,25 @@ namespace BlueHarbor.API.Migrations
                 values: new object[] { 1, 1 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Assignments_BerthId",
-                table: "Assignments",
-                column: "BerthId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Assignments_ShipId",
                 table: "Assignments",
                 column: "ShipId");
+
+            migrationBuilder.CreateIndex(
+                name: "UX_Assignments_BerthId_StartDay_EndDay",
+                table: "Assignments",
+                columns: new[] { "BerthId", "StartDay", "EndDay" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Ships_ArrivalDay",
+                table: "Ships",
+                column: "ArrivalDay");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Ships_Status",
+                table: "Ships",
+                column: "Status");
         }
 
         /// <inheritdoc />
@@ -121,6 +151,9 @@ namespace BlueHarbor.API.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Assignments");
+
+            migrationBuilder.DropTable(
+                name: "PortLogs");
 
             migrationBuilder.DropTable(
                 name: "SystemStates");

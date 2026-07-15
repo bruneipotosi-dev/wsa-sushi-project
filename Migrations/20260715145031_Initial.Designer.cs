@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlueHarbor.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260708110232_AddIndexesAndConstraints")]
-    partial class AddIndexesAndConstraints
+    [Migration("20260715145031_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,9 +61,8 @@ namespace BlueHarbor.API.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Size")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Size")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -74,49 +73,49 @@ namespace BlueHarbor.API.Migrations
                         {
                             Id = 1,
                             Name = "XL-1",
-                            Size = "XL"
+                            Size = 1
                         },
                         new
                         {
                             Id = 2,
                             Name = "L-1",
-                            Size = "L"
+                            Size = 2
                         },
                         new
                         {
                             Id = 3,
                             Name = "M-1",
-                            Size = "M"
+                            Size = 3
                         },
                         new
                         {
                             Id = 4,
                             Name = "M-2",
-                            Size = "M"
+                            Size = 3
                         },
                         new
                         {
                             Id = 5,
                             Name = "S-1",
-                            Size = "S"
+                            Size = 4
                         },
                         new
                         {
                             Id = 6,
                             Name = "S-2",
-                            Size = "S"
+                            Size = 4
                         },
                         new
                         {
                             Id = 7,
                             Name = "S-3",
-                            Size = "S"
+                            Size = 4
                         },
                         new
                         {
                             Id = 8,
                             Name = "S-4",
-                            Size = "S"
+                            Size = 4
                         });
                 });
 
@@ -172,13 +171,11 @@ namespace BlueHarbor.API.Migrations
                     b.Property<int>("OccupationDuration")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Size")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Size")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
