@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlueHarbor.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260715152230_ResetDB")]
-    partial class ResetDB
+    [Migration("20260715152637_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
