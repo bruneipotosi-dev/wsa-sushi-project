@@ -24,6 +24,16 @@ export const getShips = (status = null) =>
 export const createShip = (shipData) =>
   request("/ships", { method: "POST", body: JSON.stringify(shipData) });
 
+// --- NUOVE FUNZIONI PER MODIFICA ED ELIMINA ---
+export const updateShip = (id, shipData) =>
+  request(`/ships/${id}`, { 
+    method: "PUT", 
+    body: JSON.stringify(shipData) 
+  });
+
+export const deleteShip = (id) =>
+  request(`/ships/${id}`, { method: "DELETE" });
+
 // BANCHINE
 export const getBerths = () => request("/berths");
 

@@ -15,7 +15,6 @@
   font-family: 'IBM Plex Sans', sans-serif;
   user-select: none;
 
-  // foco da tastiera coerente con SchedulerPage/MainPage
   :focus-visible {
     outline: 3px solid $gold;
     outline-offset: 3px;
@@ -23,37 +22,41 @@
   }
 }
 
-/* left: logo + brand */
 .bh-left {
   display: flex;
   align-items: center;
   gap: 20px;
   min-width: 0;
 }
+
 .bh-brand {
   display: flex;
   align-items: center;
   gap: 13px;
   min-width: 0;
 }
-.bh-logo-mark {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
+
+/* LOGO MSC - NUOVO */
+.bh-logo {
   height: 38px;
-  border-radius: 9px;
-  background: rgba(201, 168, 76, 0.12);
-  border: 1px solid rgba(201, 168, 76, 0.35);
-  color: #C9A84C;
+  width: auto;
   flex: none;
+  display: block;
+  border-radius: 8px;
 }
+
+/* NASCONDI l'icona Anchor */
+.bh-logo-mark {
+  display: none;
+}
+
 .bh-divider {
   width: 1px;
   height: 24px;
   background: rgba(255, 255, 255, 0.14);
   flex: none;
 }
+
 .bh-brand-title {
   font-size: 18px;
   font-weight: 600;
@@ -70,6 +73,7 @@
     margin-left: 7px;
   }
 }
+
 .bh-day-pill {
   display: flex;
   align-items: center;
@@ -81,10 +85,12 @@
   flex: none;
   white-space: nowrap;
 }
+
 .bh-day-label {
   font-size: 15.5px;
   color: #9a9a9a;
 }
+
 .bh-day-num {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 18px;
@@ -92,13 +98,13 @@
   color: #ededed;
 }
 
-/* center: nav links */
 .bh-links {
   display: flex;
   align-items: center;
   gap: 6px;
   flex: none;
 }
+
 .bh-link {
   position: relative;
   padding: 9px 16px;
@@ -115,6 +121,7 @@
     background: rgba(255, 255, 255, 0.04);
   }
 }
+
 .bh-link--active {
   font-weight: 500;
   color: #ededed;
@@ -136,13 +143,13 @@
   }
 }
 
-/* right: status + actions */
 .bh-right {
   display: flex;
   align-items: center;
   gap: 12px;
   flex: none;
 }
+
 .bh-btn-primary {
   display: flex;
   align-items: center;
@@ -163,6 +170,7 @@
     background: #ffffff;
   }
 }
+
 .bh-btn-icon {
   display: flex;
   align-items: center;
@@ -186,7 +194,6 @@
   }
 }
 
-/* menu hamburger — visibile solo sotto i 900px, sostituisce i link inline */
 .bh-menu-btn {
   display: none;
   align-items: center;
@@ -230,14 +237,15 @@
   }
 }
 
-// telefoni stretti — logo, day-pill, bottoni e hamburger vanno in crisi di
-// spazio con le dimensioni ingrandite: si riduce padding/gap e si nasconde
-// la label "Giorno" (resta icona + numero) per non far traboccare l'header
 @media (max-width: 700px) {
   .bh-header { padding: 14px 16px; gap: 12px; }
   .bh-left { gap: 12px; }
   .bh-brand { gap: 9px; }
-  .bh-logo-mark { width: 32px; height: 32px; border-radius: 8px; }
+  
+  /* Logo più piccolo su mobile */
+  .bh-logo { height: 32px; }
+  
+  .bh-logo-mark { display: none; }
   .bh-divider { height: 20px; }
   .bh-brand-title { font-size: 15.5px; }
   .bh-right { gap: 8px; }

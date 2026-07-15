@@ -1,7 +1,5 @@
-// src/pages/OperatorePages.scss
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
-// Design Tokens (allineati a SchedulerPage)
 $bg-page: #161616;
 $bg-card: #1c1c1c;
 $bg-card-alt: #1a1a1a;
@@ -15,48 +13,65 @@ $accent-gold: #C9A84C;
 $accent-blue: #4d8df6;
 $accent-green: #46c08a;
 $accent-coral: #e07a5f;
+$accent-red: #ef4444;
 
 .operatore-page {
   flex: 1;
-  min-height: 0; /* fondamentale in flexbox per permettere lo scroll interno */
-  overflow-y: auto;
+  min-height: 0;
+  overflow: hidden;
   background: $bg-page;
-  padding: 0 28px 44px;
+  padding: 16px 36px 20px;
   font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
 }
 
-// ─── Section Header ─────────────────────────────────────────────
 .section-header {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  padding: 30px 0 22px;
-  gap: 24px;
+  padding: 0 0 10px 0;
+  gap: 20px;
   flex-wrap: wrap;
-  max-width: 1480px;
+  max-width: 100%;
   margin: 0 auto;
   width: 100%;
+  flex: none;
+}
+
+.section-header-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.operatore-logo {
+  height: 34px;
+  width: auto;
+  flex: none;
 }
 
 .section-eyebrow {
-  font-size: 11px;
-  letter-spacing: 1.8px;
+  font-size: 12px;
+  letter-spacing: 1.6px;
   color: $text-dim;
   font-weight: 400;
   text-transform: uppercase;
-  margin-bottom: 9px;
+  margin-bottom: 4px;
   font-family: 'IBM Plex Mono', monospace;
 }
 
 .section-title {
   margin: 0;
-  font-size: 27px;
+  font-size: 34px;
   font-weight: 500;
-  letter-spacing: -0.4px;
+  letter-spacing: -0.5px;
   color: #fafafa;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .section-pulse {
@@ -72,33 +87,32 @@ $accent-coral: #e07a5f;
   50% { opacity: 0.3; }
 }
 
-// ─── Stats ──────────────────────────────────────────────────
 .stats-container {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
 .stat-box {
-  min-width: 118px;
-  padding: 12px 16px;
-  border-radius: 9px;
+  min-width: 160px;
+  padding: 16px 20px;
+  border-radius: 11px;
   background: $bg-card;
   border: 1px solid $border-subtle;
 }
 
 .stat-label {
-  font-size: 10px;
-  letter-spacing: 1.2px;
+  font-size: 14.5px;
+  letter-spacing: 1.4px;
   color: $text-dim;
   text-transform: uppercase;
   font-family: 'IBM Plex Mono', monospace;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .stat-value {
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 28px;
+  font-size: 42.5px;
   font-weight: 500;
   line-height: 1;
   color: $text-primary;
@@ -116,61 +130,65 @@ $accent-coral: #e07a5f;
   color: $accent-green;
 }
 
-// ─── Layout principale ──────────────────────────────────────
 .operatore-layout {
   display: grid;
-  grid-template-columns: 380px 1fr;
-  gap: 20px;
+  grid-template-columns: 400px 1fr;
+  gap: 24px;
   align-items: start;
-  max-width: 1480px;
+  max-width: 100%;
   margin: 0 auto;
   width: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
-// ─── Form Card ─────────────────────────────────────────────
 .form-card {
   background: $bg-card;
   border: 1px solid $border-subtle;
-  border-radius: 11px;
-  padding: 20px;
+  border-radius: 12px;
+  padding: 24px 28px;
   position: sticky;
-  top: 20px;
+  top: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 
   h3 {
-    margin: 0 0 1.25rem;
+    margin: 0 0 1.4rem;
     color: $text-primary;
-    font-size: 15px;
+    font-size: 20px;
     font-weight: 500;
-    letter-spacing: -0.2px;
+    letter-spacing: -0.3px;
   }
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.1rem;
 
   label {
     display: block;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.5rem;
     color: $text-muted;
-    font-size: 0.85rem;
+    font-size: 1rem;
     font-weight: 400;
   }
 
   input, textarea {
     width: 100%;
-    padding: 10px 12px;
+    padding: 14px 18px;
     background: $bg-page;
     border: 1px solid $border-input;
-    border-radius: 8px;
+    border-radius: 10px;
     color: $text-primary;
     font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 0.95rem;
+    font-size: 1.1rem;
     box-sizing: border-box;
     transition: border-color 0.15s ease;
     resize: vertical;
 
     &::placeholder {
       color: $text-input;
+      font-size: 1.05rem;
     }
 
     &:focus {
@@ -185,14 +203,9 @@ $accent-coral: #e07a5f;
 
   textarea {
     font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100px;
+    flex: 1;
   }
-}
-
-.form-hint {
-  font-size: 0.75rem;
-  color: $text-input;
-  margin-bottom: 1rem;
-  line-height: 1.5;
 }
 
 .btn-submit {
@@ -200,30 +213,32 @@ $accent-coral: #e07a5f;
   background: $accent-gold;
   color: #161616;
   border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
+  padding: 15px 22px;
+  border-radius: 10px;
   font-family: 'IBM Plex Sans', sans-serif;
   font-weight: 600;
-  font-size: 13.5px;
+  font-size: 17px;
   cursor: pointer;
   transition: all 0.15s ease;
+  margin-top: auto;
 
   &:hover:not(:disabled) {
     background: #dbb95a;
+    transform: scale(1.01);
   }
 
   &:disabled {
     opacity: 0.4;
     cursor: not-allowed;
+    transform: none;
   }
 }
 
-// ─── Alert ─────────────────────────────────────────────────
 .alert {
-  padding: 10px 14px;
-  border-radius: 8px;
+  padding: 12px 16px;
+  border-radius: 9px;
   margin-bottom: 1rem;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   line-height: 1.5;
 
   &-error {
@@ -239,79 +254,98 @@ $accent-coral: #e07a5f;
   }
 }
 
-// ─── Ships Card ────────────────────────────────────────────
 .ships-card {
   background: $bg-card;
   border: 1px solid $border-subtle;
-  border-radius: 11px;
+  border-radius: 12px;
   overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 
   .ships-card-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 18px;
+    padding: 14px 18px;
     border-bottom: 1px solid $border-subtle;
+    flex: none;
 
     h3 {
       margin: 0;
       color: $text-primary;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 500;
       letter-spacing: -0.2px;
     }
 
     .ships-count {
-      font-size: 11px;
+      font-size: 12px;
       color: $text-dim;
       font-family: 'IBM Plex Mono', monospace;
     }
   }
 }
 
-// ─── Ships List ─────────────────────────────────────────────
 .ships-list {
-  padding: 10px;
+  padding: 12px 14px 14px 14px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  max-height: 600px;
+  gap: 12px;
+  flex: 1;
   overflow-y: auto;
+  min-height: 0;
 }
 
 .ship-card {
   background: $bg-card-alt;
   border: 1px solid $border-subtle;
-  border-radius: 10px;
-  padding: 13px 14px;
+  border-radius: 11px;
+  padding: 18px 22px;
   transition: all 0.15s ease;
+  flex: none;
 
   &:hover {
     border-color: rgba(255, 255, 255, 0.16);
     background: #1f1f1f;
   }
+
+  &--editing {
+    border-color: $accent-blue;
+    background: rgba(77, 141, 246, 0.05);
+  }
 }
 
-.ship-main {
+// --- ROW: nome + azioni ---
+.ship-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.ship-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
   flex-wrap: wrap;
+  flex: 1;
 }
 
 .ship-name {
-  font-size: 14.5px;
+  font-size: 19px;
   font-weight: 500;
   color: $text-primary;
 }
 
 .ship-chip {
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.3px;
-  padding: 2px 7px;
-  border-radius: 5px;
+  padding: 3px 10px;
+  border-radius: 6px;
   color: #a3a3a3;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.09);
@@ -320,11 +354,11 @@ $accent-coral: #e07a5f;
 
 .ship-status {
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.8px;
-  padding: 3px 8px;
-  border-radius: 5px;
+  letter-spacing: 0.6px;
+  padding: 4px 13px;
+  border-radius: 6px;
   flex: none;
 
   &.status-pending {
@@ -346,31 +380,178 @@ $accent-coral: #e07a5f;
   }
 }
 
-.ship-details {
+// --- AZIONI NAVI (centrate) ---
+.ship-actions {
   display: flex;
   gap: 8px;
-  margin-top: 8px;
-  font-size: 11px;
-  color: $text-dim;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-ship-edit,
+.btn-ship-delete {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 22px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+  background: transparent;
+
+  &:hover:not(:disabled) {
+    transform: scale(1.15);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+.btn-ship-edit {
+  background: rgba(77, 141, 246, 0.08);
+  border-color: rgba(77, 141, 246, 0.12);
+
+  &:hover:not(:disabled) {
+    background: rgba(77, 141, 246, 0.2);
+  }
+}
+
+.btn-ship-delete {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.12);
+
+  &:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 0.2);
+  }
+}
+
+.ship-details {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: $text-muted;
   font-family: 'IBM Plex Mono', monospace;
   flex-wrap: wrap;
   align-items: center;
 
   .ship-notes {
-    color: $text-muted;
+    color: $text-primary;
     font-style: italic;
   }
 }
 
-// ─── Empty State ────────────────────────────────────────────
+// --- MODALITA' MODIFICA ---
+.ship-edit-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ship-edit-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.ship-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  label {
+    font-size: 11px;
+    color: $text-muted;
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  input, select, textarea {
+    padding: 8px 12px;
+    background: $bg-page;
+    border: 1px solid $border-input;
+    border-radius: 6px;
+    color: $text-primary;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: rgba(77, 141, 246, 0.5);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+    }
+  }
+
+  &--full {
+    grid-column: 1 / -1;
+  }
+}
+
+.ship-edit-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.btn-edit-save,
+.btn-edit-cancel {
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.btn-edit-save {
+  background: $accent-blue;
+  color: #ffffff;
+  flex: 1;
+
+  &:hover:not(:disabled) {
+    background: #6aa0ff;
+  }
+}
+
+.btn-edit-cancel {
+  background: rgba(255, 255, 255, 0.05);
+  color: $text-muted;
+  border: 1px solid $border-input;
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    color: $text-primary;
+  }
+}
+
 .empty-state {
   text-align: center;
-  padding: 50px 18px;
+  padding: 40px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 12px;
+  flex: 1;
 
   .empty-icon {
     font-size: 36px;
@@ -380,17 +561,16 @@ $accent-coral: #e07a5f;
 
   p {
     margin: 0;
-    font-size: 13.5px;
+    font-size: 14px;
     color: $text-muted;
     line-height: 1.6;
   }
 }
 
-// ─── Scrollbar ──────────────────────────────────────────────
 .operatore-page::-webkit-scrollbar,
 .ships-list::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 .operatore-page::-webkit-scrollbar-track,
@@ -401,18 +581,30 @@ $accent-coral: #e07a5f;
 .operatore-page::-webkit-scrollbar-thumb,
 .ships-list::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
-// ─── Responsive ─────────────────────────────────────────────
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
   .operatore-layout {
     grid-template-columns: 1fr;
+    height: auto;
+    min-height: auto;
+    max-width: 800px;
   }
 
   .form-card {
     position: relative;
     top: 0;
+    height: auto;
+  }
+
+  .ships-card {
+    height: auto;
+    max-height: 400px;
+  }
+
+  .ships-list {
+    max-height: 300px;
   }
 }
 
@@ -420,7 +612,7 @@ $accent-coral: #e07a5f;
   .section-header {
     flex-direction: column;
     align-items: stretch;
-    padding: 20px 0 16px;
+    padding: 0 0 12px 0;
   }
 
   .stats-container {
@@ -430,10 +622,31 @@ $accent-coral: #e07a5f;
   .stat-box {
     flex: 1;
     min-width: 80px;
+    padding: 12px 14px;
+  }
+
+  .stat-value {
+    font-size: 28px;
+  }
+
+  .stat-label {
+    font-size: 11px;
   }
 
   .operatore-page {
-    padding: 0 16px 30px;
+    padding: 12px 16px 16px;
+  }
+
+  .section-title {
+    font-size: 28px;
+  }
+
+  .section-eyebrow {
+    font-size: 11px;
+  }
+
+  .ship-edit-fields {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -441,7 +654,7 @@ $accent-coral: #e07a5f;
   .stats-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    gap: 6px;
   }
 
   .stat-box {
@@ -451,5 +664,56 @@ $accent-coral: #e07a5f;
 
   .stat-value {
     font-size: 22px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+  }
+
+  .section-title {
+    font-size: 22px;
+  }
+
+  .operatore-layout {
+    gap: 12px;
+  }
+
+  .form-card {
+    padding: 16px;
+  }
+
+  .ship-card {
+    padding: 14px 16px;
+  }
+
+  .ship-name {
+    font-size: 17px;
+  }
+
+  .ship-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .ship-actions {
+    justify-content: center;
+  }
+
+  .btn-ship-edit,
+  .btn-ship-delete {
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
+  }
+
+  .ship-edit-actions {
+    flex-direction: column;
+  }
+
+  .btn-edit-save,
+  .btn-edit-cancel {
+    width: 100%;
+    text-align: center;
   }
 }
