@@ -11,6 +11,7 @@ obj/
 *.db-journal
 *.db-wal
 *.db-shm
+*.db
 Data/blueharbor.db
 
 # Node / frontend
