@@ -1,7 +1,8 @@
 // src/components/Navbar.jsx
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Anchor, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import mscLogo from "../assets/msc-logo.png";
 import './Navbar.scss';
 
 const ROLE_NAV_ITEMS = {
@@ -30,9 +31,7 @@ const Navbar = ({ currentDay, onNextDay, onReset, userRole }) => {
     <header className="bh-header">
       <div className="bh-left">
         <div className="bh-brand">
-          <span className="bh-logo-mark">
-            <Anchor size={18} strokeWidth={2.1} />
-          </span>
+          <img src={mscLogo} alt="MSC" className="bh-logo" />
           <span className="bh-divider" />
           <div className="bh-brand-title">
             BlueHarbor<span>Terminal</span>
