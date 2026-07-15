@@ -39,6 +39,7 @@ public class AppDbContext : DbContext
             new Berth { Id = 8, Name = "S-4",  Size = ShipSize.S  }
         );
 
+<<<<<<< Updated upstream
         modelBuilder.Entity<SystemState>().HasData(
             new SystemState { Id = 1, CurrentDay = 1 }
         );
@@ -59,6 +60,14 @@ public class AppDbContext : DbContext
             .HasIndex(s => s.ArrivalDay)
             .HasDatabaseName("IX_Ships_ArrivalDay");
 
+=======
+
+        // NOTA DI DESIGN: Questo indice UNIQUE garantisce l'unicità solo per duplicati ESATTI dello slot temporale
+        // (stessa banchina, stesso giorno d'inizio e stessa fine). Non previene la sovrapposizione parziale 
+        // o l'overlap temporale (es. giorno 5-10 e giorno 7-12 sulla stessa banchina). 
+        // La reale prevenzione degli overlap temporali è delegata alla logica applicativa (a livello di codice) 
+        // dentro 'AssignmentService.AssignShipToBerthAsync' tramite controlli transazionali con AnyAsync.
+>>>>>>> Stashed changes
         modelBuilder.Entity<Assignment>()
             .HasIndex(a => new { a.BerthId, a.StartDay, a.EndDay })
             .IsUnique()

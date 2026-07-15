@@ -19,8 +19,11 @@ public class BerthsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetBerths()
     {
-        var berths = await _db.Berths.ToListAsync();
+        // 1. Recuperiamo prima di tutto il giorno corrente virtuale del porto
+        var systemState = await _db.SystemStates.FirstOrDefaultAsync();
+        int currentDay = systemState?.CurrentDay ?? 1;
 
+<<<<<<< Updated upstream
         var assignments = await _db.Assignments
             .Include(a => a.Ship)
             .ToListAsync();
@@ -52,6 +55,30 @@ public class BerthsController : ControllerBase
                 }
             };
         });
+=======
+        // 2. Costruiamo un'unica query SQL efficiente tramite LINQ-to-SQL.
+        var result = await _db.Berths
+            .Select(b => new
+            {
+                b.Id,
+                b.Name,
+                b.Size,
+                // Cerchiamo l'assegnazione attiva oggi per questa specifica banchina
+                currentAssignment = _db.Assignments
+                    .Where(a => a.BerthId == b.Id && a.StartDay <= currentDay && currentDay <= a.EndDay)
+                    .Select(a => new
+                    {
+                        a.Id,
+                        a.StartDay,
+                        a.EndDay,
+                        shipName   = a.Ship!.Name,
+                        shipSize   = a.Ship.Size,
+                        shipStatus = a.Ship.Status
+                    })
+                    .FirstOrDefault() // Prende l'unica attiva oggi, altrimenti null
+            })
+            .ToListAsync(); // Esegue una sola query SQL sul database!
+>>>>>>> Stashed changes
 
         return Ok(result);
     }
