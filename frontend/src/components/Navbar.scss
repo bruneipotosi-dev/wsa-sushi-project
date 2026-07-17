@@ -10,13 +10,13 @@
   justify-content: space-between;
   gap: 20px;
   padding: 22px 30px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  background: #131313;
+  border-bottom: 1px solid rgba(var(--overlay-rgb), 0.07);
+  background: var(--bg-header);
   font-family: 'IBM Plex Sans', sans-serif;
   user-select: none;
 
   :focus-visible {
-    outline: 3px solid $gold;
+    outline: 3px solid $gold-text;
     outline-offset: 3px;
     border-radius: 6px;
   }
@@ -53,7 +53,7 @@
 .bh-divider {
   width: 1px;
   height: 24px;
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(var(--overlay-rgb), 0.14);
   flex: none;
 }
 
@@ -61,7 +61,7 @@
   font-size: 18px;
   font-weight: 600;
   letter-spacing: -0.1px;
-  color: #fafafa;
+  color: var(--text-heading);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -69,7 +69,7 @@
 
   span {
     font-weight: 400;
-    color: #7e7e7e;
+    color: var(--text-quaternary);
     margin-left: 7px;
   }
 }
@@ -80,22 +80,22 @@
   gap: 9px;
   padding: 8px 16px;
   border-radius: 9px;
-  background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-surface-alt);
+  border: 1px solid rgba(var(--overlay-rgb), 0.08);
   flex: none;
   white-space: nowrap;
 }
 
 .bh-day-label {
   font-size: 15.5px;
-  color: #9a9a9a;
+  color: var(--text-secondary);
 }
 
 .bh-day-num {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 18px;
   font-weight: 600;
-  color: #ededed;
+  color: var(--text-primary);
 }
 
 .bh-links {
@@ -111,20 +111,20 @@
   border-radius: 9px;
   font-size: 17px;
   font-weight: 400;
-  color: #8a8a8a;
+  color: var(--text-tertiary);
   text-decoration: none;
   transition: all 0.15s ease;
   white-space: nowrap;
 
   &:hover {
-    color: #ededed;
-    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-primary);
+    background: rgba(var(--overlay-rgb), 0.04);
   }
 }
 
 .bh-link--active {
   font-weight: 500;
-  color: #ededed;
+  color: var(--text-primary);
   background: transparent;
   position: relative;
 
@@ -135,7 +135,7 @@
     right: 16px;
     bottom: -8px;
     height: 2px;
-    background: #4d8df6;
+    background: var(--accent-blue);
   }
 
   &:hover {
@@ -161,13 +161,13 @@
   font-family: 'IBM Plex Sans', sans-serif;
   font-size: 17px;
   font-weight: 500;
-  color: #161616;
-  background: #ededed;
+  color: var(--btn-invert-text);
+  background: var(--btn-invert-bg);
   transition: all 0.15s ease;
   white-space: nowrap;
 
   &:hover {
-    background: #ffffff;
+    background: var(--btn-invert-bg-hover);
   }
 }
 
@@ -181,16 +181,16 @@
   font-family: 'IBM Plex Sans', sans-serif;
   font-size: 17px;
   font-weight: 500;
-  color: #8a8a8a;
+  color: var(--text-tertiary);
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(var(--overlay-rgb), 0.1);
   transition: all 0.15s ease;
   flex: none;
   white-space: nowrap;
 
   &:hover {
-    border-color: rgba(255, 255, 255, 0.2);
-    color: #ededed;
+    border-color: rgba(var(--overlay-rgb), 0.2);
+    color: var(--text-primary);
   }
 }
 
@@ -201,13 +201,13 @@
   width: 38px;
   height: 38px;
   border-radius: 9px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(var(--overlay-rgb), 0.1);
   background: transparent;
-  color: #ededed;
+  color: var(--text-primary);
   cursor: pointer;
   flex: none;
 
-  &:hover { border-color: rgba(255, 255, 255, 0.25); }
+  &:hover { border-color: rgba(var(--overlay-rgb), 0.25); }
 }
 
 .bh-mobile-panel {
@@ -227,9 +227,9 @@
     flex-direction: column;
     gap: 2px;
     padding: 10px 16px 16px;
-    background: #131313;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+    background: var(--bg-header);
+    border-bottom: 1px solid rgba(var(--overlay-rgb), 0.07);
+    box-shadow: var(--shadow-header-mobile);
 
     .bh-link {
       padding: 12px 14px;

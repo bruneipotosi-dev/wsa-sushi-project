@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import { User, CalendarDays, ArrowRight } from "lucide-react"
+import ThemeToggle from "../components/ThemeToggle"
 import "./MainPage.scss"
 
 export default function MainPage({ onRoleSelect }) {
@@ -15,6 +16,8 @@ export default function MainPage({ onRoleSelect }) {
       {/* ambient background */}
       <div className="bh-ambient" />
       <div className="bh-vignette" />
+
+      <ThemeToggle className="bh-theme-toggle" />
 
       <main className="bh-hero">
         <div className="bh-eyebrow">

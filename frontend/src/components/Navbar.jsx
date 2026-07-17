@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import mscLogo from "../assets/msc-logo.png";
+import ThemeToggle from './ThemeToggle';
 import './Navbar.scss';
 
 const ROLE_NAV_ITEMS = {
@@ -61,7 +62,7 @@ const Navbar = ({ currentDay, onNextDay, onReset, userRole }) => {
           <span className="bh-day-num">{currentDay}</span>
         </div>
         <button className="bh-btn-primary" onClick={onNextDay}>
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#161616" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 12h14M13 6l6 6-6 6" />
           </svg>
           Next Day
@@ -72,6 +73,8 @@ const Navbar = ({ currentDay, onNextDay, onReset, userRole }) => {
           </svg>
           Reset
         </button>
+        <span className="bh-divider" />
+        <ThemeToggle />
       </div>
 
       <button
