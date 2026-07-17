@@ -1,6 +1,46 @@
-@BlueHarbor.API_HostAddress = http://localhost:5099
+@baseUrl = http://localhost:5000/api
 
-GET {{BlueHarbor.API_HostAddress}}/weatherforecast/
-Accept: application/json
+### Giorno corrente
+GET {{baseUrl}}/day
 
-###
+### Avanza il giorno
+POST {{baseUrl}}/advance-day
+
+### Reset completo del sistema
+POST {{baseUrl}}/reset
+
+### Lista banchine
+GET {{baseUrl}}/berths
+
+### Lista navi
+GET {{baseUrl}}/ships
+
+### Lista navi filtrate per stato
+GET {{baseUrl}}/ships?status=Pending
+
+### Registra una nuova nave
+POST {{baseUrl}}/ships
+Content-Type: application/json
+
+{
+  "name": "MSC Test",
+  "size": "M",
+  "arrivalDay": 1,
+  "occupationDuration": 5,
+  "status": "Pending"
+}
+
+### Lista assegnazioni
+GET {{baseUrl}}/assignments
+
+### Crea assegnazione
+POST {{baseUrl}}/assignments
+Content-Type: application/json
+
+{
+  "shipId": 1,
+  "berthId": 3
+}
+
+### Storico PortLog
+GET {{baseUrl}}/portlogs

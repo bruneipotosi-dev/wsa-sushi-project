@@ -2,6 +2,8 @@ using BlueHarbor.API.Data;
 using BlueHarbor.API.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using BlueHarbor.API.Middleware;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,21 @@ builder.Services.AddControllers()
     });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+// Normalizza errori di validazione
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var messages = context.ModelState.Values
+            .SelectMany(v => v.Errors)
+            .Select(e => e.ErrorMessage);
+        return new BadRequestObjectResult(new { error = string.Join("; ", messages) });
+    };
+});
+
+// Gestore globale eccezioni
+builder.Services.AddExceptionHandler<ApiExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 // Collega il database SQLite
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -32,6 +49,7 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+app.UseExceptionHandler();
 
 // Crea il database automaticamente all'avvio
 using (var scope = app.Services.CreateScope())
