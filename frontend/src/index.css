@@ -153,6 +153,21 @@
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Gli elementi interni delle icone SVG (lucide-react) non hanno mai
+   background/border-color propri: la transizione ereditata da "*" non fa
+   nulla di visibile ma costringe il browser a valutarla su ogni nodo extra
+   che ogni icona introduce. La disattiviamo qui per ridurre il lavoro di
+   style recalculation quando il tema cambia. */
+svg, svg * {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none;
+  }
+}
+
 html, body {
   width: 100%;
   height: 100%;
