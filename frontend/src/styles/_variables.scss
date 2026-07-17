@@ -1,1 +1,4 @@
-$gold: #C9A84C;
+// $gold resolves to a CSS custom property so every consumer of this
+// variable automatically follows the active theme (see src/index.css).
+$gold: var(--accent-gold);
+$gold-text: var(--accent-gold-text);

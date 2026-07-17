@@ -1,13 +1,164 @@
+/* ==========================================================================
+   Design tokens — Dark / Light theme system
+   Every color used across the app is expressed as a CSS custom property so
+   both palettes stay in one place. "-rgb" variables hold comma-separated
+   channels for use inside rgba(var(--x-rgb), alpha) where alpha compositing
+   is needed. Text-only accent variants (e.g. --accent-gold-text) are tuned
+   separately from their fill counterparts because a saturated accent that
+   reads fine on a dark card fails WCAG AA as small text on a light card —
+   the fill stays brand-accurate, the text variant is darkened to keep
+   contrast >= 4.5:1 on light backgrounds.
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* surfaces */
+  --bg-canvas: #0d0f14;
+  --bg-page: #161616;
+  --bg-header: #131313;
+  --bg-surface: #1c1c1c;
+  --bg-surface-alt: #1a1a1a;
+  --bg-surface-hover: #1f1f1f;
+  --bg-elevated: #1e1e1e;
+  --bg-input: #161616;
+  --gradient-card: linear-gradient(180deg, #1c1c1c, #171717);
+
+  /* text */
+  --text-heading: #fafafa;
+  --text-primary: #ededed;
+  --text-secondary: #9a9a9a;
+  --text-tertiary: #8a8a8a;
+  --text-quaternary: #6e6e6e;
+  --text-placeholder: #565656;
+  --text-chip: #a3a3a3;
+  --text-meta: #bdbdbd;
+
+  /* overlay used for hairline borders / hover tints — inverts per theme */
+  --overlay-rgb: 255, 255, 255;
+  --shadow-rgb: 0, 0, 0;
+  --overlay-backdrop: rgba(10, 10, 10, 0.7);
+
+  /* accents — fill stays constant across themes, "-text" is contrast-tuned */
+  --accent-gold: #c9a84c;
+  --accent-gold-rgb: 201, 168, 76;
+  --accent-gold-text: #c9a84c;
+  --accent-gold-hover: #dbb95a;
+
+  --accent-blue: #4d8df6;
+  --accent-blue-rgb: 77, 141, 246;
+  --accent-blue-text: #4d8df6;
+  --accent-blue-hover: #6aa0ff;
+
+  --accent-green: #46c08a;
+  --accent-green-rgb: 70, 192, 138;
+  --accent-green-text: #46c08a;
+  --accent-green-icon: #5fd6a2;
+
+  --accent-coral: #e07a5f;
+  --accent-coral-rgb: 224, 122, 95;
+  --accent-coral-text: #f5b8a8;
+
+  --accent-red: #ef4444;
+  --accent-red-rgb: 239, 68, 68;
+  --accent-red-text: #f87171;
+
+  /* inverted "chip" button (Next Day) */
+  --btn-invert-bg: #ededed;
+  --btn-invert-bg-hover: #ffffff;
+  --btn-invert-text: #161616;
+
+  /* shadows — full shorthand values so alpha can be tuned per theme */
+  --shadow-header-mobile: 0 16px 32px rgba(0, 0, 0, 0.4);
+  --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.6);
+  --shadow-toast: 0 16px 44px rgba(0, 0, 0, 0.5);
+  --shadow-vignette: inset 0 0 200px 20px rgba(0, 0, 0, 0.4);
+  --shadow-role-card: 0 14px 40px rgba(0, 0, 0, 0.32);
+  --shadow-role-card-hover-green: 0 24px 56px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(70, 192, 138, 0.18);
+  --shadow-role-card-hover-blue: 0 24px 56px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(77, 141, 246, 0.18);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  /* surfaces — warm off-white canvas, clean white cards for elevation */
+  --bg-canvas: #faf9f6;
+  --bg-page: #f1efe9;
+  --bg-header: #fbfaf8;
+  --bg-surface: #ffffff;
+  --bg-surface-alt: #f6f4f0;
+  --bg-surface-hover: #ece9e2;
+  --bg-elevated: #ffffff;
+  --bg-input: #ffffff;
+  --gradient-card: linear-gradient(180deg, #ffffff, #faf7f2);
+
+  /* text */
+  --text-heading: #14171c;
+  --text-primary: #23262b;
+  --text-secondary: #52555c;
+  --text-tertiary: #6b6e75;
+  --text-quaternary: #595959;
+  --text-placeholder: #767676;
+  --text-chip: #6b6b6b;
+  --text-meta: #4a4a4a;
+
+  --overlay-rgb: 20, 23, 28;
+  --shadow-rgb: 30, 34, 42;
+  --overlay-backdrop: rgba(30, 34, 42, 0.4);
+
+  /* accents */
+  --accent-gold: #c9a84c;
+  --accent-gold-rgb: 201, 168, 76;
+  --accent-gold-text: #8a6a1f;
+  --accent-gold-hover: #b8933a;
+
+  --accent-blue: #4d8df6;
+  --accent-blue-rgb: 77, 141, 246;
+  --accent-blue-text: #2f5fc4;
+  --accent-blue-hover: #3d78e0;
+
+  --accent-green: #46c08a;
+  --accent-green-rgb: 70, 192, 138;
+  --accent-green-text: #1f7a52;
+  --accent-green-icon: #1f7a52;
+
+  --accent-coral: #e07a5f;
+  --accent-coral-rgb: 224, 122, 95;
+  --accent-coral-text: #a83f21;
+
+  --accent-red: #ef4444;
+  --accent-red-rgb: 239, 68, 68;
+  --accent-red-text: #b91c1c;
+
+  --btn-invert-bg: #1c1e22;
+  --btn-invert-bg-hover: #2c2f35;
+  --btn-invert-text: #f5f5f5;
+
+  --shadow-header-mobile: 0 16px 32px rgba(30, 34, 42, 0.12);
+  --shadow-modal: 0 24px 64px rgba(30, 34, 42, 0.18);
+  --shadow-toast: 0 16px 44px rgba(30, 34, 42, 0.16);
+  --shadow-vignette: inset 0 0 200px 20px rgba(30, 34, 42, 0.05);
+  --shadow-role-card: 0 14px 40px rgba(30, 34, 42, 0.1);
+  --shadow-role-card-hover-green: 0 24px 56px rgba(30, 34, 42, 0.14), 0 0 0 1px rgba(70, 192, 138, 0.25);
+  --shadow-role-card-hover-blue: 0 24px 56px rgba(30, 34, 42, 0.14), 0 0 0 1px rgba(77, 141, 246, 0.25);
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+*, *::before, *::after {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
 html, body {
   width: 100%;
   height: 100%;
   overflow: hidden; /* la pagina intera non scorre mai */
+  background: var(--bg-canvas);
+  color: var(--text-primary);
 }
 
 #root {
