@@ -1,0 +1,60 @@
+.theme-toggle {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 999px;
+
+  &:focus-visible {
+    outline: 3px solid var(--accent-gold-text);
+    outline-offset: 3px;
+  }
+}
+
+.theme-toggle-track {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 52px;
+  height: 28px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--bg-surface-alt);
+  border: 1px solid rgba(var(--overlay-rgb), 0.12);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-toggle:hover .theme-toggle-track {
+  border-color: rgba(var(--overlay-rgb), 0.22);
+}
+
+.theme-toggle-icon {
+  position: relative;
+  z-index: 1;
+  color: var(--text-quaternary);
+  flex: none;
+}
+
+.theme-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--btn-invert-bg);
+  color: var(--btn-invert-text);
+  box-shadow: 0 2px 6px rgba(var(--shadow-rgb), 0.3);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease, color 0.2s ease;
+}
+
+.theme-toggle[aria-checked="true"] .theme-toggle-thumb {
+  transform: translateX(24px);
+}
