@@ -45,9 +45,9 @@ const BERTHS = [
 ]
 
 const STATUS_THEME = {
-  DISPONIBILE: "#46c08a",
-  PIANIFICATA: "#C9A84C",
-  OCCUPATA:    "#e07a5f",
+  DISPONIBILE: "var(--accent-green)",
+  PIANIFICATA: "var(--accent-gold)",
+  OCCUPATA:    "var(--accent-coral)",
 }
 
 const pad2 = (n) => String(n).padStart(2, "0")
@@ -98,15 +98,15 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
     const status = active ? "OCCUPATA" : (upcoming ? "PIANIFICATA" : "DISPONIBILE")
     const occ = active || upcoming || null
 
-    let occMeta = "", occMetaColor = "#9a9a9a"
+    let occMeta = "", occMetaColor = "var(--text-secondary)"
     if (active) {
       const left = active.endDay - currentDay + 1
       occMeta = `Libera tra ${left} ${left === 1 ? "giorno" : "giorni"}`
-      occMetaColor = "#e07a5f"
+      occMetaColor = "var(--accent-coral-text)"
     } else if (upcoming) {
       const inn = upcoming.startDay - currentDay
       occMeta = `In arrivo tra ${inn} ${inn === 1 ? "giorno" : "giorni"}`
-      occMetaColor = "#C9A84C"
+      occMetaColor = "var(--accent-gold-text)"
     }
 
     const timeline = []
@@ -114,10 +114,10 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
       for (let k = 0; k < 7; k++) {
         const d = currentDay + k
         const cov = assigns.find(a => a.startDay <= d && d <= a.endDay)
-        let bg = "rgba(255,255,255,0.06)"
+        let bg = "rgba(var(--overlay-rgb),0.06)"
         if (cov) {
           const isActiveToday = cov.startDay <= currentDay && currentDay <= cov.endDay
-          bg = isActiveToday ? "#e07a5f" : "rgba(201,168,76,0.55)"
+          bg = isActiveToday ? "var(--accent-coral)" : "rgba(var(--accent-gold-rgb),0.55)"
         }
         const isToday = d === currentDay
         timeline.push({ dayLabel: d, bg, isToday })
@@ -233,7 +233,7 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
             <div
               key={berth.id}
               className="sch-util-seg"
-              style={{ background: state.status === "OCCUPATA" ? "#e07a5f" : state.status === "PIANIFICATA" ? "rgba(201,168,76,0.55)" : "rgba(255,255,255,0.06)" }}
+              style={{ background: state.status === "OCCUPATA" ? "var(--accent-coral)" : state.status === "PIANIFICATA" ? "rgba(var(--accent-gold-rgb),0.55)" : "rgba(var(--overlay-rgb),0.06)" }}
             />
           ))}
         </div>
@@ -353,9 +353,9 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
                   {state.status === "DISPONIBILE" ? (
                     <>
                       <div className={`sch-berth-anchor-box ${isCompatible ? "sch-berth-anchor-box--compatible" : ""}`}>
-                        <span style={{ color: isCompatible ? "#4d8df6" : "#757575" }}>⚓</span>
+                        <span style={{ color: isCompatible ? "var(--accent-blue-text)" : "var(--text-tertiary)" }}>⚓</span>
                       </div>
-                      <div className="sch-berth-center-label" style={{ color: isCompatible ? "#4d8df6" : "#8a8a8a" }}>
+                      <div className="sch-berth-center-label" style={{ color: isCompatible ? "var(--accent-blue-text)" : "var(--text-tertiary)" }}>
                         {isCompatible ? "TRASCINA O CLICCA" : "LIBERA PER ORMEGGIO"}
                       </div>
                     </>
@@ -372,8 +372,8 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
                       <div className="sch-berth-timeline">
                         {state.timeline.map((cell, idx) => (
                           <div key={idx} className="sch-timeline-cell">
-                            <div className="sch-timeline-bar" style={{ background: cell.bg, border: cell.isToday ? "1.5px solid rgba(255,255,255,0.45)" : "1px solid transparent" }} />
-                            <div className="sch-timeline-label" style={{ color: cell.isToday ? "#ededed" : "#8a8a8a", fontWeight: cell.isToday ? 500 : 400 }}>{cell.dayLabel}</div>
+                            <div className="sch-timeline-bar" style={{ background: cell.bg, border: cell.isToday ? "1.5px solid rgba(var(--overlay-rgb),0.55)" : "1px solid transparent" }} />
+                            <div className="sch-timeline-label" style={{ color: cell.isToday ? "var(--text-primary)" : "var(--text-tertiary)", fontWeight: cell.isToday ? 500 : 400 }}>{cell.dayLabel}</div>
                           </div>
                         ))}
                       </div>

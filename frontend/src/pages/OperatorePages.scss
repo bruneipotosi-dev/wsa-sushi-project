@@ -1,19 +1,32 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
-$bg-page: #161616;
-$bg-card: #1c1c1c;
-$bg-card-alt: #1a1a1a;
-$border-subtle: rgba(255, 255, 255, 0.07);
-$border-input: rgba(255, 255, 255, 0.09);
-$text-primary: #ededed;
-$text-muted: #9a9a9a;
-$text-dim: #6e6e6e;
-$text-input: #565656;
-$accent-gold: #C9A84C;
-$accent-blue: #4d8df6;
-$accent-green: #46c08a;
-$accent-coral: #e07a5f;
-$accent-red: #ef4444;
+// Le variabili locali puntano alle CSS custom properties globali
+// (src/index.css) cosi' l'intero file segue automaticamente il tema attivo.
+$bg-page: var(--bg-page);
+$bg-card: var(--bg-surface);
+$bg-card-alt: var(--bg-surface-alt);
+$border-subtle: rgba(var(--overlay-rgb), 0.07);
+$border-input: rgba(var(--overlay-rgb), 0.09);
+$text-primary: var(--text-primary);
+$text-heading: var(--text-heading);
+$text-muted: var(--text-secondary);
+$text-dim: var(--text-quaternary);
+$text-input: var(--text-placeholder);
+$text-chip: var(--text-chip);
+$accent-gold: var(--accent-gold);
+$accent-gold-text: var(--accent-gold-text);
+$accent-gold-hover: var(--accent-gold-hover);
+$accent-blue: var(--accent-blue);
+$accent-blue-text: var(--accent-blue-text);
+$accent-blue-hover: var(--accent-blue-hover);
+$accent-green: var(--accent-green);
+$accent-green-text: var(--accent-green-text);
+$accent-coral: var(--accent-coral);
+$accent-coral-rgb: var(--accent-coral-rgb);
+$accent-coral-text: var(--accent-coral-text);
+$accent-red: var(--accent-red);
+$accent-red-rgb: var(--accent-red-rgb);
+$btn-invert-text: var(--btn-invert-text);
 
 .operatore-page {
   flex: 1;
@@ -68,7 +81,7 @@ $accent-red: #ef4444;
   font-size: 34px;
   font-weight: 500;
   letter-spacing: -0.5px;
-  color: #fafafa;
+  color: $text-heading;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -119,15 +132,15 @@ $accent-red: #ef4444;
 }
 
 .stat-value-pending {
-  color: $accent-gold;
+  color: $accent-gold-text;
 }
 
 .stat-value-assigned {
-  color: $accent-blue;
+  color: $accent-blue-text;
 }
 
 .stat-value-departed {
-  color: $accent-green;
+  color: $accent-green-text;
 }
 
 .operatore-layout {
@@ -211,6 +224,8 @@ $accent-red: #ef4444;
 .btn-submit {
   width: 100%;
   background: $accent-gold;
+  // Testo scuro fisso: il fill oro resta ugualmente saturo in entrambi i
+  // temi, quindi non serve un colore che si inverta col tema.
   color: #161616;
   border: none;
   padding: 15px 22px;
@@ -223,7 +238,7 @@ $accent-red: #ef4444;
   margin-top: auto;
 
   &:hover:not(:disabled) {
-    background: #dbb95a;
+    background: $accent-gold-hover;
     transform: scale(1.01);
   }
 
@@ -242,15 +257,15 @@ $accent-red: #ef4444;
   line-height: 1.5;
 
   &-error {
-    background: rgba(224, 122, 95, 0.12);
-    border: 1px solid rgba(224, 122, 95, 0.25);
-    color: #f5b8a8;
+    background: rgba($accent-coral-rgb, 0.12);
+    border: 1px solid rgba($accent-coral-rgb, 0.25);
+    color: $accent-coral-text;
   }
 
   &-success {
-    background: rgba(70, 192, 138, 0.12);
-    border: 1px solid rgba(70, 192, 138, 0.25);
-    color: #7ddbb6;
+    background: rgba(var(--accent-green-rgb), 0.12);
+    border: 1px solid rgba(var(--accent-green-rgb), 0.25);
+    color: $accent-green-text;
   }
 }
 
@@ -306,13 +321,13 @@ $accent-red: #ef4444;
   flex: none;
 
   &:hover {
-    border-color: rgba(255, 255, 255, 0.16);
-    background: #1f1f1f;
+    border-color: rgba(var(--overlay-rgb), 0.16);
+    background: var(--bg-surface-hover);
   }
 
   &--editing {
     border-color: $accent-blue;
-    background: rgba(77, 141, 246, 0.05);
+    background: rgba(var(--accent-blue-rgb), 0.05);
   }
 }
 
@@ -346,9 +361,9 @@ $accent-red: #ef4444;
   letter-spacing: 0.3px;
   padding: 3px 10px;
   border-radius: 6px;
-  color: #a3a3a3;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  color: $text-chip;
+  background: rgba(var(--overlay-rgb), 0.05);
+  border: 1px solid rgba(var(--overlay-rgb), 0.09);
   flex: none;
 }
 
@@ -362,21 +377,21 @@ $accent-red: #ef4444;
   flex: none;
 
   &.status-pending {
-    color: $accent-gold;
-    background: rgba(201, 168, 76, 0.12);
-    border: 1px solid rgba(201, 168, 76, 0.2);
+    color: $accent-gold-text;
+    background: rgba(var(--accent-gold-rgb), 0.12);
+    border: 1px solid rgba(var(--accent-gold-rgb), 0.2);
   }
 
   &.status-assigned {
-    color: $accent-blue;
-    background: rgba(77, 141, 246, 0.12);
-    border: 1px solid rgba(77, 141, 246, 0.2);
+    color: $accent-blue-text;
+    background: rgba(var(--accent-blue-rgb), 0.12);
+    border: 1px solid rgba(var(--accent-blue-rgb), 0.2);
   }
 
   &.status-departed {
-    color: $accent-green;
-    background: rgba(70, 192, 138, 0.12);
-    border: 1px solid rgba(70, 192, 138, 0.2);
+    color: $accent-green-text;
+    background: rgba(var(--accent-green-rgb), 0.12);
+    border: 1px solid rgba(var(--accent-green-rgb), 0.2);
   }
 }
 
@@ -415,20 +430,20 @@ $accent-red: #ef4444;
 }
 
 .btn-ship-edit {
-  background: rgba(77, 141, 246, 0.08);
-  border-color: rgba(77, 141, 246, 0.12);
+  background: rgba(var(--accent-blue-rgb), 0.08);
+  border-color: rgba(var(--accent-blue-rgb), 0.12);
 
   &:hover:not(:disabled) {
-    background: rgba(77, 141, 246, 0.2);
+    background: rgba(var(--accent-blue-rgb), 0.2);
   }
 }
 
 .btn-ship-delete {
-  background: rgba(239, 68, 68, 0.08);
-  border-color: rgba(239, 68, 68, 0.12);
+  background: rgba(var(--accent-red-rgb), 0.08);
+  border-color: rgba(var(--accent-red-rgb), 0.12);
 
   &:hover:not(:disabled) {
-    background: rgba(239, 68, 68, 0.2);
+    background: rgba(var(--accent-red-rgb), 0.2);
   }
 }
 
@@ -528,17 +543,17 @@ $accent-red: #ef4444;
   flex: 1;
 
   &:hover:not(:disabled) {
-    background: #6aa0ff;
+    background: $accent-blue-hover;
   }
 }
 
 .btn-edit-cancel {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(var(--overlay-rgb), 0.05);
   color: $text-muted;
   border: 1px solid $border-input;
 
   &:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(var(--overlay-rgb), 0.1);
     color: $text-primary;
   }
 }
@@ -580,7 +595,7 @@ $accent-red: #ef4444;
 
 .operatore-page::-webkit-scrollbar-thumb,
 .ships-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(var(--overlay-rgb), 0.1);
   border-radius: 4px;
 }
 
