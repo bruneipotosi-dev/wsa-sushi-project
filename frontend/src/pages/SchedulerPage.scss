@@ -18,6 +18,8 @@ $accent-gold-text: var(--accent-gold-text);
 $accent-blue: var(--accent-blue);
 $accent-blue-text: var(--accent-blue-text);
 $accent-blue-hover: var(--accent-blue-hover);
+$accent-blue-button: var(--accent-blue-button);
+$accent-blue-button-hover: var(--accent-blue-button-hover);
 $accent-green: var(--accent-green);
 $accent-green-text: var(--accent-green-text);
 $accent-coral: var(--accent-coral);
@@ -543,8 +545,8 @@ $accent-coral-text: var(--accent-coral-text);
     font-weight: 500;
     letter-spacing: 0.4px;
     color: #ffffff;
-    background: $accent-blue;
-    &:hover { background: $accent-blue-hover; }
+    background: $accent-blue-button;
+    &:hover { background: $accent-blue-button-hover; }
     &:focus-visible { outline-offset: 2px; }
   }
 }
@@ -691,9 +693,9 @@ $accent-coral-text: var(--accent-coral-text);
   font-size: 18px;
   font-weight: 500;
   color: #ffffff;
-  background: $accent-blue;
+  background: $accent-blue-button;
   border: none;
-  &:hover:not(:disabled) { background: $accent-blue-hover; }
+  &:hover:not(:disabled) { background: $accent-blue-button-hover; }
   &:disabled { opacity: 0.6; cursor: not-allowed; }
 }
 

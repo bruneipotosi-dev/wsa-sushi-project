@@ -19,6 +19,8 @@ $accent-gold-hover: var(--accent-gold-hover);
 $accent-blue: var(--accent-blue);
 $accent-blue-text: var(--accent-blue-text);
 $accent-blue-hover: var(--accent-blue-hover);
+$accent-blue-button: var(--accent-blue-button);
+$accent-blue-button-hover: var(--accent-blue-button-hover);
 $accent-green: var(--accent-green);
 $accent-green-text: var(--accent-green-text);
 $accent-coral: var(--accent-coral);
@@ -538,12 +540,12 @@ $btn-invert-text: var(--btn-invert-text);
 }
 
 .btn-edit-save {
-  background: $accent-blue;
+  background: $accent-blue-button;
   color: #ffffff;
   flex: 1;
 
   &:hover:not(:disabled) {
-    background: $accent-blue-hover;
+    background: $accent-blue-button-hover;
   }
 }
 

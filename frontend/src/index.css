@@ -49,6 +49,12 @@
   --accent-blue-rgb: 77, 141, 246;
   --accent-blue-text: #4d8df6;
   --accent-blue-hover: #6aa0ff;
+  /* Variante piu' scura usata solo per bottoni pieni con testo bianco sopra:
+     #4d8df6 con testo bianco da un contrasto di ~3.25:1, sotto il minimo
+     AA (4.5:1) per testo normale. Stesso valore in entrambi i temi perche'
+     e' un bottone a fill fisso, non legato allo sfondo della pagina. */
+  --accent-blue-button: #2f6fe0;
+  --accent-blue-button-hover: #3f7fe8;
 
   --accent-green: #46c08a;
   --accent-green-rgb: 70, 192, 138;
@@ -116,6 +122,8 @@
   --accent-blue-rgb: 77, 141, 246;
   --accent-blue-text: #2f5fc4;
   --accent-blue-hover: #3d78e0;
+  --accent-blue-button: #2f6fe0;
+  --accent-blue-button-hover: #3f7fe8;
 
   --accent-green: #46c08a;
   --accent-green-rgb: 70, 192, 138;
