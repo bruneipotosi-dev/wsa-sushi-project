@@ -93,6 +93,15 @@ $accent-red: #ef4444;
   flex-wrap: wrap;
 }
 
+// NUOVO: stile per stats in basso
+.stats-container--bottom {
+  flex: none;
+  justify-content: flex-end;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid $border-subtle;
+}
+
 .stat-box {
   min-width: 160px;
   padding: 16px 20px;
@@ -305,10 +314,11 @@ $accent-red: #ef4444;
   transition: all 0.15s ease;
   flex: none;
 
-  &:hover {
-    border-color: rgba(255, 255, 255, 0.16);
-    background: #1f1f1f;
-  }
+  // HOVER RIMOSSO - non c'è più interazione
+  // &:hover {
+  //   border-color: rgba(255, 255, 255, 0.16);
+  //   background: #1f1f1f;
+  // }
 
   &--editing {
     border-color: $accent-blue;

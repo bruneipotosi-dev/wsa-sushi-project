@@ -60,7 +60,7 @@
   border: 1px solid rgba(255, 255, 255, 0.09);
 }
 
-// TOP LINE
+// TOP LINE - STATS RIMOSSE
 .sch-topline {
   flex: none;
   display: flex;
@@ -80,11 +80,29 @@
   letter-spacing: -0.6px;
   color: #fafafa;
 }
+.sch-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 16px;
+  color: #8a8a8a;
+  font-family: 'IBM Plex Mono', monospace;
+  letter-spacing: 0.5px;
+}
 
+// STATS - STILE BASE (ora usato solo per le stats in basso)
 .sch-stats {
   display: flex;
   gap: 16px;
 }
+
+// NUOVO: stile per stats in basso
+.sch-stats--bottom {
+  flex: none;
+  justify-content: flex-end;
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
 .sch-stat-box {
   min-width: 160px;
   padding: 16px 20px;
@@ -220,6 +238,15 @@
   margin: 0 auto;
 }
 
+// NUOVO: contenitore per griglia + stats
+.sch-berth-column {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
 // QUEUE SIDEBAR
 .sch-queue {
   flex: none;
@@ -321,10 +348,6 @@
   min-height: 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  // minmax(0, 1fr): le righe dividono sempre lo spazio disponibile in parti
-  // uguali, senza mai crescere oltre — la pagina non deve mai scrollare qui.
-  // L'overflow interno di ogni card viene tagliato da .sch-berth-card invece
-  // di traboccare e sovrapporsi alla riga sottostante.
   grid-template-rows: repeat(2, minmax(0, 1fr));
   gap: 14px;
 }
@@ -718,6 +741,8 @@
   .sch-queue-empty { flex: none; }
   .sch-berth-grid { height: auto; grid-template-columns: repeat(2, 1fr); grid-template-rows: none; }
   .sch-berth-card { min-height: 260px; }
+  .sch-berth-column { height: auto; } // Aggiunto per responsivo
+  .sch-stats--bottom { justify-content: flex-start; } // Aggiunto per responsivo
 }
 
 // TABLET (portrait e schermi medi)
@@ -766,6 +791,7 @@
   .sch-btn-cancel, .sch-btn-confirm { flex: none; width: 100%; }
 
   .sch-toast { left: 14px; right: 14px; bottom: 14px; max-width: none; padding: 14px 16px; }
+  .sch-berth-column { gap: 10px; } // Aggiunto per mobile
 }
 
 // TELEFONI PICCOLI
@@ -789,4 +815,6 @@
   .sch-queue-empty { flex: none; }
   .sch-berth-grid { height: auto; grid-template-rows: none; }
   .sch-berth-card { min-height: 280px; }
+  .sch-berth-column { height: auto; } // Aggiunto per schermi bassi
+  .sch-stats--bottom { justify-content: flex-start; } // Aggiunto per schermi bassi
 }
