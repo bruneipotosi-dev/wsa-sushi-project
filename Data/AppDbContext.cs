@@ -12,6 +12,7 @@ public class AppDbContext : DbContext
     public DbSet<Assignment> Assignments => Set<Assignment>();
     public DbSet<SystemState> SystemStates => Set<SystemState>();
     public DbSet<PortLog> PortLogs { get; set; }
+    public DbSet<ShipProfile> ShipProfiles => Set<ShipProfile>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -52,5 +53,17 @@ public class AppDbContext : DbContext
             .HasIndex(a => new { a.BerthId, a.StartDay, a.EndDay })
             .IsUnique()
             .HasDatabaseName("UX_Assignments_BerthId_StartDay_EndDay");
+
+
+modelBuilder.Entity<ShipProfile>().HasData(
+    new ShipProfile { Id = 1, Name = "Poseidon Express",  Notes = "Carico containers refrigerati, provenienza Rotterdam." },
+    new ShipProfile { Id = 2, Name = "Ocean Trader",      Notes = "Priorità media, scarico entro fine settimana." },
+    new ShipProfile { Id = 3, Name = "Pacific Pioneer",   Notes = "Nave abitualmente in ritardo, avvisare operatore banchina." },
+    new ShipProfile { Id = 4, Name = "Nautilus Pride",    Notes = "Carico misto, nessuna priorità particolare." },
+    new ShipProfile { Id = 5, Name = "Blue Horizon",      Notes = "Piccolo carico urgente, priorità alta." },
+    new ShipProfile { Id = 6, Name = "Atlantis Leader",   Notes = "Nave gemella della Neptune Star, stesso operatore." },
+    new ShipProfile { Id = 7, Name = "Neptune Star",      Notes = "Container misti, ispezione doganale richiesta all'arrivo." },
+    new ShipProfile { Id = 8, Name = "Titan Carrier",     Notes = "Prima nave della giornata, scarico prioritario." }
+);
     }
 }
