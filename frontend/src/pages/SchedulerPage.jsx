@@ -1,5 +1,6 @@
 // src/pages/SchedulerPage.jsx
 import { useState, useEffect } from "react"
+import { Ship, ArrowRight, X } from "lucide-react"
 import { getShips, getBerths, createAssignment, getAssignments } from "../services/api"
 import "./SchedulerPage.scss"
 
@@ -46,9 +47,9 @@ const BERTHS = [
 ]
 
 const STATUS_THEME = {
-  DISPONIBILE: "#46c08a",
-  PIANIFICATA: "#C9A84C",
-  OCCUPATA:    "#e07a5f",
+  DISPONIBILE: "var(--color-success)",
+  PIANIFICATA: "var(--color-warning)",
+  OCCUPATA:    "var(--color-coral)",
 }
 
 const pad2 = (n) => String(n).padStart(2, "0")
@@ -99,15 +100,15 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
     const status = active ? "OCCUPATA" : (upcoming ? "PIANIFICATA" : "DISPONIBILE")
     const occ = active || upcoming || null
 
-    let occMeta = "", occMetaColor = "#9a9a9a"
+    let occMeta = "", occMetaColor = "var(--color-text-secondary)"
     if (active) {
       const left = active.endDay - currentDay + 1
       occMeta = `Libera tra ${left} ${left === 1 ? "giorno" : "giorni"}`
-      occMetaColor = "#e07a5f"
+      occMetaColor = "var(--color-coral)"
     } else if (upcoming) {
       const inn = upcoming.startDay - currentDay
       occMeta = `In arrivo tra ${inn} ${inn === 1 ? "giorno" : "giorni"}`
-      occMetaColor = "#C9A84C"
+      occMetaColor = "var(--color-warning)"
     }
 
     const timeline = []
@@ -115,10 +116,10 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
       for (let k = 0; k < 7; k++) {
         const d = currentDay + k
         const cov = assigns.find(a => a.startDay <= d && d <= a.endDay)
-        let bg = "rgba(255,255,255,0.06)"
+        let bg = "var(--color-overlay-2)"
         if (cov) {
           const isActiveToday = cov.startDay <= currentDay && currentDay <= cov.endDay
-          bg = isActiveToday ? "#e07a5f" : "rgba(201,168,76,0.55)"
+          bg = isActiveToday ? "var(--color-coral)" : "var(--color-warning-strong)"
         }
         const isToday = d === currentDay
         timeline.push({ dayLabel: d, bg, isToday })
@@ -209,13 +210,34 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
   return (
     <div className="scheduler-page">
 
-      {/* SECTION HEADER - SOLO TITOLO, STATS RIMOSSE */}
+      {/* SECTION HEADER - TITOLO + STATO SELEZIONE (se presente) */}
       <div className="sch-topline">
         <div>
           <h1 className="sch-title">Matrice di assegnazione</h1>
           <p className="sch-subtitle">Giorno operativo {currentDay}</p>
         </div>
-        {/* STATS RIMOSSE DA QUI - SPOSTATE IN BASSO */}
+
+        {selectedShip && (
+          <div className="selection-banner">
+            <span className="selection-banner-icon" aria-hidden="true">
+              <Ship size={14} strokeWidth={2.2} />
+            </span>
+            <span className="selection-banner-text">
+              <strong>{selectedShip.name}</strong>
+              <span className="sch-chip">{selectedShip.size}</span>
+              <ArrowRight size={13} strokeWidth={2} className="selection-banner-arrow" aria-hidden="true" />
+              scegli banchina
+            </span>
+            <button
+              type="button"
+              className="selection-banner-close"
+              onClick={() => setSelectedShip(null)}
+              aria-label="Annulla selezione nave"
+            >
+              <X size={14} strokeWidth={2.2} />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* UTILIZATION BAR */}
@@ -226,23 +248,12 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
             <div
               key={berth.id}
               className="sch-util-seg"
-              style={{ background: state.status === "OCCUPATA" ? "#e07a5f" : state.status === "PIANIFICATA" ? "rgba(201,168,76,0.55)" : "rgba(255,255,255,0.06)" }}
+              style={{ background: state.status === "OCCUPATA" ? "var(--color-coral)" : state.status === "PIANIFICATA" ? "var(--color-warning-strong)" : "var(--color-overlay-2)" }}
             />
           ))}
         </div>
         <span className="sch-util-count">{occCount} occupate · {planCount} pianificate</span>
       </div>
-
-      {selectedShip && (
-        <div className="selection-banner">
-          <span>
-            Nave selezionata: <strong>{selectedShip.name}</strong>
-            &nbsp;·&nbsp; Taglia <span className="sch-chip">{selectedShip.size}</span>
-            &nbsp;·&nbsp; Clicca o trascina su una banchina <strong>{selectedShip.size}</strong>
-          </span>
-          <button onClick={() => setSelectedShip(null)}>✕ Annulla</button>
-        </div>
-      )}
 
       {overdueShips.length > 0 && (
         <div className="warning-banner">
@@ -348,9 +359,9 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
                     {state.status === "DISPONIBILE" ? (
                       <>
                         <div className={`sch-berth-anchor-box ${isCompatible ? "sch-berth-anchor-box--compatible" : ""}`}>
-                          <span style={{ color: isCompatible ? "#4d8df6" : "#757575" }}>⚓</span>
+                          <span style={{ color: isCompatible ? "var(--color-primary)" : "var(--color-text-tertiary)" }}>⚓</span>
                         </div>
-                        <div className="sch-berth-center-label" style={{ color: isCompatible ? "#4d8df6" : "#8a8a8a" }}>
+                        <div className="sch-berth-center-label" style={{ color: isCompatible ? "var(--color-primary)" : "var(--color-text-secondary)" }}>
                           {isCompatible ? "TRASCINA O CLICCA" : "LIBERA PER ORMEGGIO"}
                         </div>
                       </>
@@ -367,8 +378,8 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
                         <div className="sch-berth-timeline">
                           {state.timeline.map((cell, idx) => (
                             <div key={idx} className="sch-timeline-cell">
-                              <div className="sch-timeline-bar" style={{ background: cell.bg, border: cell.isToday ? "1.5px solid rgba(255,255,255,0.45)" : "1px solid transparent" }} />
-                              <div className="sch-timeline-label" style={{ color: cell.isToday ? "#ededed" : "#8a8a8a", fontWeight: cell.isToday ? 500 : 400 }}>{cell.dayLabel}</div>
+                              <div className="sch-timeline-bar" style={{ background: cell.bg, border: cell.isToday ? "1.5px solid var(--color-overlay-5)" : "1px solid transparent" }} />
+                              <div className="sch-timeline-label" style={{ color: cell.isToday ? "var(--color-text-primary)" : "var(--color-text-secondary)", fontWeight: cell.isToday ? 500 : 400 }}>{cell.dayLabel}</div>
                             </div>
                           ))}
                         </div>

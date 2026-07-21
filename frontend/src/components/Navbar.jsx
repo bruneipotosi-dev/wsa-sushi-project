@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import mscLogo from "../assets/msc-logo.png";
+import ThemeToggle from './ThemeToggle';
 import './Navbar.scss';
 
 const ROLE_NAV_ITEMS = {
@@ -53,7 +54,7 @@ const Navbar = ({ currentDay, onNextDay, onReset, userRole }) => {
 
       <div className="bh-right">
         <div className="bh-day-pill">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="4" width="18" height="18" rx="2" />
             <path d="M16 2v4M8 2v4M3 10h18" />
           </svg>
@@ -61,7 +62,7 @@ const Navbar = ({ currentDay, onNextDay, onReset, userRole }) => {
           <span className="bh-day-num">{currentDay}</span>
         </div>
         <button className="bh-btn-primary" onClick={onNextDay}>
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#161616" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 12h14M13 6l6 6-6 6" />
           </svg>
           Next Day
@@ -72,6 +73,7 @@ const Navbar = ({ currentDay, onNextDay, onReset, userRole }) => {
           </svg>
           Reset
         </button>
+        <ThemeToggle />
       </div>
 
       <button
