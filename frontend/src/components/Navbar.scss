@@ -1,4 +1,3 @@
-@use "../styles/variables" as *;
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 .bh-header {
@@ -10,13 +9,13 @@
   justify-content: space-between;
   gap: 20px;
   padding: 22px 30px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  background: #131313;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-nav-background);
   font-family: 'IBM Plex Sans', sans-serif;
   user-select: none;
 
   :focus-visible {
-    outline: 3px solid $gold;
+    outline: 3px solid var(--color-primary);
     outline-offset: 3px;
     border-radius: 6px;
   }
@@ -53,7 +52,7 @@
 .bh-divider {
   width: 1px;
   height: 24px;
-  background: rgba(255, 255, 255, 0.14);
+  background: var(--color-border-strong);
   flex: none;
 }
 
@@ -61,7 +60,7 @@
   font-size: 18px;
   font-weight: 600;
   letter-spacing: -0.1px;
-  color: #fafafa;
+  color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -69,7 +68,7 @@
 
   span {
     font-weight: 400;
-    color: #7e7e7e;
+    color: var(--color-text-tertiary);
     margin-left: 7px;
   }
 }
@@ -80,22 +79,22 @@
   gap: 9px;
   padding: 8px 16px;
   border-radius: 9px;
-  background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
   flex: none;
   white-space: nowrap;
 }
 
 .bh-day-label {
   font-size: 15.5px;
-  color: #9a9a9a;
+  color: var(--color-text-secondary);
 }
 
 .bh-day-num {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 18px;
   font-weight: 600;
-  color: #ededed;
+  color: var(--color-text-primary);
 }
 
 .bh-links {
@@ -111,20 +110,20 @@
   border-radius: 9px;
   font-size: 17px;
   font-weight: 400;
-  color: #8a8a8a;
+  color: var(--color-text-secondary);
   text-decoration: none;
   transition: all 0.15s ease;
   white-space: nowrap;
 
   &:hover {
-    color: #ededed;
-    background: rgba(255, 255, 255, 0.04);
+    color: var(--color-text-primary);
+    background: var(--color-overlay-1);
   }
 }
 
 .bh-link--active {
   font-weight: 500;
-  color: #ededed;
+  color: var(--color-text-primary);
   background: transparent;
   position: relative;
 
@@ -135,7 +134,7 @@
     right: 16px;
     bottom: -8px;
     height: 2px;
-    background: #4d8df6;
+    background: var(--color-primary);
   }
 
   &:hover {
@@ -161,13 +160,13 @@
   font-family: 'IBM Plex Sans', sans-serif;
   font-size: 17px;
   font-weight: 500;
-  color: #161616;
-  background: #ededed;
+  color: var(--color-on-primary);
+  background: var(--color-primary);
   transition: all 0.15s ease;
   white-space: nowrap;
 
   &:hover {
-    background: #ffffff;
+    background: var(--color-primary-hover);
   }
 }
 
@@ -181,16 +180,16 @@
   font-family: 'IBM Plex Sans', sans-serif;
   font-size: 17px;
   font-weight: 500;
-  color: #8a8a8a;
+  color: var(--color-text-secondary);
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--color-border-strong);
   transition: all 0.15s ease;
   flex: none;
   white-space: nowrap;
 
   &:hover {
-    border-color: rgba(255, 255, 255, 0.2);
-    color: #ededed;
+    border-color: var(--color-overlay-4);
+    color: var(--color-text-primary);
   }
 }
 
@@ -201,13 +200,13 @@
   width: 38px;
   height: 38px;
   border-radius: 9px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--color-border-strong);
   background: transparent;
-  color: #ededed;
+  color: var(--color-text-primary);
   cursor: pointer;
   flex: none;
 
-  &:hover { border-color: rgba(255, 255, 255, 0.25); }
+  &:hover { border-color: var(--color-overlay-5); }
 }
 
 .bh-mobile-panel {
@@ -227,9 +226,9 @@
     flex-direction: column;
     gap: 2px;
     padding: 10px 16px 16px;
-    background: #131313;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+    background: var(--color-nav-background);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: 0 16px 32px var(--color-shadow-strong);
 
     .bh-link {
       padding: 12px 14px;
@@ -241,10 +240,10 @@
   .bh-header { padding: 14px 16px; gap: 12px; }
   .bh-left { gap: 12px; }
   .bh-brand { gap: 9px; }
-  
+
   /* Logo più piccolo su mobile */
   .bh-logo { height: 32px; }
-  
+
   .bh-logo-mark { display: none; }
   .bh-divider { height: 20px; }
   .bh-brand-title { font-size: 15.5px; }

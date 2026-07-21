@@ -1,0 +1,145 @@
+// Design tokens — dark è il tema di default (invariato rispetto al design
+// originale), light è stato calibrato a mano verificando il contrasto WCAG
+// AA (4.5:1 testo normale, 3:1 testo grande / elementi grafici) per ogni
+// coppia testo/sfondo realmente usata nell'app.
+:root {
+  // superfici
+  --color-background: #161616;
+  --color-hero-background: #0d0f14;
+  --color-nav-background: #131313;
+  --color-surface: #1c1c1c;
+  --color-surface-alt: #1a1a1a;
+  --color-surface-raised: #1e1e1e;
+
+  // testo
+  --color-text-primary: #ededed;
+  --color-text-secondary: #9a9a9a;
+  --color-text-tertiary: #6e6e6e;
+  --color-text-inverse: #161616;
+
+  // bordi e overlay neutri (scala di opacità bianca)
+  --color-border: rgba(255, 255, 255, 0.07);
+  --color-border-strong: rgba(255, 255, 255, 0.14);
+  --color-overlay-1: rgba(255, 255, 255, 0.04);
+  --color-overlay-2: rgba(255, 255, 255, 0.08);
+  --color-overlay-3: rgba(255, 255, 255, 0.14);
+  --color-overlay-4: rgba(255, 255, 255, 0.2);
+  --color-overlay-5: rgba(255, 255, 255, 0.32);
+
+  // input
+  --color-input-bg: #161616;
+  --color-input-border: rgba(255, 255, 255, 0.09);
+  --color-input-placeholder: #565656;
+
+  // brand / interattivo
+  --color-primary: #4d8df6;
+  --color-primary-hover: #6aa0ff;
+  --color-primary-text: #4d8df6;
+  --color-primary-bg: rgba(77, 141, 246, 0.1);
+  --color-primary-border: rgba(77, 141, 246, 0.32);
+  --color-on-primary: #ffffff;
+  --color-accent: #C9A84C;
+  --color-accent-hover: #dbb95a;
+  --color-on-accent: #161616;
+  --color-hero-glow: rgba(201, 168, 76, 0.34);
+
+  // stato semantico (successo / attesa / errore / occupato)
+  --color-success: #46c08a;
+  --color-success-bg: rgba(70, 192, 138, 0.12);
+  --color-success-border: rgba(70, 192, 138, 0.25);
+  --color-warning: #C9A84C;
+  --color-warning-bg: rgba(201, 168, 76, 0.12);
+  --color-warning-border: rgba(201, 168, 76, 0.25);
+  --color-warning-strong: rgba(201, 168, 76, 0.55);
+  --color-danger: #ef4444;
+  --color-danger-bg: rgba(239, 68, 68, 0.1);
+  --color-danger-border: rgba(239, 68, 68, 0.22);
+  --color-coral: #e07a5f;
+  --color-coral-bg: rgba(224, 122, 95, 0.12);
+  --color-coral-border: rgba(224, 122, 95, 0.28);
+
+  // effetti
+  --color-shadow-soft: rgba(0, 0, 0, 0.32);
+  --color-shadow-strong: rgba(0, 0, 0, 0.55);
+  --color-scrim: rgba(10, 10, 10, 0.7);
+}
+
+:root[data-theme="light"] {
+  // superfici
+  --color-background: #f7f6f3;
+  --color-hero-background: #f7f6f3;
+  --color-nav-background: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f1efe9;
+  --color-surface-raised: #ffffff;
+
+  // testo
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #5c5c5c;
+  --color-text-tertiary: #6b6b6b;
+  --color-text-inverse: #ffffff;
+
+  // bordi e overlay neutri (scala di opacità nera)
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-strong: rgba(0, 0, 0, 0.16);
+  --color-overlay-1: rgba(0, 0, 0, 0.035);
+  --color-overlay-2: rgba(0, 0, 0, 0.06);
+  --color-overlay-3: rgba(0, 0, 0, 0.1);
+  --color-overlay-4: rgba(0, 0, 0, 0.16);
+  --color-overlay-5: rgba(0, 0, 0, 0.28);
+
+  // input
+  --color-input-bg: #ffffff;
+  --color-input-border: rgba(0, 0, 0, 0.15);
+  --color-input-placeholder: #8f8f8f;
+
+  // brand / interattivo
+  --color-primary: #2f6fe0;
+  --color-primary-hover: #1d5bc9;
+  // usato come colore di testo (badge, label, tag): più scuro del token
+  // "primary" per garantire 4.5:1 su sfondi chiari, dove #2f6fe0 è al limite
+  --color-primary-text: #1d5bc9;
+  --color-primary-bg: rgba(47, 111, 224, 0.08);
+  --color-primary-border: rgba(47, 111, 224, 0.28);
+  --color-on-primary: #ffffff;
+  --color-accent: #a8822f;
+  --color-accent-hover: #8f6c22;
+  --color-on-accent: #1a1a1a;
+  --color-hero-glow: rgba(168, 130, 47, 0.16);
+
+  // stato semantico — versioni scurite rispetto al tema dark per restare
+  // sopra 4.5:1 anche quando il colore è usato come testo (badge piccoli,
+  // non solo come accento grande)
+  --color-success: #2a7352;
+  --color-success-bg: rgba(42, 115, 82, 0.12);
+  --color-success-border: rgba(42, 115, 82, 0.28);
+  --color-warning: #866825;
+  --color-warning-bg: rgba(134, 104, 37, 0.12);
+  --color-warning-border: rgba(134, 104, 37, 0.28);
+  --color-warning-strong: rgba(134, 104, 37, 0.45);
+  --color-danger: #bf3636;
+  --color-danger-bg: rgba(191, 54, 54, 0.1);
+  --color-danger-border: rgba(191, 54, 54, 0.24);
+  --color-coral: #9c5542;
+  --color-coral-bg: rgba(156, 85, 66, 0.12);
+  --color-coral-border: rgba(156, 85, 66, 0.28);
+
+  // effetti
+  --color-shadow-soft: rgba(20, 20, 20, 0.1);
+  --color-shadow-strong: rgba(20, 20, 20, 0.16);
+  --color-scrim: rgba(15, 15, 15, 0.5);
+}
+
+// transizione fluida tra i temi, disattivata per chi preferisce ridurre le
+// animazioni (stesso approccio della bhPulse in OperatorePages.scss)
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

@@ -1,25 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
-$bg-page: #161616;
-$bg-card: #1c1c1c;
-$bg-card-alt: #1a1a1a;
-$border-subtle: rgba(255, 255, 255, 0.07);
-$border-input: rgba(255, 255, 255, 0.09);
-$text-primary: #ededed;
-$text-muted: #9a9a9a;
-$text-dim: #6e6e6e;
-$text-input: #565656;
-$accent-gold: #C9A84C;
-$accent-blue: #4d8df6;
-$accent-green: #46c08a;
-$accent-coral: #e07a5f;
-$accent-red: #ef4444;
-
 .operatore-page {
   flex: 1;
   min-height: 0;
   overflow: hidden;
-  background: $bg-page;
+  background: var(--color-background);
   padding: 16px 36px 20px;
   font-family: 'IBM Plex Sans', sans-serif;
   font-size: 16px;
@@ -56,7 +41,7 @@ $accent-red: #ef4444;
 .section-eyebrow {
   font-size: 12px;
   letter-spacing: 1.6px;
-  color: $text-dim;
+  color: var(--color-text-tertiary);
   font-weight: 400;
   text-transform: uppercase;
   margin-bottom: 4px;
@@ -68,7 +53,7 @@ $accent-red: #ef4444;
   font-size: 34px;
   font-weight: 500;
   letter-spacing: -0.5px;
-  color: #fafafa;
+  color: var(--color-text-primary);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -78,7 +63,7 @@ $accent-red: #ef4444;
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: $accent-green;
+  background: var(--color-success);
   animation: bhPulse 2.4s ease-in-out infinite;
 }
 
@@ -99,21 +84,21 @@ $accent-red: #ef4444;
   justify-content: flex-end;
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid $border-subtle;
+  border-top: 1px solid var(--color-border);
 }
 
 .stat-box {
   min-width: 160px;
   padding: 16px 20px;
   border-radius: 11px;
-  background: $bg-card;
-  border: 1px solid $border-subtle;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
 }
 
 .stat-label {
   font-size: 14.5px;
   letter-spacing: 1.4px;
-  color: $text-dim;
+  color: var(--color-text-tertiary);
   text-transform: uppercase;
   font-family: 'IBM Plex Mono', monospace;
   margin-bottom: 8px;
@@ -124,19 +109,19 @@ $accent-red: #ef4444;
   font-size: 42.5px;
   font-weight: 500;
   line-height: 1;
-  color: $text-primary;
+  color: var(--color-text-primary);
 }
 
 .stat-value-pending {
-  color: $accent-gold;
+  color: var(--color-accent);
 }
 
 .stat-value-assigned {
-  color: $accent-blue;
+  color: var(--color-primary);
 }
 
 .stat-value-departed {
-  color: $accent-green;
+  color: var(--color-success);
 }
 
 .operatore-layout {
@@ -152,8 +137,8 @@ $accent-red: #ef4444;
 }
 
 .form-card {
-  background: $bg-card;
-  border: 1px solid $border-subtle;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 24px 28px;
   position: sticky;
@@ -164,7 +149,7 @@ $accent-red: #ef4444;
 
   h3 {
     margin: 0 0 1.4rem;
-    color: $text-primary;
+    color: var(--color-text-primary);
     font-size: 20px;
     font-weight: 500;
     letter-spacing: -0.3px;
@@ -177,7 +162,7 @@ $accent-red: #ef4444;
   label {
     display: block;
     margin-bottom: 0.5rem;
-    color: $text-muted;
+    color: var(--color-text-secondary);
     font-size: 1rem;
     font-weight: 400;
   }
@@ -185,10 +170,10 @@ $accent-red: #ef4444;
   input, textarea {
     width: 100%;
     padding: 14px 18px;
-    background: $bg-page;
-    border: 1px solid $border-input;
+    background: var(--color-input-bg);
+    border: 1px solid var(--color-input-border);
     border-radius: 10px;
-    color: $text-primary;
+    color: var(--color-text-primary);
     font-family: 'IBM Plex Sans', sans-serif;
     font-size: 1.1rem;
     box-sizing: border-box;
@@ -196,13 +181,13 @@ $accent-red: #ef4444;
     resize: vertical;
 
     &::placeholder {
-      color: $text-input;
+      color: var(--color-input-placeholder);
       font-size: 1.05rem;
     }
 
     &:focus {
       outline: none;
-      border-color: rgba(77, 141, 246, 0.5);
+      border-color: var(--color-primary);
     }
 
     &:disabled {
@@ -219,8 +204,8 @@ $accent-red: #ef4444;
 
 .btn-submit {
   width: 100%;
-  background: $accent-gold;
-  color: #161616;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
   border: none;
   padding: 15px 22px;
   border-radius: 10px;
@@ -232,7 +217,7 @@ $accent-red: #ef4444;
   margin-top: auto;
 
   &:hover:not(:disabled) {
-    background: #dbb95a;
+    background: var(--color-accent-hover);
     transform: scale(1.01);
   }
 
@@ -251,21 +236,21 @@ $accent-red: #ef4444;
   line-height: 1.5;
 
   &-error {
-    background: rgba(224, 122, 95, 0.12);
-    border: 1px solid rgba(224, 122, 95, 0.25);
-    color: #f5b8a8;
+    background: var(--color-coral-bg);
+    border: 1px solid var(--color-coral-border);
+    color: var(--color-coral);
   }
 
   &-success {
-    background: rgba(70, 192, 138, 0.12);
-    border: 1px solid rgba(70, 192, 138, 0.25);
-    color: #7ddbb6;
+    background: var(--color-success-bg);
+    border: 1px solid var(--color-success-border);
+    color: var(--color-success);
   }
 }
 
 .ships-card {
-  background: $bg-card;
-  border: 1px solid $border-subtle;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   overflow: hidden;
   height: 100%;
@@ -277,12 +262,12 @@ $accent-red: #ef4444;
     align-items: center;
     justify-content: space-between;
     padding: 14px 18px;
-    border-bottom: 1px solid $border-subtle;
+    border-bottom: 1px solid var(--color-border);
     flex: none;
 
     h3 {
       margin: 0;
-      color: $text-primary;
+      color: var(--color-text-primary);
       font-size: 16px;
       font-weight: 500;
       letter-spacing: -0.2px;
@@ -290,7 +275,7 @@ $accent-red: #ef4444;
 
     .ships-count {
       font-size: 12px;
-      color: $text-dim;
+      color: var(--color-text-tertiary);
       font-family: 'IBM Plex Mono', monospace;
     }
   }
@@ -307,8 +292,8 @@ $accent-red: #ef4444;
 }
 
 .ship-card {
-  background: $bg-card-alt;
-  border: 1px solid $border-subtle;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
   border-radius: 11px;
   padding: 18px 22px;
   transition: all 0.15s ease;
@@ -321,8 +306,8 @@ $accent-red: #ef4444;
   // }
 
   &--editing {
-    border-color: $accent-blue;
-    background: rgba(77, 141, 246, 0.05);
+    border-color: var(--color-primary);
+    background: var(--color-primary-bg);
   }
 }
 
@@ -346,7 +331,7 @@ $accent-red: #ef4444;
 .ship-name {
   font-size: 19px;
   font-weight: 500;
-  color: $text-primary;
+  color: var(--color-text-primary);
 }
 
 .ship-chip {
@@ -356,9 +341,9 @@ $accent-red: #ef4444;
   letter-spacing: 0.3px;
   padding: 3px 10px;
   border-radius: 6px;
-  color: #a3a3a3;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  color: var(--color-text-secondary);
+  background: var(--color-overlay-1);
+  border: 1px solid var(--color-border);
   flex: none;
 }
 
@@ -372,21 +357,21 @@ $accent-red: #ef4444;
   flex: none;
 
   &.status-pending {
-    color: $accent-gold;
-    background: rgba(201, 168, 76, 0.12);
-    border: 1px solid rgba(201, 168, 76, 0.2);
+    color: var(--color-accent);
+    background: var(--color-warning-bg);
+    border: 1px solid var(--color-warning-border);
   }
 
   &.status-assigned {
-    color: $accent-blue;
-    background: rgba(77, 141, 246, 0.12);
-    border: 1px solid rgba(77, 141, 246, 0.2);
+    color: var(--color-primary-text);
+    background: var(--color-primary-bg);
+    border: 1px solid var(--color-primary-border);
   }
 
   &.status-departed {
-    color: $accent-green;
-    background: rgba(70, 192, 138, 0.12);
-    border: 1px solid rgba(70, 192, 138, 0.2);
+    color: var(--color-success);
+    background: var(--color-success-bg);
+    border: 1px solid var(--color-success-border);
   }
 }
 
@@ -425,20 +410,20 @@ $accent-red: #ef4444;
 }
 
 .btn-ship-edit {
-  background: rgba(77, 141, 246, 0.08);
-  border-color: rgba(77, 141, 246, 0.12);
+  background: var(--color-primary-bg);
+  border-color: var(--color-primary-border);
 
   &:hover:not(:disabled) {
-    background: rgba(77, 141, 246, 0.2);
+    background: var(--color-primary-border);
   }
 }
 
 .btn-ship-delete {
-  background: rgba(239, 68, 68, 0.08);
-  border-color: rgba(239, 68, 68, 0.12);
+  background: var(--color-danger-bg);
+  border-color: var(--color-danger-border);
 
   &:hover:not(:disabled) {
-    background: rgba(239, 68, 68, 0.2);
+    background: var(--color-danger-border);
   }
 }
 
@@ -447,13 +432,13 @@ $accent-red: #ef4444;
   gap: 10px;
   margin-top: 10px;
   font-size: 13px;
-  color: $text-muted;
+  color: var(--color-text-secondary);
   font-family: 'IBM Plex Mono', monospace;
   flex-wrap: wrap;
   align-items: center;
 
   .ship-notes {
-    color: $text-primary;
+    color: var(--color-text-primary);
     font-style: italic;
   }
 }
@@ -478,7 +463,7 @@ $accent-red: #ef4444;
 
   label {
     font-size: 11px;
-    color: $text-muted;
+    color: var(--color-text-secondary);
     font-family: 'IBM Plex Mono', monospace;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -486,17 +471,17 @@ $accent-red: #ef4444;
 
   input, select, textarea {
     padding: 8px 12px;
-    background: $bg-page;
-    border: 1px solid $border-input;
+    background: var(--color-input-bg);
+    border: 1px solid var(--color-input-border);
     border-radius: 6px;
-    color: $text-primary;
+    color: var(--color-text-primary);
     font-family: 'IBM Plex Sans', sans-serif;
     font-size: 14px;
     box-sizing: border-box;
 
     &:focus {
       outline: none;
-      border-color: rgba(77, 141, 246, 0.5);
+      border-color: var(--color-primary);
     }
 
     &:disabled {
@@ -533,23 +518,23 @@ $accent-red: #ef4444;
 }
 
 .btn-edit-save {
-  background: $accent-blue;
-  color: #ffffff;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
   flex: 1;
 
   &:hover:not(:disabled) {
-    background: #6aa0ff;
+    background: var(--color-primary-hover);
   }
 }
 
 .btn-edit-cancel {
-  background: rgba(255, 255, 255, 0.05);
-  color: $text-muted;
-  border: 1px solid $border-input;
+  background: var(--color-overlay-1);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-input-border);
 
   &:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.1);
-    color: $text-primary;
+    background: var(--color-overlay-3);
+    color: var(--color-text-primary);
   }
 }
 
@@ -572,7 +557,7 @@ $accent-red: #ef4444;
   p {
     margin: 0;
     font-size: 14px;
-    color: $text-muted;
+    color: var(--color-text-secondary);
     line-height: 1.6;
   }
 }
@@ -590,7 +575,7 @@ $accent-red: #ef4444;
 
 .operatore-page::-webkit-scrollbar-thumb,
 .ships-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--color-overlay-4);
   border-radius: 4px;
 }
 

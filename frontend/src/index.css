@@ -1,3 +1,5 @@
+@import './styles/_theme.scss';
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -8,6 +10,8 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden; /* la pagina intera non scorre mai */
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
 }
 
 #root {

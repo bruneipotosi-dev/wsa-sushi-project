@@ -4,6 +4,15 @@
     <link rel="icon" type="image/png" href="/msc-logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BlueHarbor Terminal</title>
+    <script>
+      // Applica il tema prima del primo paint per evitare un flash del
+      // tema sbagliato (stesso THEME_STORAGE_KEY di useTheme.js).
+      (function () {
+        var stored = localStorage.getItem('blueharbor-theme');
+        var theme = stored || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
