@@ -131,39 +131,14 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
 
   return (
     <div className="operatore-page">
-
       <div className="section-header">
         <div className="section-header-title">
-          <div>
-            <div className="section-eyebrow">AREA OPERATORE</div>
-            <h1 className="section-title">
-              Registro Navi
-              <span className="section-pulse" />
-            </h1>
-          </div>
-        </div>
-        <div className="stats-container">
-          <div className="stat-box">
-            <div className="stat-label">Totale navi</div>
-            <div className="stat-value">{ships.length}</div>
-          </div>
-          <div className="stat-box">
-            <div className="stat-label">In attesa</div>
-            <div className="stat-value stat-value-pending">{pending.length}</div>
-          </div>
-          <div className="stat-box">
-            <div className="stat-label">Assegnate</div>
-            <div className="stat-value stat-value-assigned">{assigned.length}</div>
-          </div>
-          <div className="stat-box">
-            <div className="stat-label">Partite</div>
-            <div className="stat-value stat-value-departed">{departed.length}</div>
-          </div>
+          <h1>Operatore</h1>
+          <p className="subtitle">Gestione navi e registrazione</p>
         </div>
       </div>
 
       <div className="operatore-layout">
-
         <div className="form-card">
           <h3>Registra nuova nave</h3>
 
@@ -277,7 +252,7 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
                           disabled={loading || !editName.trim()}
                           className="btn-edit-save"
                         >
-                          {loading ? "Salvataggio..." : "💾 Salva"}
+                          {loading ? "Salvataggio..." : "Salva"}
                         </button>
                         <button
                           onClick={handleCancelEdit}
@@ -305,7 +280,7 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
                             disabled={loading}
                             title="Modifica"
                           >
-                            ✏️
+                            ✏️ 
                           </button>
                           <button
                             onClick={() => handleDeleteShip(ship.id, ship.name)}
@@ -313,7 +288,7 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
                             disabled={loading}
                             title="Elimina"
                           >
-                            🗑️
+                            ❌
                           </button>
                         </div>
                       </div>
@@ -334,8 +309,27 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
               ))}
             </div>
           )}
-        </div>
 
+          {/* STATS SPOSTATE IN BASSO */}
+          <div className="stats-container stats-container--bottom">
+            <div className="stat-box">
+              <div className="stat-label">Totale navi</div>
+              <div className="stat-value">{ships.length}</div>
+            </div>
+            <div className="stat-box">
+              <div className="stat-label">In attesa</div>
+              <div className="stat-value stat-value-pending">{pending.length}</div>
+            </div>
+            <div className="stat-box">
+              <div className="stat-label">Assegnate</div>
+              <div className="stat-value stat-value-assigned">{assigned.length}</div>
+            </div>
+            <div className="stat-box">
+              <div className="stat-label">Partite</div>
+              <div className="stat-value stat-value-departed">{departed.length}</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
