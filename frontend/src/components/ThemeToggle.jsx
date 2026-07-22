@@ -17,7 +17,7 @@ export default function ThemeToggle({ className = '' }) {
     >
       <span className="theme-toggle-track">
         <span className={`theme-toggle-thumb ${isDark ? 'theme-toggle-thumb--dark' : ''}`}>
-          {isDark ? <Moon size={13} strokeWidth={2} /> : <Sun size={13} strokeWidth={2} />}
+          {isDark ? <Moon size={13} strokeWidth={2} aria-hidden="true" /> : <Sun size={13} strokeWidth={2} aria-hidden="true" />}
         </span>
       </span>
     </button>
