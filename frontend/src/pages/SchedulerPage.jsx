@@ -1,7 +1,8 @@
 // src/pages/SchedulerPage.jsx
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Ship, ArrowRight, X } from "lucide-react"
 import { getShips, getBerths, createAssignment, getAssignments } from "../services/api"
+import { useFocusTrap } from "../hooks/useFocusTrap"
 import "./SchedulerPage.scss"
 
 const USE_MOCK = false
@@ -207,8 +208,14 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
     }
   }
 
+  const handleCloseModal = useCallback(() => {
+    if (!confirmLoading) setConfirmModal(null)
+  }, [confirmLoading])
+
+  const modalRef = useFocusTrap(!!confirmModal, handleCloseModal)
+
   return (
-    <div className="scheduler-page">
+    <main className="scheduler-page">
 
       {/* SECTION HEADER - TITOLO + STATO SELEZIONE (se presente) */}
       <div className="sch-topline">
@@ -234,7 +241,7 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
               onClick={() => setSelectedShip(null)}
               aria-label="Annulla selezione nave"
             >
-              <X size={14} strokeWidth={2.2} />
+              <X size={14} strokeWidth={2.2} aria-hidden="true" />
             </button>
           </div>
         )}
@@ -243,7 +250,7 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
       {/* UTILIZATION BAR */}
       <div className="sch-util">
         <span className="sch-util-label">Occupazione terminale</span>
-        <div className="sch-util-track">
+        <div className="sch-util-track" aria-hidden="true">
           {berthStates.map(({ berth, state }) => (
             <div
               key={berth.id}
@@ -256,8 +263,8 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
       </div>
 
       {overdueShips.length > 0 && (
-        <div className="warning-banner">
-          <div className="warning-icon">⚠️</div>
+        <div className="warning-banner" role="status">
+          <div className="warning-icon" aria-hidden="true">⚠️</div>
           <div className="warning-content">
             <strong>Attenzione:</strong> ci sono <strong>{overdueShips.length}</strong> navi in attesa già arrivate.
             <br />
@@ -305,7 +312,7 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
                     <div><span className="sch-meta-label">DURATA</span><span className="sch-meta-val">{ship.occupationDuration} {ship.occupationDuration === 1 ? "giorno" : "giorni"}</span></div>
                   </div>
                   {selectedShip?.id === ship.id && (
-                    <div className="sch-ship-selected-tag">✓ Scegli banchina</div>
+                    <div className="sch-ship-selected-tag"><span aria-hidden="true">✓</span> Scegli banchina</div>
                   )}
                 </div>
               ))}
@@ -316,7 +323,7 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
         {/* BERTH COLUMN - NUOVO CONTENITORE PER GRIGLIA + STATS */}
         <div className="sch-berth-column">
           {/* BERTH GRID */}
-          <main className="sch-berth-grid">
+          <div className="sch-berth-grid">
             {berthStates.map(({ berth, state }, i) => {
               const isCompatible = !!(selectedShip && berth.size === selectedShip.size)
               const isDimmed     = !!(selectedShip && !isCompatible)
@@ -347,7 +354,7 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
                   <div className="sch-berth-head">
                     <div className="sch-berth-index">BANCHINA {pad2(i + 1)}</div>
                     <div className="sch-berth-badge">
-                      <span className="sch-berth-badge-dot" style={{ background: themeColor }} />
+                      <span className="sch-berth-badge-dot" aria-hidden="true" style={{ background: themeColor }} />
                       {state.status}
                     </div>
                   </div>
@@ -359,7 +366,7 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
                     {state.status === "DISPONIBILE" ? (
                       <>
                         <div className={`sch-berth-anchor-box ${isCompatible ? "sch-berth-anchor-box--compatible" : ""}`}>
-                          <span style={{ color: isCompatible ? "var(--color-primary)" : "var(--color-text-tertiary)" }}>⚓</span>
+                          <span aria-hidden="true" style={{ color: isCompatible ? "var(--color-primary)" : "var(--color-text-tertiary)" }}>⚓</span>
                         </div>
                         <div className="sch-berth-center-label" style={{ color: isCompatible ? "var(--color-primary)" : "var(--color-text-secondary)" }}>
                           {isCompatible ? "TRASCINA O CLICCA" : "LIBERA PER ORMEGGIO"}
@@ -399,7 +406,7 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
                 </div>
               )
             })}
-          </main>
+          </div>
 
           {/* STATS SPOSTATE IN BASSO */}
           <div className="sch-stats sch-stats--bottom">
@@ -417,10 +424,18 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
 
       {/* CONFIRM MODAL */}
       {confirmModal && (
-        <div className="sch-modal-overlay" onClick={() => !confirmLoading && setConfirmModal(null)}>
-          <div className="sch-modal" onClick={e => e.stopPropagation()}>
-            <div className="sch-modal-head">
-              <span className="sch-modal-head-dot" />
+        <div className="sch-modal-overlay" onClick={handleCloseModal}>
+          <div
+            className="sch-modal"
+            onClick={e => e.stopPropagation()}
+            ref={modalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="sch-modal-title"
+            tabIndex={-1}
+          >
+            <div className="sch-modal-head" id="sch-modal-title">
+              <span className="sch-modal-head-dot" aria-hidden="true" />
               Conferma assegnazione
             </div>
             <div className="sch-modal-body">
@@ -430,7 +445,7 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
                   <strong>{confirmModal.ship.name}</strong>
                   <span className="sch-chip">{confirmModal.ship.size}</span>
                 </div>
-                <span className="sch-modal-arrow">→</span>
+                <span className="sch-modal-arrow" aria-hidden="true">→</span>
                 <div className="sch-modal-compare-item">
                   <span>BANCHINA</span>
                   <strong>{confirmModal.berth.name}</strong>
@@ -441,9 +456,9 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
                 <div><span>GIORNO FINE</span><strong>G{confirmModal.endDay}</strong></div>
                 <div><span>DURATA</span><strong>{confirmModal.endDay - confirmModal.startDay + 1} giorni</strong></div>
               </div>
-              {confirmError && <div className="sch-modal-error">{confirmError}</div>}
+              {confirmError && <div className="sch-modal-error" role="alert">{confirmError}</div>}
               <div className="sch-modal-actions">
-                <button className="sch-btn-cancel" onClick={() => setConfirmModal(null)} disabled={confirmLoading}>Annulla</button>
+                <button className="sch-btn-cancel" onClick={handleCloseModal} disabled={confirmLoading}>Annulla</button>
                 <button className="sch-btn-confirm" onClick={handleConfirm} disabled={confirmLoading}>
                   {confirmLoading ? "Conferma in corso…" : "Conferma"}
                 </button>
@@ -455,8 +470,8 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
 
       {/* TOAST */}
       {toast && (
-        <div className="sch-toast">
-          <div className="sch-toast-icon">✓</div>
+        <div className="sch-toast" role="status">
+          <div className="sch-toast-icon" aria-hidden="true">✓</div>
           <div>
             <div className="sch-toast-title">{toast.title}</div>
             <div className="sch-toast-msg">{toast.msg}</div>
@@ -464,6 +479,6 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
         </div>
       )}
 
-    </div>
+    </main>
   )
 }

@@ -11,6 +11,14 @@
   line-height: 1.5;
   display: flex;
   flex-direction: column;
+
+  // focus visibile ad alto contrasto per navigazione da tastiera — stesso
+  // pattern usato in Navbar/SchedulerPage
+  :focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
 }
 
 .section-header {
@@ -147,7 +155,7 @@
   display: flex;
   flex-direction: column;
 
-  h3 {
+  h2 {
     margin: 0 0 1.4rem;
     color: var(--color-text-primary);
     font-size: 20px;
@@ -185,8 +193,7 @@
       font-size: 1.05rem;
     }
 
-    &:focus {
-      outline: none;
+    &:focus-visible {
       border-color: var(--color-primary);
     }
 
@@ -265,7 +272,7 @@
     border-bottom: 1px solid var(--color-border);
     flex: none;
 
-    h3 {
+    h2 {
       margin: 0;
       color: var(--color-text-primary);
       font-size: 16px;
@@ -479,8 +486,7 @@
     font-size: 14px;
     box-sizing: border-box;
 
-    &:focus {
-      outline: none;
+    &:focus-visible {
       border-color: var(--color-primary);
     }
 

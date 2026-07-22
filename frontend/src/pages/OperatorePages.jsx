@@ -12,6 +12,16 @@ function generateShipData(currentDay) {
   };
 }
 
+// Solo per la visualizzazione: lo stato dal backend resta in inglese
+// (usato per filtri e classe CSS), ma testo in inglese in un'interfaccia
+// italiana è un problema di lingua per screen reader (WCAG 3.1.2) — qui
+// traduciamo solo l'etichetta mostrata, senza toccare ship.status.
+const STATUS_LABELS = {
+  Pending: "In attesa",
+  Assigned: "Assegnata",
+  Departed: "Partita",
+};
+
 export default function OperatorePage({ ships, setShips, currentDay }) {
   const [name, setName]       = useState("");
   const [notes, setNotes]     = useState("");
@@ -130,7 +140,7 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
   }
 
   return (
-    <div className="operatore-page">
+    <main className="operatore-page">
       <div className="section-header">
         <div className="section-header-title">
           <h1>Operatore</h1>
@@ -140,14 +150,15 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
 
       <div className="operatore-layout">
         <div className="form-card">
-          <h3>Registra nuova nave</h3>
+          <h2>Registra nuova nave</h2>
 
-          {error   && <div className="alert alert-error">{error}</div>}
-          {success && <div className="alert alert-success">{success}</div>}
+          {error   && <div className="alert alert-error" role="alert">{error}</div>}
+          {success && <div className="alert alert-success" role="status">{success}</div>}
 
           <div className="form-group">
-            <label>Nome nave *</label>
+            <label htmlFor="ship-name">Nome nave *</label>
             <input
+              id="ship-name"
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}
@@ -157,8 +168,9 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
           </div>
 
           <div className="form-group">
-            <label>Note operative</label>
+            <label htmlFor="ship-notes">Note operative</label>
             <textarea
+              id="ship-notes"
               value={notes}
               onChange={e => setNotes(e.target.value)}
               placeholder="Carico, provenienza, istruzioni..."
@@ -178,13 +190,13 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
 
         <div className="ships-card">
           <div className="ships-card-header">
-            <h3>Registro navi</h3>
+            <h2>Registro navi</h2>
             <span className="ships-count">{ships.length} navi</span>
           </div>
 
           {ships.length === 0 ? (
             <div className="empty-state">
-              <span className="empty-icon">🚢</span>
+              <span className="empty-icon" aria-hidden="true">🚢</span>
               <p>Nessuna nave registrata.<br/>Usa il form per aggiungerne una.</p>
             </div>
           ) : (
@@ -195,8 +207,9 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
                     <div className="ship-edit-mode">
                       <div className="ship-edit-fields">
                         <div className="ship-edit-field">
-                          <label>Nome</label>
+                          <label htmlFor="edit-ship-name">Nome</label>
                           <input
+                            id="edit-ship-name"
                             type="text"
                             value={editName}
                             onChange={e => setEditName(e.target.value)}
@@ -204,8 +217,9 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
                           />
                         </div>
                         <div className="ship-edit-field">
-                          <label>Taglia</label>
+                          <label htmlFor="edit-ship-size">Taglia</label>
                           <select
+                            id="edit-ship-size"
                             value={editSize}
                             onChange={e => setEditSize(e.target.value)}
                             disabled={loading}
@@ -217,8 +231,9 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
                           </select>
                         </div>
                         <div className="ship-edit-field">
-                          <label>Arrivo (giorno)</label>
+                          <label htmlFor="edit-ship-arrival">Arrivo (giorno)</label>
                           <input
+                            id="edit-ship-arrival"
                             type="number"
                             value={editArrivalDay}
                             onChange={e => setEditArrivalDay(parseInt(e.target.value) || 1)}
@@ -227,8 +242,9 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
                           />
                         </div>
                         <div className="ship-edit-field">
-                          <label>Durata (giorni)</label>
+                          <label htmlFor="edit-ship-duration">Durata (giorni)</label>
                           <input
+                            id="edit-ship-duration"
                             type="number"
                             value={editDuration}
                             onChange={e => setEditDuration(parseInt(e.target.value) || 1)}
@@ -237,8 +253,9 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
                           />
                         </div>
                         <div className="ship-edit-field ship-edit-field--full">
-                          <label>Note</label>
+                          <label htmlFor="edit-ship-notes">Note</label>
                           <textarea
+                            id="edit-ship-notes"
                             value={editNotes}
                             onChange={e => setEditNotes(e.target.value)}
                             disabled={loading}
@@ -270,7 +287,7 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
                           <span className="ship-name">{ship.name}</span>
                           <span className="ship-chip">{ship.size}</span>
                           <span className={`ship-status status-${ship.status.toLowerCase()}`}>
-                            {ship.status}
+                            {STATUS_LABELS[ship.status] ?? ship.status}
                           </span>
                         </div>
                         <div className="ship-actions">
@@ -279,26 +296,28 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
                             className="btn-ship-edit"
                             disabled={loading}
                             title="Modifica"
+                            aria-label={`Modifica ${ship.name}`}
                           >
-                            ✏️ 
+                            <span aria-hidden="true">✏️</span>
                           </button>
                           <button
                             onClick={() => handleDeleteShip(ship.id, ship.name)}
                             className="btn-ship-delete"
                             disabled={loading}
                             title="Elimina"
+                            aria-label={`Elimina ${ship.name}`}
                           >
-                            ❌
+                            <span aria-hidden="true">❌</span>
                           </button>
                         </div>
                       </div>
                       <div className="ship-details">
                         <span>Arrivo: Gg {ship.arrivalDay}</span>
-                        <span>•</span>
+                        <span aria-hidden="true">•</span>
                         <span>Durata: {ship.occupationDuration} giorni</span>
                         {ship.notes && (
                           <>
-                            <span>•</span>
+                            <span aria-hidden="true">•</span>
                             <span className="ship-notes">{ship.notes}</span>
                           </>
                         )}
@@ -331,6 +350,6 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

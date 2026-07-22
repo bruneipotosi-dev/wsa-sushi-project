@@ -45,11 +45,11 @@ export default function MainPage({ onRoleSelect }) {
             <span className="bh-role-top-line" />
             <User className="bh-role-icon-ghost" strokeWidth={0.6} aria-hidden="true" />
             <span className="bh-role-icon-badge">
-              <User size={28} strokeWidth={1.7} />
+              <User size={28} strokeWidth={1.7} aria-hidden="true" />
             </span>
             <span className="bh-role-name">Operatore</span>
             <span className="bh-role-cta">
-              Entra <ArrowRight size={16} />
+              Entra <ArrowRight size={16} aria-hidden="true" />
             </span>
           </button>
 
@@ -61,11 +61,11 @@ export default function MainPage({ onRoleSelect }) {
             <span className="bh-role-top-line" />
             <CalendarDays className="bh-role-icon-ghost" strokeWidth={0.6} aria-hidden="true" />
             <span className="bh-role-icon-badge">
-              <CalendarDays size={28} strokeWidth={1.7} />
+              <CalendarDays size={28} strokeWidth={1.7} aria-hidden="true" />
             </span>
             <span className="bh-role-name">Scheduler</span>
             <span className="bh-role-cta">
-              Entra <ArrowRight size={16} />
+              Entra <ArrowRight size={16} aria-hidden="true" />
             </span>
           </button>
         </div>
