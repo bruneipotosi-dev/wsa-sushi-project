@@ -37,30 +37,30 @@ const calcSlotReal = (berth, ship, assignments, currentDay) => {
 
 const BERTHS = [
   { id: 1, name: "XL-1", size: "XL" },
-  { id: 2, name: "L-1",  size: "L"  },
-  { id: 3, name: "M-1",  size: "M"  },
-  { id: 4, name: "M-2",  size: "M"  },
-  { id: 5, name: "S-1",  size: "S"  },
-  { id: 6, name: "S-2",  size: "S"  },
-  { id: 7, name: "S-3",  size: "S"  },
-  { id: 8, name: "S-4",  size: "S"  },
+  { id: 2, name: "L-1", size: "L" },
+  { id: 3, name: "M-1", size: "M" },
+  { id: 4, name: "M-2", size: "M" },
+  { id: 5, name: "S-1", size: "S" },
+  { id: 6, name: "S-2", size: "S" },
+  { id: 7, name: "S-3", size: "S" },
+  { id: 8, name: "S-4", size: "S" },
 ]
 
 const STATUS_THEME = {
   DISPONIBILE: "var(--color-success)",
   PIANIFICATA: "var(--color-warning)",
-  OCCUPATA:    "var(--color-coral)",
+  OCCUPATA: "var(--color-coral)",
 }
 
 const pad2 = (n) => String(n).padStart(2, "0")
 
 export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) {
-  const [apiData, setApiData]           = useState({ ships: [], berths: [], assignments: [] })
+  const [apiData, setApiData] = useState({ ships: [], berths: [], assignments: [] })
   const [selectedShip, setSelectedShip] = useState(null)
   const [confirmModal, setConfirmModal] = useState(null)
   const [confirmLoading, setConfirmLoading] = useState(false)
   const [confirmError, setConfirmError] = useState(null)
-  const [toast, setToast]               = useState(null)
+  const [toast, setToast] = useState(null)
   const [dragOverBerthId, setDragOverBerthId] = useState(null)
 
   useEffect(() => {
@@ -78,8 +78,8 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
   }, [toast])
 
   const pendingShips = USE_MOCK ? ships.filter(s => s.status === "Pending") : apiData.ships
-  const berths        = USE_MOCK ? BERTHS : apiData.berths
-  const overdueShips  = pendingShips.filter(ship => ship.arrivalDay <= currentDay)
+  const berths = USE_MOCK ? BERTHS : apiData.berths
+  const overdueShips = pendingShips.filter(ship => ship.arrivalDay <= currentDay)
 
   // Calcola active + upcoming (piu vicino) + finestra a 7 giorni per una banchina
   const getBerthState = (berth) => {
@@ -95,7 +95,7 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
     }
     assigns.sort((p, q) => p.startDay - q.startDay)
 
-    const active   = assigns.find(a => a.startDay <= currentDay && currentDay <= a.endDay)
+    const active = assigns.find(a => a.startDay <= currentDay && currentDay <= a.endDay)
     const upcoming = assigns.find(a => a.startDay > currentDay)
     const status = active ? "OCCUPATA" : (upcoming ? "PIANIFICATA" : "DISPONIBILE")
     const occ = active || upcoming || null
@@ -130,7 +130,7 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
   }
 
   const berthStates = berths.map(b => ({ berth: b, state: getBerthState(b) }))
-  const occCount  = berthStates.filter(x => x.state.status === "OCCUPATA").length
+  const occCount = berthStates.filter(x => x.state.status === "OCCUPATA").length
   const planCount = berthStates.filter(x => x.state.status === "PIANIFICATA").length
   const freeCount = berthStates.filter(x => x.state.status === "DISPONIBILE").length
 
@@ -259,9 +259,18 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
         <div className="warning-banner">
           <div className="warning-icon">⚠️</div>
           <div className="warning-content">
-            <strong>Attenzione:</strong> ci sono <strong>{overdueShips.length}</strong> navi in attesa già arrivate.
+            <strong>Attenzione:</strong>{' '}
+            {overdueShips.length === 1
+              ? "c'è 1 nave in attesa già arrivata."
+              : `ci sono ${overdueShips.length} navi in attesa già arrivate.`
+            }
             <br />
-            <small>Assegnale prima di proseguire con il giorno operativo.</small>
+            <small>
+              {overdueShips.length === 1
+                ? "Assegnala prima di proseguire con il giorno operativo."
+                : "Assegnale prima di proseguire con il giorno operativo."
+              }
+            </small>
           </div>
         </div>
       )}
@@ -319,9 +328,9 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
           <main className="sch-berth-grid">
             {berthStates.map(({ berth, state }, i) => {
               const isCompatible = !!(selectedShip && berth.size === selectedShip.size)
-              const isDimmed     = !!(selectedShip && !isCompatible)
-              const isDragOver   = dragOverBerthId === berth.id
-              const themeColor   = STATUS_THEME[state.status]
+              const isDimmed = !!(selectedShip && !isCompatible)
+              const isDragOver = dragOverBerthId === berth.id
+              const themeColor = STATUS_THEME[state.status]
 
               return (
                 <div
