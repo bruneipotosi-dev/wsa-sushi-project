@@ -12,7 +12,6 @@ obj/
 *.db-wal
 *.db-shm
 *.db
-Data/blueharbor.db
 
 # Node / frontend
 node_modules/

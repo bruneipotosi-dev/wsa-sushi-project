@@ -10,6 +10,7 @@ Il setup non è lungo. Ti basta aprire due terminali nella cartella del progetto
 
 ```bash
 # 1. backend
+cd backend
 dotnet run
 
 # 2. frontend
