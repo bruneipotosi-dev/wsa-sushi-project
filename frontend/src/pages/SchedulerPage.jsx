@@ -223,27 +223,49 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
           <p className="sch-subtitle">Giorno operativo {currentDay}</p>
         </div>
 
-        {selectedShip && (
-          <div className="selection-banner">
-            <span className="selection-banner-icon" aria-hidden="true">
-              <Ship size={14} strokeWidth={2.2} />
-            </span>
-            <span className="selection-banner-text">
-              <strong>{selectedShip.name}</strong>
-              <span className="sch-chip">{selectedShip.size}</span>
-              <ArrowRight size={13} strokeWidth={2} className="selection-banner-arrow" aria-hidden="true" />
-              scegli banchina
-            </span>
-            <button
-              type="button"
-              className="selection-banner-close"
-              onClick={() => setSelectedShip(null)}
-              aria-label="Annulla selezione nave"
+        <div className="sch-topline-right">
+          {overdueShips.length > 0 && (
+            <div
+              className="warning-banner"
+              role="status"
+              title={overdueShips.length === 1
+                ? "Assegnala prima di proseguire con il giorno operativo."
+                : "Assegnale prima di proseguire con il giorno operativo."
+              }
             >
-              <X size={14} strokeWidth={2.2} aria-hidden="true" />
-            </button>
-          </div>
-        )}
+              <span className="warning-icon" aria-hidden="true">⚠️</span>
+              <span className="warning-content">
+                <strong>Attenzione:</strong>{' '}
+                {overdueShips.length === 1
+                  ? "1 nave in attesa già arrivata"
+                  : `${overdueShips.length} navi in attesa già arrivate`
+                }
+              </span>
+            </div>
+          )}
+
+          {selectedShip && (
+            <div className="selection-banner">
+              <span className="selection-banner-icon" aria-hidden="true">
+                <Ship size={14} strokeWidth={2.2} />
+              </span>
+              <span className="selection-banner-text">
+                <strong>{selectedShip.name}</strong>
+                <span className="sch-chip">{selectedShip.size}</span>
+                <ArrowRight size={13} strokeWidth={2} className="selection-banner-arrow" aria-hidden="true" />
+                scegli banchina
+              </span>
+              <button
+                type="button"
+                className="selection-banner-close"
+                onClick={() => setSelectedShip(null)}
+                aria-label="Annulla selezione nave"
+              >
+                <X size={14} strokeWidth={2.2} aria-hidden="true" />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* UTILIZATION BAR */}
@@ -260,26 +282,6 @@ export default function SchedulerPage({ currentDay = 1, ships = [], setShips }) 
         </div>
         <span className="sch-util-count">{occCount} occupate · {planCount} pianificate</span>
       </div>
-
-      {overdueShips.length > 0 && (
-        <div className="warning-banner" role="status">
-          <div className="warning-icon" aria-hidden="true">⚠️</div>
-          <div className="warning-content">
-            <strong>Attenzione:</strong>{' '}
-            {overdueShips.length === 1
-              ? "c'è 1 nave in attesa già arrivata."
-              : `ci sono ${overdueShips.length} navi in attesa già arrivate.`
-            }
-            <br />
-            <small>
-              {overdueShips.length === 1
-                ? "Assegnala prima di proseguire con il giorno operativo."
-                : "Assegnale prima di proseguire con il giorno operativo."
-              }
-            </small>
-          </div>
-        </div>
-      )}
 
       <div className="sch-body">
 
