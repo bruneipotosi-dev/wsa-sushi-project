@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import MainPage from './pages/MainPage';
 import OperatorePages from './pages/OperatorePages';
 import SchedulerPage from './pages/SchedulerPage';
+import AccessDenied from './components/AccessDenied';
 import { getCurrentDay, advanceDay, resetSystem } from './services/api';
 
 const ROLE_STORAGE_KEY = 'blueharbor-role';
@@ -15,7 +16,7 @@ function ProtectedRoute({ role, userRole, children }) {
   }
 
   if (userRole !== role) {
-    return <Navigate to={userRole === 'Operatore' ? '/operatore' : '/scheduler'} replace />;
+    return <AccessDenied role={role} />;
   }
 
   return children;
