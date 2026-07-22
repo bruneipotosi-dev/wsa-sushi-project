@@ -179,7 +179,7 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
         <div className="ships-card">
           <div className="ships-card-header">
             <h3>Registro navi</h3>
-            <span className="ships-count">{ships.length} navi</span>
+               <span className="ships-count">{ships.length} {ships.length === 1 ? "nave" : "navi"}</span>
           </div>
 
           {ships.length === 0 ? (
