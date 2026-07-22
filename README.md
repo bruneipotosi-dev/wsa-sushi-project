@@ -86,7 +86,7 @@ Se non vedi subito i dati del terminal, controlla che le migrazioni siano state 
 
 La documentazione architetturale si trova qui:
 
-- [docs/BLUEHARBOR_ARCHITECTURAL_DOCUMENTATION.md](docs/BLUEHARBOR_ARCHITECTURAL_DOCUMENTATION.md)
+- [docs/BLUEHARBOR_PROJECT_REPORT.md](docs/BLUEHARBOR_PROJECT_REPORT.md)
 
 ## Grazie
 
