@@ -290,26 +290,28 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
                             {STATUS_LABELS[ship.status] ?? ship.status}
                           </span>
                         </div>
-                        <div className="ship-actions">
-                          <button
-                            onClick={() => handleEditClick(ship)}
-                            className="btn-ship-edit"
-                            disabled={loading}
-                            title="Modifica"
-                            aria-label={`Modifica ${ship.name}`}
-                          >
-                            <span aria-hidden="true">✏️</span>
-                          </button>
-                          <button
-                            onClick={() => handleDeleteShip(ship.id, ship.name)}
-                            className="btn-ship-delete"
-                            disabled={loading}
-                            title="Elimina"
-                            aria-label={`Elimina ${ship.name}`}
-                          >
-                            <span aria-hidden="true">❌</span>
-                          </button>
-                        </div>
+                        {ship.status === "Pending" && (
+                          <div className="ship-actions">
+                            <button
+                              onClick={() => handleEditClick(ship)}
+                              className="btn-ship-edit"
+                              disabled={loading}
+                              title="Modifica"
+                              aria-label={`Modifica ${ship.name}`}
+                            >
+                              <span aria-hidden="true">✏️</span>
+                            </button>
+                            <button
+                              onClick={() => handleDeleteShip(ship.id, ship.name)}
+                              className="btn-ship-delete"
+                              disabled={loading}
+                              title="Elimina"
+                              aria-label={`Elimina ${ship.name}`}
+                            >
+                              <span aria-hidden="true">❌</span>
+                            </button>
+                          </div>
+                        )}
                       </div>
                       <div className="ship-details">
                         <span>Arrivo: Gg {ship.arrivalDay}</span>

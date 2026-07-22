@@ -21,19 +21,18 @@ const calcSlot = (berth, ship, allShips, currentDay) => {
   return { startDay, endDay }
 }
 
-// Stessa formula FindFirstFreeSlot, usata qui solo per l'anteprima nel modal
-// in modalità reale (il backend calcola comunque il valore definitivo al POST)
+// Rispecchia esattamente la logica di AssignmentService.cs (assegnazione
+// sempre sequenziale, mai in un buco libero) cosi' l'anteprima nel modal
+// coincide con il valore che il backend salvera' davvero al POST.
 const calcSlotReal = (berth, ship, assignments, currentDay) => {
-  const berthAssignments = assignments
-    .filter(a => a.berthId === berth.id)
-    .sort((a, b) => a.startDay - b.startDay)
-  let cand = Math.max(ship.arrivalDay, currentDay)
+  const berthAssignments = assignments.filter(a => a.berthId === berth.id)
+  const lastEndDay = berthAssignments.length > 0
+    ? Math.max(...berthAssignments.map(a => a.endDay))
+    : currentDay - 1
+  const firstFreeDay = Math.max(currentDay, lastEndDay + 1)
+  const startDay = Math.max(ship.arrivalDay, firstFreeDay)
   const dur = ship.occupationDuration
-  for (const a of berthAssignments) {
-    if (cand + dur - 1 < a.startDay) break
-    if (cand <= a.endDay) cand = a.endDay + 1
-  }
-  return { startDay: cand, endDay: cand + dur - 1 }
+  return { startDay, endDay: startDay + dur - 1 }
 }
 
 const BERTHS = [
