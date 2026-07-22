@@ -1,5 +1,7 @@
 # Report Test Funzionale — 2026-07-22
 
+> **Aggiornamento successivo (PR #30, branch `fix/scheduler-slot-and-operator-permissions`):** i Bug #2 (mismatch finestra nel modal di assegnazione), #3 (bottoni Modifica/Elimina visibili su navi assegnate) e #4 (nessuna pagina Accesso negato) sono stati **corretti e verificati** con una nuova esecuzione completa dei 5 scenari, nessuna regressione. Resta aperto solo il **Bug #1** (form di modifica che non salva Taglia/Arrivo/Durata), escluso di proposito perché di competenza di Mirko. Dettagli tecnici delle correzioni nella PR #30.
+
 > **Aggiornamento — stesso giorno, dopo nuovo pull:** `main` è avanzato a `e18ac38` (merge della PR #29, che porta in `main` il lavoro del branch `feature/accessibility-audit-fix`). Backend riavviato a pulito e i 5 scenari rieseguiti per verificare l'impatto sui bug trovati. Risultato: **Bug #5 e #6 (focus trap + `Esc`) risultano corretti**, verificati end-to-end da tastiera con successo completo. Gli altri 4 bug (#1, #2, #3, #4) sono ancora presenti, ri-riprodotti singolarmente per conferma — vedi stato aggiornato accanto a ciascuno nella sezione "Bug trovati". Nessuna regressione rilevata sugli scenari già passati. Unica differenza cosmetica: l'etichetta di stato "Pending" nell'interfaccia Operatore ora appare tradotta in italiano ("In attesa") — non è un bug, solo un cambio di copy incluso nel redesign UX di questa PR; il valore interno resta `Pending`.
 
 **Ambiente testato:** branch `main`, commit `9eddbcf` nella prima passata, `e18ac38` (merge PR #29) nella seconda.
