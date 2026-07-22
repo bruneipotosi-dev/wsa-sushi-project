@@ -72,6 +72,20 @@ public class ShipsController : ControllerBase
         // Forza lo stato a Pending (sicurezza)
         ship.Status = ShipStatus.Pending;
 
+        // ─── NUOVA LOGICA: AUTOCOMPLETAMENTO NOTE DAL CATALOGO ────────────────
+        // Completa le note dal catalogo SOLO se l'operatore non ne ha già scritta una
+        if (string.IsNullOrWhiteSpace(ship.Notes))
+        {
+            var profile = await _db.ShipProfiles
+                .FirstOrDefaultAsync(p => p.Name.ToLower() == ship.Name.ToLower());
+
+            if (profile is not null)
+            {
+                ship.Notes = profile.Notes;
+            }
+        }
+        // ──────────────────────────────────────────────────────────────────────
+
         _db.Ships.Add(ship);
         await _db.SaveChangesAsync();
         return CreatedAtAction(nameof(GetShipById), new { id = ship.Id }, ship);
