@@ -10,10 +10,12 @@ const ROLE_NAV_ITEMS = {
   Operatore: [
     { to: '/', label: 'Home' },
     { to: '/operatore', label: 'Operatore' },
+    { to: '/storico', label: 'Storico' },
   ],
   Scheduler: [
     { to: '/', label: 'Home' },
     { to: '/scheduler', label: 'Scheduler' },
+    { to: '/storico', label: 'Storico' },
   ],
 };
 

@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import MainPage from './pages/MainPage';
 import OperatorePages from './pages/OperatorePages';
 import SchedulerPage from './pages/SchedulerPage';
+import StoricoPage from './pages/StoricoPage';
 import AccessDenied from './components/AccessDenied';
 import { getCurrentDay, advanceDay, resetSystem } from './services/api';
 
@@ -17,6 +18,15 @@ function ProtectedRoute({ role, userRole, children }) {
 
   if (userRole !== role) {
     return <AccessDenied role={role} />;
+  }
+
+  return children;
+}
+
+// Accessibile a qualunque ruolo attivo (non è specifico di Operatore o Scheduler)
+function AnyRoleRoute({ userRole, children }) {
+  if (!userRole) {
+    return <Navigate to="/" replace />;
   }
 
   return children;
@@ -88,6 +98,11 @@ function App() {
             <ProtectedRoute role="Scheduler" userRole={userRole}>
               <SchedulerPage currentDay={currentDay} ships={ships} setShips={setShips} />
             </ProtectedRoute>
+          } />
+          <Route path="/storico" element={
+            <AnyRoleRoute userRole={userRole}>
+              <StoricoPage />
+            </AnyRoleRoute>
           } />
         </Routes>
       </div>

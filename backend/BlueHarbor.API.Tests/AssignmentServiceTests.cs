@@ -30,7 +30,7 @@ public class AssignmentServiceTests
     public async Task AssignShipToBerth_ValidAssignment_CalculatesCorrectStartAndEndDay()
     {
         using var db = CreateInMemoryDb();
-        var service = new AssignmentService(db);
+        var service = new AssignmentService(db, new PortLogService(db));
 
         var ship = new Ship
         {
@@ -54,7 +54,7 @@ public class AssignmentServiceTests
     public async Task AssignShipToBerth_IncompatibleSize_ThrowsException()
     {
         using var db = CreateInMemoryDb();
-        var service = new AssignmentService(db);
+        var service = new AssignmentService(db, new PortLogService(db));
 
         var ship = new Ship
         {
@@ -77,7 +77,7 @@ public class AssignmentServiceTests
     public async Task AssignShipToBerth_ShipAlreadyAssigned_ThrowsException()
     {
         using var db = CreateInMemoryDb();
-        var service = new AssignmentService(db);
+        var service = new AssignmentService(db, new PortLogService(db));
 
         var ship = new Ship
         {
@@ -100,7 +100,7 @@ public class AssignmentServiceTests
     public async Task AssignShipToBerth_BerthOverlap_MovesToNextAvailableWindow()
     {
         using var db = CreateInMemoryDb();
-        var service = new AssignmentService(db);
+        var service = new AssignmentService(db, new PortLogService(db));
 
         var ship1 = new Ship
         {
@@ -135,7 +135,7 @@ public class AssignmentServiceTests
     public async Task AssignShipToBerth_RespectsFormula_MaxArrivalDayLastEndDayPlusOne()
     {
         using var db = CreateInMemoryDb();
-        var service = new AssignmentService(db);
+        var service = new AssignmentService(db, new PortLogService(db));
 
         var ship1 = new Ship
         {

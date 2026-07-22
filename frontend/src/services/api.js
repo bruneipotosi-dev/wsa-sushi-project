@@ -52,3 +52,6 @@ export const advanceDay = () =>
 
 // RESET
 export const resetSystem = () => request("/reset", { method: "POST" });
+
+// STORICO EVENTI
+export const getPortLogs = () => request("/portlogs");

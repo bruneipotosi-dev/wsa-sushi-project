@@ -3,8 +3,6 @@ using BlueHarbor.API.Models;
 using BlueHarbor.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace BlueHarbor.API.Controllers;
 
@@ -13,10 +11,12 @@ namespace BlueHarbor.API.Controllers;
 public class SystemController : ControllerBase
 {
     private readonly AppDbContext _db;
+    private readonly IPortLogService _logService;
 
-    public SystemController(AppDbContext db)
+    public SystemController(AppDbContext db, IPortLogService logService)
     {
         _db = db;
+        _logService = logService;
     }
 
     [HttpGet("day")]
@@ -41,23 +41,18 @@ public class SystemController : ControllerBase
                      && a.Ship!.Status == ShipStatus.Assigned)
             .ToListAsync();
 
-        var logService = ((IInfrastructure<IServiceProvider>)_db).Instance.GetService<IPortLogService>();
-
         foreach (var assignment in assignmentsEnded)
         {
             assignment.Ship!.Status = ShipStatus.Departed;
 
             var duration = assignment.EndDay - assignment.StartDay + 1;
-            if (logService is not null)
-            {
-                await logService.LogAsync(
-                    "Departed",
-                    $"{assignment.Ship!.Name} (ID: {assignment.ShipId}) partita da banchina {assignment.BerthId}",
-                    arrivalDay: assignment.Ship.ArrivalDay,
-                    departureDay: assignment.EndDay,
-                    duration: duration
-                );
-            }
+            await _logService.LogAsync(
+                "Departed",
+                $"{assignment.Ship!.Name} (ID: {assignment.ShipId}) partita da banchina {assignment.BerthId}",
+                arrivalDay: assignment.Ship.ArrivalDay,
+                departureDay: assignment.EndDay,
+                duration: duration
+            );
         }
 
         await _db.SaveChangesAsync();

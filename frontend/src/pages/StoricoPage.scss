@@ -1,0 +1,115 @@
+.storico-page {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--color-background);
+  padding: 16px 36px 32px;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.storico-header {
+  padding: 8px 0 20px;
+
+  h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+}
+
+.storico-subtitle {
+  margin: 4px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 15px;
+}
+
+.storico-alert {
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: var(--color-danger-bg);
+  border: 1px solid var(--color-danger-border);
+  color: var(--color-danger);
+  margin-bottom: 16px;
+}
+
+.storico-loading,
+.storico-empty {
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: 60px 20px;
+
+  span {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 10px;
+  }
+}
+
+.storico-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 1100px;
+}
+
+.storico-row {
+  display: grid;
+  grid-template-columns: 110px 1fr auto auto;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.storico-action {
+  font-size: 12.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  text-align: center;
+  width: fit-content;
+}
+
+.storico-action--assigned {
+  color: var(--color-primary-text);
+  background: var(--color-primary-bg);
+  border: 1px solid var(--color-primary-border);
+}
+
+.storico-action--departed {
+  color: var(--color-text-secondary);
+  background: var(--color-overlay-2);
+  border: 1px solid var(--color-border-strong);
+}
+
+.storico-details {
+  color: var(--color-text-primary);
+  font-size: 14.5px;
+}
+
+.storico-window {
+  color: var(--color-text-secondary);
+  font-size: 13.5px;
+  white-space: nowrap;
+}
+
+.storico-time {
+  color: var(--color-text-tertiary);
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .storico-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
