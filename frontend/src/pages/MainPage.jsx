@@ -29,7 +29,7 @@ export default function MainPage({ onRoleSelect }) {
         </div>
 
         <h1 className="bh-title">
-          Benvenuto in <span className="bh-title-accent">plancia</span>
+          Benvenuto nella tua <span className="bh-title-accent">dashboard</span>
         </h1>
         <p className="bh-subtitle">
           Seleziona il tuo ruolo per entrare nel terminale BlueHarbor
