@@ -195,8 +195,7 @@
 
     .warning-content {
       font-size: 16px;
-      line-height: 1;
-      white-space: nowrap;
+      line-height: 1.3;
     }
   }
 }
@@ -826,6 +825,16 @@
   .sch-berth-card { min-height: 240px; padding: 18px; }
   .sch-berth-name { font-size: 23px; }
   .sch-berth-occupant-name { font-size: 18px; }
+
+  // Stessa ragione della regola in @media 700px sotto: senza width:100% la
+  // pill puo' sforare a destra tra 701px e 900px, dove il titolo va a capo
+  // ma la pill resta sulla sua larghezza intrinseca (min-width:auto di un
+  // flex item non si riduce sotto il contenuto anche se il genitore ha
+  // spazio in teoria). Verificato che si rompe esattamente a 768px.
+  .sch-topline-right { width: 100%; }
+  .selection-banner { width: 100%; flex-wrap: wrap; white-space: normal; }
+  .sch-topline-right .warning-banner { width: 100%; max-width: none; }
+  .sch-topline-right .warning-banner .warning-content { white-space: normal; }
 }
 
 // MOBILE
@@ -847,10 +856,32 @@
   .selection-banner-text { flex-wrap: wrap; }
   .selection-banner-close { margin-left: auto; }
 
+  .sch-topline-right { width: 100%; }
+  .sch-topline-right .warning-banner { width: 100%; max-width: none; border-radius: 14px; }
+  .sch-topline-right .warning-banner .warning-content { white-space: normal; }
+
   .sch-queue-empty { padding: 40px 18px; }
 
-  .sch-berth-grid { grid-template-columns: 1fr; gap: 12px; }
-  .sch-berth-card { min-height: 0; padding: 16px; }
+  // Con una sola colonna ogni card (specie le banchine occupate, che
+  // includono nome, meta, finestra e timeline a 7 giorni) e' alta abbastanza
+  // da mostrarne una sola per schermata, costringendo a scorrere quasi tutta
+  // la pagina per vedere le altre 7. Due colonne dimezzano lo scroll; la
+  // timeline giorno-per-giorno (elemento piu' ingombrante e solo decorativo,
+  // l'informazione essenziale e' gia' in "FINESTRA Gx-Gy") viene nascosta
+  // sotto i 700px per lasciare spazio a un layout leggibile in due colonne.
+  .sch-berth-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .sch-berth-card { min-height: 0; padding: 12px; }
+  .sch-berth-index { font-size: 11px; }
+  .sch-berth-badge { font-size: 11px; padding: 3px 8px; }
+  .sch-berth-name { font-size: 19px; }
+  .sch-berth-anchor-box { width: 40px; height: 40px; font-size: 20px; }
+  .sch-berth-center-label { font-size: 11px; }
+  .sch-berth-occupant-name { font-size: 15px; }
+  .sch-berth-occupant-meta { font-size: 11.5px; }
+  .sch-berth-occupant-range { font-size: 11px; }
+  .sch-berth-timeline { display: none; }
+  .sch-berth-cta { padding: 8px; font-size: 13px; &--compatible { font-size: 14px; } }
+
   .sch-ship-name { font-size: 18px; }
   .sch-ship-card-meta { gap: 16px; font-size: 14px; }
 
@@ -894,4 +925,12 @@
   .sch-berth-card { min-height: 280px; }
   .sch-berth-column { height: auto; } // Aggiunto per schermi bassi
   .sch-stats--bottom { justify-content: flex-start; } // Aggiunto per schermi bassi
+
+  // align-items:center su .sch-modal-overlay centra verticalmente il modal,
+  // ma se il modal e' piu' alto della viewport (es. mobile in orizzontale,
+  // ~375px di altezza) il centraggio lo sposta sopra lo 0 e la parte alta
+  // resta irraggiungibile: nessuno scroll puo' recuperarla in modo affidabile
+  // tra i vari browser. Sotto i 900px di altezza si allinea in alto e si
+  // lascia scrollare la overlay stessa.
+  .sch-modal-overlay { align-items: flex-start; overflow-y: auto; padding: 24px; }
 }

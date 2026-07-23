@@ -252,7 +252,17 @@
 
 // RESPONSIVE
 @media (max-width: 768px) {
+  // Se il contenuto (titolo + sottotitolo + card impilate + footer) supera
+  // l'altezza disponibile, .main-page ha overflow:hidden ereditato dalla
+  // regola base pensata per il desktop: qui lo sovrascriviamo per lasciare
+  // scorrere la pagina invece di tagliare silenziosamente il contenuto in
+  // basso. Verificato che si rompe su viewport sotto ~700px di altezza.
+  .main-page { overflow-y: auto; }
+
+  .bh-hero { padding: 32px 24px 40px; }
   .bh-title { font-size: 38px !important; }
-  .bh-role-grid { grid-template-columns: 1fr; max-width: 330px; }
+  .bh-subtitle { margin-bottom: 32px; }
+  .bh-role-grid { grid-template-columns: 1fr; max-width: 330px; gap: 16px; }
+  .bh-role-card { padding: 28px 24px 22px; }
   .bh-theme-toggle-slot { top: 16px; right: 16px; }
 }

@@ -498,6 +498,22 @@
   &--full {
     grid-column: 1 / -1;
   }
+
+  &--readonly {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+  }
+}
+
+.ship-edit-readonly-label {
+  width: 100%;
+  font-size: 11px;
+  font-style: italic;
 }
 
 .ship-edit-actions {
@@ -586,6 +602,15 @@
 }
 
 @media (max-width: 1200px) {
+  // .operatore-page eredita overflow:hidden dalla regola base (pensata per
+  // desktop, dove form-card è sticky e solo .ships-list scorre). Qui sotto
+  // il layout impila form-card + ships-card in un'unica colonna: l'altezza
+  // totale puo' superare quella fissa del contenitore (100vh - navbar) e
+  // senza scroll qui il contenuto in basso verrebbe tagliato in silenzio.
+  .operatore-page {
+    overflow-y: auto;
+  }
+
   .operatore-layout {
     grid-template-columns: 1fr;
     height: auto;
@@ -601,11 +626,18 @@
 
   .ships-card {
     height: auto;
-    max-height: 400px;
+    max-height: none;
+    overflow: visible;
   }
 
   .ships-list {
-    max-height: 300px;
+    // niente scroll interno annidato sotto ai 1200px: con .operatore-page
+    // gia' scrollabile, un max-height qui (400px sulla card, 300px sulla
+    // lista) tagliava le statistiche in fondo alla card ogni volta che
+    // header + lista arrivavano vicino al limite. Un'unica area di scroll
+    // (la pagina) e' anche piu' prevedibile su touch di due scroll annidati.
+    max-height: none;
+    overflow-y: visible;
   }
 }
 

@@ -33,6 +33,8 @@
   align-items: center;
   gap: 13px;
   min-width: 0;
+  text-decoration: none;
+  color: inherit;
 }
 
 /* LOGO MSC - NUOVO */
@@ -257,4 +259,26 @@
 
 @media (min-width: 901px) {
   .bh-mobile-panel { display: none !important; }
+}
+
+/* Sotto questa soglia bh-right (day pill + Next Day + Reset + ThemeToggle)
+   + bh-menu-btn non entrano più affiancati: si nascondono le etichette dei
+   bottoni (resta l'icona, con aria-label/title per l'accessibilità) invece
+   di lasciare che bh-menu-btn — l'unico accesso alla navigazione su mobile —
+   finisca fuori dal viewport. Verificato con test automatici a 320/375/390px. */
+@media (max-width: 440px) {
+  .bh-btn-label { display: none; }
+  .bh-btn-primary, .bh-btn-icon { padding: 8px; gap: 0; }
+  .bh-right { gap: 6px; }
+
+  // Anche con le etichette dei bottoni gia' nascoste sopra, lo spazio a
+  // sinistra (logo + "BlueHarbor Terminal") e a destra (day pill + 2
+  // bottoni icona + theme toggle + menu) insieme supera la larghezza di
+  // un telefono normale (~375-430px): il testo del brand veniva troncato
+  // in ellissi. Si toglie "Terminal" e il separatore, tenendo solo il nome
+  // essenziale, che basta per l'identita' del brand su schermi stretti.
+  .bh-brand { gap: 8px; }
+  .bh-logo { height: 27px; }
+  .bh-divider { display: none; }
+  .bh-brand-title span { display: none; }
 }

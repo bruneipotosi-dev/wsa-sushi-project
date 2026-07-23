@@ -31,13 +31,13 @@ const Navbar = ({ currentDay, onNextDay, onReset, userRole }) => {
   return (
     <header className="bh-header">
       <div className="bh-left">
-        <div className="bh-brand">
+        <Link to="/" className="bh-brand" aria-label="Torna alla home">
           <img src={mscLogo} alt="MSC" className="bh-logo" />
           <span className="bh-divider" />
           <div className="bh-brand-title">
             BlueHarbor<span>Terminal</span>
           </div>
-        </div>
+        </Link>
       </div>
 
       <nav className="bh-links">
@@ -61,17 +61,17 @@ const Navbar = ({ currentDay, onNextDay, onReset, userRole }) => {
           <span className="bh-day-label">Giorno</span>
           <span className="bh-day-num">{currentDay}</span>
         </div>
-        <button className="bh-btn-primary" onClick={onNextDay}>
+        <button className="bh-btn-primary" onClick={onNextDay} aria-label="Next Day" title="Next Day">
           <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 12h14M13 6l6 6-6 6" />
           </svg>
-          Next Day
+          <span className="bh-btn-label">Next Day</span>
         </button>
-        <button className="bh-btn-icon" onClick={onReset}>
+        <button className="bh-btn-icon" onClick={onReset} aria-label="Reset" title="Reset">
           <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6" />
           </svg>
-          Reset
+          <span className="bh-btn-label">Reset</span>
         </button>
         <ThemeToggle />
       </div>

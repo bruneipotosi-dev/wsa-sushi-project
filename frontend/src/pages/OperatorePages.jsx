@@ -32,9 +32,6 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
   const [editingShip, setEditingShip] = useState(null);
   const [editName, setEditName] = useState("");
   const [editNotes, setEditNotes] = useState("");
-  const [editSize, setEditSize] = useState("M");
-  const [editArrivalDay, setEditArrivalDay] = useState(1);
-  const [editDuration, setEditDuration] = useState(5);
 
   const loadShips = async () => {
     try {
@@ -102,9 +99,6 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
     setEditingShip(ship);
     setEditName(ship.name);
     setEditNotes(ship.notes || "");
-    setEditSize(ship.size || "M");
-    setEditArrivalDay(ship.arrivalDay || 1);
-    setEditDuration(ship.occupationDuration || 5);
   }
 
   async function handleSaveEdit() {
@@ -119,10 +113,6 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
       await updateShip(editingShip.id, {
         name: editName.trim(),
         notes: editNotes.trim(),
-        size: editSize,
-        arrivalDay: parseInt(editArrivalDay),
-        occupationDuration: parseInt(editDuration),
-        status: editingShip.status
       });
       await loadShips();
       setSuccess(`"${editName.trim()}" modificata con successo.`);
@@ -216,41 +206,11 @@ export default function OperatorePage({ ships, setShips, currentDay }) {
                             disabled={loading}
                           />
                         </div>
-                        <div className="ship-edit-field">
-                          <label htmlFor="edit-ship-size">Taglia</label>
-                          <select
-                            id="edit-ship-size"
-                            value={editSize}
-                            onChange={e => setEditSize(e.target.value)}
-                            disabled={loading}
-                          >
-                            <option value="XL">XL</option>
-                            <option value="L">L</option>
-                            <option value="M">M</option>
-                            <option value="S">S</option>
-                          </select>
-                        </div>
-                        <div className="ship-edit-field">
-                          <label htmlFor="edit-ship-arrival">Arrivo (giorno)</label>
-                          <input
-                            id="edit-ship-arrival"
-                            type="number"
-                            value={editArrivalDay}
-                            onChange={e => setEditArrivalDay(parseInt(e.target.value) || 1)}
-                            disabled={loading}
-                            min="1"
-                          />
-                        </div>
-                        <div className="ship-edit-field">
-                          <label htmlFor="edit-ship-duration">Durata (giorni)</label>
-                          <input
-                            id="edit-ship-duration"
-                            type="number"
-                            value={editDuration}
-                            onChange={e => setEditDuration(parseInt(e.target.value) || 1)}
-                            disabled={loading}
-                            min="1"
-                          />
+                        <div className="ship-edit-field ship-edit-field--readonly">
+                          <span className="ship-edit-readonly-label">Taglia, arrivo e durata sono assegnati automaticamente dal sistema e non sono modificabili.</span>
+                          <span className="ship-chip">{editingShip.size}</span>
+                          <span>Arrivo giorno {editingShip.arrivalDay}</span>
+                          <span>Durata {editingShip.occupationDuration} giorni</span>
                         </div>
                         <div className="ship-edit-field ship-edit-field--full">
                           <label htmlFor="edit-ship-notes">Note</label>
