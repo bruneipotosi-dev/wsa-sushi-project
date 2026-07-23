@@ -1,6 +1,5 @@
 // src/services/api.js
-// BASE_URL verrà aggiornata in Fase B con la porta di Hussni
-const BASE_URL = "http://localhost:5000/api";
+const BASE_URL = "/api";
 
 async function request(path, options = {}) {
   const res = await fetch(`${BASE_URL}${path}`, {
