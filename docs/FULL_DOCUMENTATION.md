@@ -101,20 +101,20 @@ Operatore → Compila nome + note opzionali
 Scheduler → Seleziona nave Pending → Clic/Drag su banchina compatibile
 → POST /api/assignments { shipId, berthId } → AssignmentsController.CreateAssignment()
 → Delega a AssignmentService.AssignShipToBerthAsync():
-    1. Verifica esistenza nave e banchina
-    2. Verifica ship.Status == Pending
-    3. Verifica ship.Size == berth.Size (compatibilità taglia)
-    4. Calcola finestra temporale:
-       - lastEndDay = MAX(EndDay) delle assegnazioni esistenti sulla banchina (o currentDay - 1)
-       - firstFreeDay = MAX(currentDay, lastEndDay + 1)
-       - startDay = MAX(ship.ArrivalDay, firstFreeDay)
-       - endDay = startDay + ship.OccupationDuration - 1
-    5. Verifica assenza overlap con AnyAsync
-    6. Avvia transazione serializzabile (IsolationLevel.Serializable)
-    7. UPDATE Ship.Status → Assigned
-    8. INSERT Assignment
-    9. COMMIT transazione
-    10. Log "Assigned" su PortLog
+     1. Verifica esistenza nave e banchina
+     2. Verifica ship.Status == Pending
+     3. Verifica ship.Size == berth.Size (compatibilità taglia)
+     4. Calcola finestra temporale:
+        - lastEndDay = MAX(EndDay) delle assegnazioni esistenti sulla banchina (o currentDay - 1)
+        - firstFreeDay = MAX(currentDay, lastEndDay + 1)
+        - startDay = MAX(ship.ArrivalDay, firstFreeDay)
+        - endDay = startDay + ship.OccupationDuration - 1
+     5. Verifica assenza overlap con AnyAsync
+     6. Avvia transazione serializzabile (IsolationLevel.Serializable)
+     7. UPDATE Ship.Status → Assigned
+     8. INSERT Assignment
+     9. COMMIT transazione
+     10. Log "Assigned" su PortLog
 → Risposta 201 Created con finestra temporale calcolata
 ```
 
@@ -122,12 +122,12 @@ Scheduler → Seleziona nave Pending → Clic/Drag su banchina compatibile
 
 ```
 Navbar → POST /api/advance-day → SystemController.AdvanceDay()
-    1. SystemState.CurrentDay++
-    2. Trova navi Pending con ArrivalDay < CurrentDay (genera warning, non bloccante)
-    3. Trova assegnazioni con EndDay < CurrentDay E nave in stato Assigned
-    4. Per ciascuna: Ship.Status → Departed
-    5. Log "Departed" su PortLog per ogni nave partita
-    6. Salva modifiche (db.SaveChangesAsync)
+     1. SystemState.CurrentDay++
+     2. Trova navi Pending con ArrivalDay < CurrentDay (genera warning, non bloccante)
+     3. Trova assegnazioni con EndDay < CurrentDay E nave in stato Assigned
+     4. Per ciascuna: Ship.Status → Departed
+     5. Log "Departed" su PortLog per ogni nave partita
+     6. Salva modifiche (db.SaveChangesAsync)
 → Risposta: { newDay, departedCount, departedShips[], warning? }
 ```
 
@@ -215,20 +215,20 @@ erDiagram
 | Proprietà | Tipo | Vincoli | Descrizione |
 |---|---|---|---|
 | `Id` | `int` | PK, auto-increment | Identificatore univoco |
-| `Name` | `string` | Required, 2-100 caratteri | Nome della nave (es. "MSC Aurora") |
-| `Size` | `ShipSize` (enum) | Required | Taglia: XL, L, M, S |
-| `ArrivalDay` | `int` | ≥ 0 | Giorno virtuale di arrivo al porto |
-| `OccupationDuration` | `int` | 3-15 giorni | Durata della sosta in banchina |
-| `Status` | `ShipStatus` (enum) | Required | Stato: Pending, Assigned, Departed |
-| `Notes` | `string?` | max 500 caratteri | Note operative opzionali (autocompilate dal catalogo se nome matcha) |
+| `Name` | `string` | Required, `[StringLength(100, MinimumLength = 2)]` | Nome della nave (es. "MSC Aurora") |
+| `Size` | `ShipSize` (enum) | Required, `[EnumDataType]` | Taglia: XL, L, M, S |
+| `ArrivalDay` | `int` | `[Range(0, 100000)]` | Giorno virtuale di arrivo al porto |
+| `OccupationDuration` | `int` | `[Range(3, 15)]` | Durata della sosta in banchina |
+| `Status` | `ShipStatus` (enum) | Required, `[EnumDataType]` | Stato: Pending, Assigned, Departed |
+| `Notes` | `string?` | `[StringLength(500)]` | Note operative opzionali (autocompilate dal catalogo se nome matcha) |
 
 #### **Berth** (`backend/Models/Berth.cs`)
 
 | Proprietà | Tipo | Vincoli | Descrizione |
 |---|---|---|---|
 | `Id` | `int` | PK, auto-increment | Identificatore univoco |
-| `Name` | `string` | Required, 2-20 caratteri | Nome banchina (es. "XL-1", "S-3") |
-| `Size` | `ShipSize` (enum) | Required | Taglia della banchina |
+| `Name` | `string` | Required, `[StringLength(20, MinimumLength = 2)]` | Nome banchina (es. "XL-1", "S-3") |
+| `Size` | `ShipSize` (enum) | Required, `[EnumDataType]` | Taglia della banchina |
 
 **8 banchine fisse (seed in `AppDbContext.OnModelCreating()`):**
 
@@ -248,12 +248,12 @@ erDiagram
 | Proprietà | Tipo | Vincoli | Descrizione |
 |---|---|---|---|
 | `Id` | `int` | PK, auto-increment | Identificatore univoco |
-| `ShipId` | `int` | FK → Ship, > 0 | Nave assegnata |
+| `ShipId` | `int` | FK → Ship, `[Range(1, int.MaxValue)]` | Nave assegnata |
 | `Ship` | `Ship?` | Navigation property | Nave (caricata con `.Include()`) |
-| `BerthId` | `int` | FK → Berth, > 0 | Banchina assegnata |
+| `BerthId` | `int` | FK → Berth, `[Range(1, int.MaxValue)]` | Banchina assegnata |
 | `Berth` | `Berth?` | Navigation property | Banchina (caricata con `.Include()`) |
-| `StartDay` | `int` | ≥ 0 | Giorno di inizio occupazione |
-| `EndDay` | `int` | ≥ 0 | Giorno di fine occupazione (incluso) |
+| `StartDay` | `int` | `[Range(0, int.MaxValue)]` | Giorno di inizio occupazione |
+| `EndDay` | `int` | `[Range(0, int.MaxValue)]` | Giorno di fine occupazione (incluso) |
 
 #### **SystemState** (`backend/Models/SystemState.cs`)
 
@@ -269,7 +269,7 @@ erDiagram
 | `Id` | `int` | PK, auto-increment |
 | `Action` | `string` | Tipo evento: "Assigned" o "Departed" |
 | `Details` | `string` | Testo descrittivo dell'evento |
-| `Timestamp` | `DateTime` | Momento dell'evento (UTC) |
+| `Timestamp` | `DateTime` | Momento dell'evento (UTC), default `DateTime.UtcNow` |
 | `ArrivalDay` | `int` | Giorno di arrivo della nave (metadato) |
 | `DepartureDay` | `int` | Giorno di partenza della nave (metadato) |
 | `Duration` | `int` | Durata dell'occupazione (metadato) |
@@ -279,8 +279,8 @@ erDiagram
 | Proprietà | Tipo | Vincoli | Descrizione |
 |---|---|---|---|
 | `Id` | `int` | PK, auto-increment | Identificatore univoco |
-| `Name` | `string` | Required, max 100 | Nome del profilo nave |
-| `Notes` | `string` | Required, max 500 | Note del profilo (usate per autocompletamento) |
+| `Name` | `string` | Required, `[StringLength(100)]` | Nome del profilo nave |
+| `Notes` | `string` | Required, `[StringLength(500)]` | Note del profilo (usate per autocompletamento) |
 
 **8 profili seed:**
 
@@ -640,22 +640,25 @@ app.UseSwaggerUI(c =>
 
 | Tecnologia | Versione | Ruolo |
 |---|---|---|
-| .NET SDK / ASP.NET Core | 10.0 | Framework web, dependency injection, controller REST |
-| Entity Framework Core | 10.0.x | ORM, query LINQ, migration, seed dati |
-| EF Core SQLite Provider | 10.0.x | Database SQLite |
-| Swashbuckle (Swagger) | 10.2.x | Documentazione API interattiva |
+| .NET SDK / ASP.NET Core | 10.0 (net10.0) | Framework web, dependency injection, controller REST |
+| Entity Framework Core Sqlite | 10.0.8 | ORM, query LINQ, migration, seed dati |
+| Entity Framework Core Design | 10.0.9 | Strumenti di design per migrazioni |
+| Swashbuckle (Swagger) | 10.2.1 | Documentazione API interattiva |
+| Microsoft.AspNetCore.OpenApi | 10.0.8 | Supporto OpenApi per ASP.NET Core |
 | System.Text.Json | built-in | Serializzazione JSON (con `JsonStringEnumConverter`) |
-| SQLitePCLRaw | 3.x | Driver SQLite nativo |
+| SQLitePCLRaw.core | 3.0.3 | Driver SQLite nativo (core) |
+| SQLitePCLRaw.lib.e_sqlite3 | 2.1.12 | Driver SQLite nativo (binario) |
 
 ### 1.5.2 Frontend (`frontend/package.json`)
 
 | Tecnologia | Versione | Ruolo |
 |---|---|---|
-| React | 19.2.x | UI component-based |
-| Vite | 8.x | Build tool, dev server con HMR |
-| React Router DOM | 7.x | Routing lato client, ProtectedRoute |
-| Sass (SCSS) | 1.100.x | Stili modulari, variabili tema |
-| lucide-react | 1.23.x | Icone SVG leggere |
+| React | ^19.2.6 | UI component-based |
+| React DOM | ^19.2.6 | Render DOM per React |
+| Vite | ^8.0.12 | Build tool, dev server con HMR |
+| React Router DOM | ^7.17.0 | Routing lato client, ProtectedRoute |
+| Sass (SCSS) | ^1.100.0 | Stili modulari, variabili tema |
+| lucide-react | ^1.23.0 | Icone SVG leggere |
 
 ### 1.5.3 Testing
 
@@ -721,10 +724,15 @@ wsa-sushi-project/
 │   ├── Middleware/
 │   │   └── ApiExceptionHandler.cs      # Gestione globale eccezioni HTTP 500
 │   │
-│   ├── Migrations/                     # Migrazioni EF Core
+│   ├── Migrations/                     # Migrazioni EF Core (unificate)
 │   │   ├── 20260721093923_AddShipProfileCatalog.cs
 │   │   ├── 20260721093923_AddShipProfileCatalog.Designer.cs
 │   │   └── AppDbContextModelSnapshot.cs
+│   │
+│   ├── BlueHarbor.API.Tests/           # Progetto test xUnit
+│   │   ├── BlueHarbor.API.Tests.csproj
+│   │   ├── AssignmentServiceTests.cs    # 5 test su logica assegnazione
+│   │   └── PortLogServiceTests.cs       # 1 test su logging
 │   │
 │   └── Properties/
 │       └── launchSettings.json         # Profilo: porta 5000, HTTP
@@ -750,38 +758,33 @@ wsa-sushi-project/
 │       │   └── SchedulerPage.scss
 │       │
 │       ├── components/
-│       │   ├── Navbar.jsx               # Barra navigazione: giorno, Next Day, Reset
+│       │   ├── Navbar.jsx              # Barra navigazione: giorno, Next Day, Reset
 │       │   ├── Navbar.scss
-│       │   ├── AccessDenied.jsx         # Pagina accesso negato
+│       │   ├── AccessDenied.jsx        # Pagina accesso negato
 │       │   ├── AccessDenied.scss
-│       │   ├── ThemeToggle.jsx          # Pulsante cambio tema chiaro/scuro
+│       │   ├── ThemeToggle.jsx         # Pulsante cambio tema chiaro/scuro
 │       │   └── ThemeToggle.scss
 │       │
 │       ├── services/
-│       │   └── api.js                   # Client HTTP centralizzato (fetch wrapper)
+│       │   └── api.js                  # Client HTTP centralizzato (fetch wrapper)
 │       │
 │       ├── styles/
-│       │   └── _theme.scss              # Token colore: tema scuro + chiaro (WCAG AA)
+│       │   └── _theme.scss             # Token colore: tema scuro + chiaro (WCAG AA)
 │       │
 │       ├── hooks/
-│       │   ├── useTheme.js              # Hook gestione tema (light/dark/system)
-│       │   └── useFocusTrap.js          # Hook accessibilità per modali
+│       │   ├── useTheme.js             # Hook gestione tema (light/dark/system)
+│       │   └── useFocusTrap.js         # Hook accessibilità per modali
 │       │
-│       ├── api/                         # (directory placeholder)
-│       ├── assets/                      # Asset statici (logo MSC)
-│       └── mock/                        # (directory placeholder, USE_MOCK = false)
+│       ├── assets/                     # Asset statici (logo MSC)
+│       ├── api/                        # Directory placeholder
+│       └── mock/                       # Directory placeholder (USE_MOCK = false)
 │
-├── docs/                                # Documentazione
-│   ├── FULL_DOCUMENTATION.md            # QUESTO FILE
-│   ├── DOCUMENTAZIONE_TECNICA.md        # Documentazione tecnica precedente
-│   ├── BLUEHARBOR_PROJECT_REPORT.md     # Report architetturale
-│   └── REPORT_ANALISI_PROGETTO.md       # Analisi e audit del codice
-│
-└── BlueHarbor.API.Tests/                # Progetto test xUnit
-    ├── BlueHarbor.API.Tests.csproj
-    ├── AssignmentServiceTests.cs         # 5 test su logica assegnazione
-    └── PortLogServiceTests.cs            # 1 test su logging
+└── docs/                               # Documentazione
+    ├── FULL_DOCUMENTATION.md           # QUESTO FILE
+    └── REPORT_ANALISI_PROGETTO.md      # Analisi e audit del codice
 ```
+
+> **Nota:** Il progetto test `BlueHarbor.API.Tests/` è fisicamente situato sotto `backend/BlueHarbor.API.Tests/` nella struttura reale del repository, non alla root del progetto.
 
 ---
 
@@ -825,15 +828,7 @@ Apri il browser su `http://localhost:5173`.
 
 Alla prima esecuzione, `Program.cs` esegue automaticamente `db.Database.Migrate()` per creare/aggiornare il database SQLite in `backend/Data/blueharbor.db`.
 
-**Problema noto:** Le migrazioni EF Core hanno timestamp invertiti (`AddShipProfileCatalog` del 21 luglio precede `InitialCreate` del 22 luglio). Su un clone pulito, la migrazione automatica potrebbe fallire. Soluzione:
-
-```bash
-cd backend
-dotnet ef migrations remove    # Rimuove migrazioni esistenti
-dotnet ef migrations add InitialCreate  # Crea migrazione unificata
-dotnet ef database update      # Applica al database
-dotnet run                     # Riavvia
-```
+> **Nota sulle migrazioni:** Le migrazioni EF Core sono state consolidate in un unico file (`AddShipProfileCatalog`). Il precedente problema di timestamp invertiti tra due migrazioni è stato risolto: la migrazione `InitialCreate` è stata rimossa e `AddShipProfileCatalog` ora contiene l'intero schema del database, inclusi i seed dati per banchine, SystemState e ShipProfile. Su un clone pulito, `db.Database.Migrate()` funziona senza errori.
 
 ---
 
@@ -841,7 +836,7 @@ dotnet run                     # Riavvia
 
 ### 1.8.1 Suite di Test
 
-6 test xUnit nel progetto `BlueHarbor.API.Tests/`:
+6 test xUnit nel progetto `backend/BlueHarbor.API.Tests/`:
 
 **AssignmentServiceTests** (5 test):
 
@@ -862,7 +857,7 @@ dotnet run                     # Riavvia
 ### 1.8.2 Esecuzione
 
 ```bash
-dotnet test BlueHarbor.API.Tests/BlueHarbor.API.Tests.csproj
+dotnet test backend/BlueHarbor.API.Tests/BlueHarbor.API.Tests.csproj
 ```
 
 **Output atteso:** `Test Run Successful. Total: 6, Passed: 6, Failed: 0`
@@ -887,40 +882,56 @@ dotnet test BlueHarbor.API.Tests/BlueHarbor.API.Tests.csproj
 |---|---|---|
 | **Nessuna autenticazione reale** | By design | Ruoli simulati via `localStorage`. Nessun login, JWT, o sessione. |
 | **Nessuna paginazione** | By design | Volume dati ridotto, accettabile per demo didattica. |
-| **Disallineamento UI/API modifica nave** | Bug noto | Frontend invia `size, arrivalDay, occupationDuration, status` nel PUT, ma `UpdateShipDto` accetta solo `Name` e `Notes`. I campi extra vengono ignorati silenziosamente. |
-| **Migration EF Core invertite** | Bug tecnico | `AddShipProfileCatalog` (21/07) ha timestamp precedente a `InitialCreate` (22/07). Su clone pulito, `db.Database.Migrate()` può fallire. |
+| **Disallineamento UI/API modifica nave** | Bug noto | Frontend invia `size, arrivalDay, occupationDuration, status` nel PUT, ma `UpdateShipDto` accetta solo `Name` e `Notes`. I campi extra (editSize, editArrivalDay, editDuration a righe 35-37 di OperatorePages.jsx) vengono ignorati silenziosamente dal model binder. |
 | **PortLog non esposto in UI** | Gap funzionale | Endpoint `/api/portlogs` disponibile, ma nessuna pagina frontend lo consuma. |
 | **Frontend non chiama ShipProfiles** | Gap minore | `api.js` non espone `getShipProfiles()`. Il catalogo è usato solo backend-side. |
 | **USE_MOCK disattivato ma presente** | Debito tecnico | Codice mock rimane in `SchedulerPage.jsx` (`USE_MOCK = false`) ma non è più utilizzato. |
 | **Nessuna containerizzazione** | By design | Non richiesta per contesto didattico. |
 
+**Migrazioni risolte:** Il precedente problema di migrazioni EF Core con timestamp invertiti (`AddShipProfileCatalog` vs `InitialCreate`) non è più applicabile. Le migrazioni sono state consolidate in una singola migrazione `AddShipProfileCatalog`. Su un clone pulito, `db.Database.Migrate()` in `Program.cs` funziona correttamente.
+
 ### 1.9.2 Suggerimenti per Sviluppi Futuri
 
-1. **Correggere migrazioni EF Core:** Unificare in una sola `InitialCreate` che includa anche `ShipProfile`.
-2. **Allineare UI modifica nave:** Rimuovere campi "Taglia", "Arrivo", "Durata" dal form di edit oppure estendere `UpdateShipDto` per supportarli.
-3. **Pagina storico PortLog:** Aggiungere sezione frontend per visualizzare i log operativi (`GET /api/portlogs`).
-4. **Aggiungere `getShipProfiles()` in `api.js`:** Esporre il catalogo al frontend per mostrare suggerimenti nel form di creazione.
-5. **Test di integrazione:** Usare `WebApplicationFactory` per test end-to-end dei controller.
-6. **Autenticazione base:** Se il progetto dovesse evolvere oltre il contesto didattico, aggiungere login con ruoli reali.
-7. **Docker Compose:** Per avvio unificato backend + frontend con un solo comando.
-8. **Internazionalizzazione (i18n):** Aggiungere supporto multilingua (almeno IT/EN).
+1. **Allineare UI modifica nave:** Rimuovere campi "Taglia", "Arrivo", "Durata" dal form di edit oppure estendere `UpdateShipDto` per supportarli.
+2. **Pagina storico PortLog:** Aggiungere sezione frontend per visualizzare i log operativi (`GET /api/portlogs`).
+3. **Aggiungere `getShipProfiles()` in `api.js`:** Esporre il catalogo al frontend per mostrare suggerimenti nel form di creazione.
+4. **Test di integrazione:** Usare `WebApplicationFactory` per test end-to-end dei controller.
+5. **Autenticazione base:** Se il progetto dovesse evolvere oltre il contesto didattico, aggiungere login con ruoli reali.
+6. **Docker Compose:** Per avvio unificato backend + frontend con un solo comando.
+7. **Internazionalizzazione (i18n):** Aggiungere supporto multilingua (almeno IT/EN).
+8. **Test per i controller mancanti:** Coprire `ShipProfilesController`, `ShipsController.CreateShip` (autocompletamento), `SystemController.AdvanceDay` e `AdminController.Reset`.
+
+---
+
+## Appendice A: Glossario
+
+| Termine | Significato |
+|---|---|
+| **API** | Application Programming Interface — interfaccia che permette a due sistemi (frontend e backend) di comunicare |
+| **ASP.NET Core** | Framework Microsoft per creare applicazioni web e API |
+| **Banchina** | Posto barca (ormeggio) nel porto, con taglia associata |
+| **CORS** | Cross-Origin Resource Sharing — meccanismo che permette a un frontend di chiamare un backend su porta diversa |
+| **CRUD** | Create, Read, Update, Delete — le quattro operazioni base su dati |
+| **DTO** | Data Transfer Object — oggetto leggero per trasportare dati tra API |
+| **EF Core** | Entity Framework Core — ORM (Object-Relational Mapper) per .NET |
+| **EF Core InMemory** | Database fittizio in memoria, usato nei test per isolare la logica senza file reali |
+| **Enum** | Enumerazione — tipo di dato con valori fissi (es. XL, L, M, S) |
+| **JSON** | JavaScript Object Notation — formato leggero per scambiare dati |
+| **ORM** | Object-Relational Mapper — strumento che traduce oggetti del codice in tabelle del database |
+| **REST** | Representational State Transfer — stile architetturale per API web |
+| **Seed** | Dati iniziali inseriti nel database alla prima creazione |
+| **Singleton** | Oggetto che esiste in una sola istanza (es. SystemState con CurrentDay) |
+| **SQLite** | Database leggero senza server, basato su file singolo |
+| **Swagger** | Interfaccia web interattiva per testare le API |
+| **Transazione serializzabile** | Livello di isolamento massimo: impedisce accessi concorrenti ai dati |
+| **xUnit** | Framework di test per .NET |
+| **WCAG AA** | Standard di accessibilità web (contrasto 4.5:1 per testo normale) |
 
 ---
 
 # SEZIONE 2 — DOCUMENTAZIONE UTENTE (MANUALE CLIENTE BLUEHARBOR)
 
 > Rivolta al personale BlueHarbor non tecnico: operatori portuali, scheduler, manager.
-
----
-
-## Indice (Sezione 2)
-
-1. [Introduzione](#21-introduzione)
-2. [Installazione e Avvio](#22-installazione-e-avvio)
-3. [Guida per l'Operatore](#23-guida-per-loperatore)
-4. [Guida per lo Scheduler](#24-guida-per-lo-scheduler)
-5. [Gestione del Tempo (Next Day)](#25-gestione-del-tempo-next-day)
-6. [Risoluzione Problemi (FAQ)](#26-risoluzione-problemi-faq)
 
 ---
 
