@@ -31,6 +31,10 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 builder.Services.AddProblemDetails();
 
+// Assicura che la cartella Data esista prima che SQLite provi a scriverci dentro
+// (necessario in ambienti come Railway, dove la cartella non esiste finché non viene creata)
+Directory.CreateDirectory("Data");
+
 // Collega il database SQLite
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
