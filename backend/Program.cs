@@ -14,6 +14,7 @@ builder.Services.AddControllers()
     });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 // Normalizza errori di validazione
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
@@ -37,12 +38,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IAssignmentService, AssignmentService>();
 builder.Services.AddScoped<IPortLogService, PortLogService>();
 
-// CORS — necessario per le chiamate dal frontend (porta 5173)
+// CORS — aperto temporaneamente per il deploy rapido su Railway
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -73,4 +74,6 @@ app.UseCors();          // ⚠️ deve stare PRIMA di UseAuthorization
 app.UseAuthorization();
 app.MapControllers();
 
-app.Run();
+// Porta dinamica — Railway assegna la porta tramite la variabile PORT
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+app.Run($"http://0.0.0.0:{port}");
