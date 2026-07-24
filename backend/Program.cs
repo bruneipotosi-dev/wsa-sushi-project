@@ -32,7 +32,7 @@ builder.Services.AddProblemDetails();
 
 // Collega il database SQLite
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=Data/blueharbor.db"));
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IAssignmentService, AssignmentService>();
 builder.Services.AddScoped<IPortLogService, PortLogService>();
